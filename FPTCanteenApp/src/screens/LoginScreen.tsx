@@ -22,7 +22,7 @@ const LoginScreen = ({ navigation }: any) => {
 
   const handleLogin = () => {
     // Xử lý đăng nhập ở đây
-    alert("Đăng nhập thành công (mock)!");
+    navigation.replace("App");
   };
 
   return (
@@ -75,7 +75,11 @@ const LoginScreen = ({ navigation }: any) => {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.button} activeOpacity={0.8}>
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={handleLogin}
+        >
           <Text style={styles.buttonText}>Đăng nhập</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
