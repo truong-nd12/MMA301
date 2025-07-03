@@ -13,14 +13,20 @@ import {
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 
 const OrderScreen = ({ route, navigation }: any) => {
   const { food } = route.params || {};
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
   const [time, setTime] = useState("11:30");
-  const [isPickup, setIsPickup] = useState(true);
+  const [deliveryMethod, setDeliveryMethod] = useState<
+    "pickup" | "delivery" | "ship"
+  >("pickup");
+  const [selectedLocation, setSelectedLocation] = useState<
+    "phonghoc" | "ktx" | "khac"
+  >("phonghoc");
+  const [customLocation, setCustomLocation] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [useStudentDiscount, setUseStudentDiscount] = useState(false);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
@@ -44,36 +50,49 @@ const OrderScreen = ({ route, navigation }: any) => {
   const decrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
 
   const toggleAddOn = (addOnId: string) => {
-    setSelectedAddOns(prev => 
-      prev.includes(addOnId) 
-        ? prev.filter(id => id !== addOnId)
+    setSelectedAddOns((prev) =>
+      prev.includes(addOnId)
+        ? prev.filter((id) => id !== addOnId)
         : [...prev, addOnId]
     );
+  };
+
+  let estimatedTime = "10-15 phút";
+  if (deliveryMethod === "delivery") estimatedTime = "20-30 phút";
+  if (deliveryMethod === "ship") estimatedTime = "15-25 phút";
+
+  const getShipFee = () => {
+    if (deliveryMethod !== "ship") return 0;
+    if (selectedLocation === "phonghoc") return 15000;
+    if (selectedLocation === "ktx") return 10000;
+    return 20000;
+  };
+
+  const shipLocationLabel = {
+    phonghoc: "Phòng học",
+    ktx: "Ký túc xá",
+    khac: "Khác",
   };
 
   const calculateTotal = () => {
     const basePrice = food.price * quantity;
     const addOnPrice = selectedAddOns.reduce((total, addOnId) => {
-      const addOn = addOns.find(a => a.id === addOnId);
+      const addOn = addOns.find((a) => a.id === addOnId);
       return total + (addOn ? addOn.price * quantity : 0);
     }, 0);
     const subtotal = basePrice + addOnPrice;
     const discount = useStudentDiscount ? subtotal * 0.1 : 0;
-    return subtotal - discount;
+    const shipFee = getShipFee();
+    return subtotal - discount + shipFee;
   };
-
-  const estimatedTime = isPickup ? "10-15 phút" : "20-30 phút";
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <LinearGradient
-        colors={['#667eea', '#764ba2']}
-        style={styles.header}
-      >
-        <TouchableOpacity 
+      <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.header}>
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
@@ -82,7 +101,10 @@ const OrderScreen = ({ route, navigation }: any) => {
         <Text style={styles.headerTitle}>Đặt món</Text>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <Animatable.View
           animation="fadeInUp"
           duration={700}
@@ -126,18 +148,23 @@ const OrderScreen = ({ route, navigation }: any) => {
                 key={addOn.id}
                 style={[
                   styles.addOnItem,
-                  selectedAddOns.includes(addOn.id) && styles.addOnItemSelected
+                  selectedAddOns.includes(addOn.id) && styles.addOnItemSelected,
                 ]}
                 onPress={() => toggleAddOn(addOn.id)}
               >
                 <View style={styles.addOnInfo}>
                   <Text style={styles.addOnName}>{addOn.name}</Text>
-                  <Text style={styles.addOnPrice}>+{addOn.price.toLocaleString()}đ</Text>
+                  <Text style={styles.addOnPrice}>
+                    +{addOn.price.toLocaleString()}đ
+                  </Text>
                 </View>
-                <View style={[
-                  styles.checkbox,
-                  selectedAddOns.includes(addOn.id) && styles.checkboxSelected
-                ]}>
+                <View
+                  style={[
+                    styles.checkbox,
+                    selectedAddOns.includes(addOn.id) &&
+                      styles.checkboxSelected,
+                  ]}
+                >
                   {selectedAddOns.includes(addOn.id) && (
                     <Ionicons name="checkmark" size={16} color="#fff" />
                   )}
@@ -151,37 +178,207 @@ const OrderScreen = ({ route, navigation }: any) => {
             <Text style={styles.sectionTitle}>Phương thức nhận món</Text>
             <View style={styles.deliveryOptions}>
               <TouchableOpacity
-                style={[styles.deliveryOption, isPickup && styles.deliveryOptionActive]}
-                onPress={() => setIsPickup(true)}
+                style={[
+                  styles.deliveryOption,
+                  deliveryMethod === "pickup" && styles.deliveryOptionActive,
+                ]}
+                onPress={() => setDeliveryMethod("pickup")}
               >
-                <Ionicons 
-                  name="storefront-outline" 
-                  size={20} 
-                  color={isPickup ? "#fff" : "#667eea"} 
+                <Ionicons
+                  name="storefront-outline"
+                  size={20}
+                  color={deliveryMethod === "pickup" ? "#fff" : "#667eea"}
                 />
-                <Text style={[
-                  styles.deliveryOptionText,
-                  isPickup && styles.deliveryOptionTextActive
-                ]}>Tự đến lấy</Text>
+                <Text
+                  style={[
+                    styles.deliveryOptionText,
+                    deliveryMethod === "pickup" &&
+                      styles.deliveryOptionTextActive,
+                  ]}
+                >
+                  Tự đến lấy
+                </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.deliveryOption, !isPickup && styles.deliveryOptionActive]}
-                onPress={() => setIsPickup(false)}
+                style={[
+                  styles.deliveryOption,
+                  deliveryMethod === "delivery" && styles.deliveryOptionActive,
+                ]}
+                onPress={() => setDeliveryMethod("delivery")}
               >
-                <Ionicons 
-                  name="bicycle-outline" 
-                  size={20} 
-                  color={!isPickup ? "#fff" : "#667eea"} 
+                <Ionicons
+                  name="bicycle-outline"
+                  size={20}
+                  color={deliveryMethod === "delivery" ? "#fff" : "#667eea"}
                 />
-                <Text style={[
-                  styles.deliveryOptionText,
-                  !isPickup && styles.deliveryOptionTextActive
-                ]}>Giao tận nơi</Text>
+                <Text
+                  style={[
+                    styles.deliveryOptionText,
+                    deliveryMethod === "delivery" &&
+                      styles.deliveryOptionTextActive,
+                  ]}
+                >
+                  Giao tận nơi
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.deliveryOption,
+                  deliveryMethod === "ship" && styles.deliveryOptionActive,
+                ]}
+                onPress={() => setDeliveryMethod("ship")}
+              >
+                <Ionicons
+                  name="car-outline"
+                  size={20}
+                  color={deliveryMethod === "ship" ? "#fff" : "#667eea"}
+                />
+                <Text
+                  style={[
+                    styles.deliveryOptionText,
+                    deliveryMethod === "ship" &&
+                      styles.deliveryOptionTextActive,
+                  ]}
+                >
+                  Giao hàng (Ship)
+                </Text>
               </TouchableOpacity>
             </View>
             <Text style={styles.estimatedTime}>
               Thời gian dự kiến: {estimatedTime}
             </Text>
+
+            {deliveryMethod === "ship" && (
+              <View style={{ marginTop: 16 }}>
+                <Text
+                  style={{
+                    fontWeight: "600",
+                    color: "#2c3e50",
+                    marginBottom: 8,
+                  }}
+                >
+                  Chọn địa điểm nhận món
+                </Text>
+                <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                  <TouchableOpacity
+                    style={[
+                      styles.deliveryOption,
+                      selectedLocation === "phonghoc" &&
+                        styles.deliveryOptionActive,
+                      { flex: 1, marginRight: 6 },
+                    ]}
+                    onPress={() => setSelectedLocation("phonghoc")}
+                  >
+                    <Ionicons
+                      name="school-outline"
+                      size={18}
+                      color={
+                        selectedLocation === "phonghoc" ? "#fff" : "#667eea"
+                      }
+                    />
+                    <Text
+                      style={[
+                        styles.deliveryOptionText,
+                        selectedLocation === "phonghoc" &&
+                          styles.deliveryOptionTextActive,
+                      ]}
+                    >
+                      Phòng học
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.deliveryOption,
+                      selectedLocation === "ktx" && styles.deliveryOptionActive,
+                      { flex: 1, marginRight: 6 },
+                    ]}
+                    onPress={() => setSelectedLocation("ktx")}
+                  >
+                    <Ionicons
+                      name="home-outline"
+                      size={18}
+                      color={selectedLocation === "ktx" ? "#fff" : "#667eea"}
+                    />
+                    <Text
+                      style={[
+                        styles.deliveryOptionText,
+                        selectedLocation === "ktx" &&
+                          styles.deliveryOptionTextActive,
+                      ]}
+                    >
+                      Ký túc xá
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.deliveryOption,
+                      selectedLocation === "khac" &&
+                        styles.deliveryOptionActive,
+                      { flex: 1 },
+                    ]}
+                    onPress={() => setSelectedLocation("khac")}
+                  >
+                    <Ionicons
+                      name="location-outline"
+                      size={18}
+                      color={selectedLocation === "khac" ? "#fff" : "#667eea"}
+                    />
+                    <Text
+                      style={[
+                        styles.deliveryOptionText,
+                        selectedLocation === "khac" &&
+                          styles.deliveryOptionTextActive,
+                      ]}
+                    >
+                      Khác
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {selectedLocation === "khac" && (
+                  <TextInput
+                    style={[styles.input, { marginTop: 8 }]}
+                    placeholder="Nhập địa chỉ cụ thể..."
+                    value={customLocation}
+                    onChangeText={setCustomLocation}
+                  />
+                )}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginTop: 10,
+                  }}
+                >
+                  <Ionicons name="cash-outline" size={18} color="#667eea" />
+                  <Text
+                    style={{ marginLeft: 8, fontSize: 15, color: "#2c3e50" }}
+                  >
+                    Phí ship:{" "}
+                    <Text style={{ color: "#E74C3C", fontWeight: "bold" }}>
+                      {getShipFee().toLocaleString()}đ
+                    </Text>
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    marginTop: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <Ionicons name="navigate-outline" size={18} color="#667eea" />
+                  <Text
+                    style={{
+                      marginLeft: 8,
+                      color: "#7f8c8d",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    Đang tìm shipper cho bạn...
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
 
           {/* Time Section */}
@@ -213,7 +410,9 @@ const OrderScreen = ({ route, navigation }: any) => {
             <View style={styles.discountContainer}>
               <View style={styles.discountInfo}>
                 <Ionicons name="school-outline" size={20} color="#667eea" />
-                <Text style={styles.discountText}>Giảm giá sinh viên (10%)</Text>
+                <Text style={styles.discountText}>
+                  Giảm giá sinh viên (10%)
+                </Text>
               </View>
               <Switch
                 value={useStudentDiscount}
@@ -237,19 +436,24 @@ const OrderScreen = ({ route, navigation }: any) => {
                   key={method.id}
                   style={[
                     styles.paymentMethod,
-                    paymentMethod === method.id && styles.paymentMethodActive
+                    paymentMethod === method.id && styles.paymentMethodActive,
                   ]}
                   onPress={() => setPaymentMethod(method.id)}
                 >
-                  <Ionicons 
-                    name={method.icon as any} 
-                    size={20} 
-                    color={paymentMethod === method.id ? "#fff" : "#667eea"} 
+                  <Ionicons
+                    name={method.icon as any}
+                    size={20}
+                    color={paymentMethod === method.id ? "#fff" : "#667eea"}
                   />
-                  <Text style={[
-                    styles.paymentMethodText,
-                    paymentMethod === method.id && styles.paymentMethodTextActive
-                  ]}>{method.name}</Text>
+                  <Text
+                    style={[
+                      styles.paymentMethodText,
+                      paymentMethod === method.id &&
+                        styles.paymentMethodTextActive,
+                    ]}
+                  >
+                    {method.name}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -264,11 +468,13 @@ const OrderScreen = ({ route, navigation }: any) => {
                 {(food.price * quantity).toLocaleString()}đ
               </Text>
             </View>
-            {selectedAddOns.map(addOnId => {
-              const addOn = addOns.find(a => a.id === addOnId);
+            {selectedAddOns.map((addOnId) => {
+              const addOn = addOns.find((a) => a.id === addOnId);
               return addOn ? (
                 <View key={addOnId} style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>{addOn.name} ({quantity}x)</Text>
+                  <Text style={styles.summaryLabel}>
+                    {addOn.name} ({quantity}x)
+                  </Text>
                   <Text style={styles.summaryValue}>
                     {(addOn.price * quantity).toLocaleString()}đ
                   </Text>
@@ -277,11 +483,21 @@ const OrderScreen = ({ route, navigation }: any) => {
             })}
             {useStudentDiscount && (
               <View style={styles.summaryRow}>
-                <Text style={[styles.summaryLabel, { color: '#4CAF50' }]}>
+                <Text style={[styles.summaryLabel, { color: "#4CAF50" }]}>
                   Giảm giá sinh viên
                 </Text>
-                <Text style={[styles.summaryValue, { color: '#4CAF50' }]}>
-                  -{(calculateTotal() * 0.1 / 0.9).toLocaleString()}đ
+                <Text style={[styles.summaryValue, { color: "#4CAF50" }]}>
+                  -{((calculateTotal() * 0.1) / 0.9).toLocaleString()}đ
+                </Text>
+              </View>
+            )}
+            {deliveryMethod === "ship" && (
+              <View style={styles.summaryRow}>
+                <Text style={[styles.summaryLabel, { color: "#E74C3C" }]}>
+                  Phí ship ({shipLocationLabel[selectedLocation]})
+                </Text>
+                <Text style={[styles.summaryValue, { color: "#E74C3C" }]}>
+                  {getShipFee().toLocaleString()}đ
                 </Text>
               </View>
             )}
@@ -301,10 +517,14 @@ const OrderScreen = ({ route, navigation }: any) => {
             onPress={() => alert("Đặt món thành công!")}
           >
             <LinearGradient
-              colors={['#667eea', '#764ba2']}
+              colors={["#667eea", "#764ba2"]}
               style={styles.orderBtnGradient}
             >
-              <Ionicons name="checkmark-circle-outline" size={22} color="#fff" />
+              <Ionicons
+                name="checkmark-circle-outline"
+                size={22}
+                color="#fff"
+              />
               <Text style={styles.orderBtnText}>
                 Xác nhận đặt món • {calculateTotal().toLocaleString()}đ
               </Text>
@@ -318,9 +538,9 @@ const OrderScreen = ({ route, navigation }: any) => {
 
 const styles = StyleSheet.create({
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 50 : 30,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingTop: Platform.OS === "ios" ? 50 : 30,
     paddingBottom: 15,
     paddingHorizontal: 20,
   },
@@ -330,8 +550,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   scrollContainer: {
     flex: 1,
