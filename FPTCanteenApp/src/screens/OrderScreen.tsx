@@ -46,13 +46,13 @@ const OrderScreen = ({ route, navigation }: any) => {
     { id: "soup", name: "Canh", price: 10000 },
   ];
 
-  const increase = () => setQuantity((q) => q + 1);
-  const decrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+  const increase = () => setQuantity((q: number) => q + 1);
+  const decrease = () => setQuantity((q: number) => (q > 1 ? q - 1 : 1));
 
   const toggleAddOn = (addOnId: string) => {
-    setSelectedAddOns((prev) =>
+    setSelectedAddOns((prev: string[]) =>
       prev.includes(addOnId)
-        ? prev.filter((id) => id !== addOnId)
+        ? prev.filter((id: string) => id !== addOnId)
         : [...prev, addOnId]
     );
   };
@@ -76,10 +76,13 @@ const OrderScreen = ({ route, navigation }: any) => {
 
   const calculateTotal = () => {
     const basePrice = food.price * quantity;
-    const addOnPrice = selectedAddOns.reduce((total, addOnId) => {
-      const addOn = addOns.find((a) => a.id === addOnId);
-      return total + (addOn ? addOn.price * quantity : 0);
-    }, 0);
+    const addOnPrice = selectedAddOns.reduce(
+      (total: number, addOnId: string) => {
+        const addOn = addOns.find((a) => a.id === addOnId);
+        return total + (addOn ? addOn.price * quantity : 0);
+      },
+      0
+    );
     const subtotal = basePrice + addOnPrice;
     const discount = useStudentDiscount ? subtotal * 0.1 : 0;
     const shipFee = getShipFee();
@@ -457,6 +460,35 @@ const OrderScreen = ({ route, navigation }: any) => {
                 </TouchableOpacity>
               ))}
             </View>
+            {/* Hiển thị mã QR nếu chọn MoMo */}
+            {paymentMethod === "momo" && (
+              <View style={{ alignItems: "center", marginTop: 16 }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "500",
+                    marginBottom: 8,
+                    color: "#7f8c8d",
+                  }}
+                >
+                  Quét mã QR để thanh toán MoMo
+                </Text>
+                <Image
+                  source={require("../assets/images/momo-qr.png")}
+                  style={{
+                    width: 180,
+                    height: 180,
+                    borderRadius: 12,
+                    backgroundColor: "#fff",
+                  }}
+                  resizeMode="contain"
+                />
+                <Text style={{ fontSize: 13, color: "#7f8c8d", marginTop: 8 }}>
+                  Vui lòng chuyển khoản đúng số tiền và ghi rõ nội dung đơn
+                  hàng.
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Order Summary */}
@@ -468,7 +500,7 @@ const OrderScreen = ({ route, navigation }: any) => {
                 {(food.price * quantity).toLocaleString()}đ
               </Text>
             </View>
-            {selectedAddOns.map((addOnId) => {
+            {selectedAddOns.map((addOnId: string) => {
               const addOn = addOns.find((a) => a.id === addOnId);
               return addOn ? (
                 <View key={addOnId} style={styles.summaryRow}>
@@ -494,7 +526,13 @@ const OrderScreen = ({ route, navigation }: any) => {
             {deliveryMethod === "ship" && (
               <View style={styles.summaryRow}>
                 <Text style={[styles.summaryLabel, { color: "#E74C3C" }]}>
-                  Phí ship ({shipLocationLabel[selectedLocation]})
+                  Phí ship (
+                  {
+                    shipLocationLabel[
+                      selectedLocation as "phonghoc" | "ktx" | "khac"
+                    ]
+                  }
+                  )
                 </Text>
                 <Text style={[styles.summaryValue, { color: "#E74C3C" }]}>
                   {getShipFee().toLocaleString()}đ

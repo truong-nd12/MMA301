@@ -15,16 +15,21 @@ import {
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 const vendors = [
   { id: "v1", name: "Quầy Cơm", icon: "restaurant-outline", color: "#FF6B6B" },
   { id: "v2", name: "Quầy Bún", icon: "bowl-outline", color: "#4ECDC4" },
   { id: "v3", name: "Quầy Chay", icon: "leaf-outline", color: "#45B7D1" },
   { id: "v4", name: "Quầy Đồ Uống", icon: "cafe-outline", color: "#96CEB4" },
-  { id: "v5", name: "Quầy Tráng Miệng", icon: "ice-cream-outline", color: "#FFEAA7" },
+  {
+    id: "v5",
+    name: "Quầy Tráng Miệng",
+    icon: "ice-cream-outline",
+    color: "#FFEAA7",
+  },
 ];
 
 const categories = [
@@ -48,7 +53,8 @@ const mockMenu = [
     price: 30000,
     originalPrice: 35000,
     desc: "Cơm sườn nướng tẩm mật ong, ăn kèm dưa leo, trứng kho",
-    image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
     vendorId: "v1",
     days: ["T2", "T3", "T4"],
     category: "man",
@@ -70,7 +76,8 @@ const mockMenu = [
     price: 30000,
     originalPrice: 30000,
     desc: "Bún, đậu hũ, nấm, rau thơm, nước dùng chay thanh mát",
-    image: "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80",
     vendorId: "v3",
     days: ["T2", "T5", "T6"],
     category: "chay",
@@ -92,7 +99,8 @@ const mockMenu = [
     price: 40000,
     originalPrice: 45000,
     desc: "Mì trứng, thịt bò tươi, rau củ, nước sốt đặc biệt của quán",
-    image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80",
     vendorId: "v1",
     days: ["T3", "T4", "T5"],
     category: "man",
@@ -114,7 +122,8 @@ const mockMenu = [
     price: 25000,
     originalPrice: 25000,
     desc: "Xà lách, cà chua cherry, dưa leo, sốt mè rang thơm ngon",
-    image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80",
     vendorId: "v3",
     days: ["T2", "T6", "CN"],
     category: "chay",
@@ -136,7 +145,8 @@ const mockMenu = [
     price: 18000,
     originalPrice: 22000,
     desc: "Trà đào tươi, cam ngọt, sả thơm, đá mát lạnh - thức uống giải khát tuyệt vời",
-    image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80",
     vendorId: "v4",
     days: ["T4", "T5", "T6", "T7"],
     category: "nuoc",
@@ -158,7 +168,8 @@ const mockMenu = [
     price: 15000,
     originalPrice: 18000,
     desc: "Chè đậu xanh mềm, nước cốt dừa thơm, đá bào mát lạnh",
-    image: "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80",
+    image:
+      "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80",
     vendorId: "v5",
     days: ["T6", "T7", "CN"],
     category: "an_nhe",
@@ -211,7 +222,10 @@ const MenuCard = ({
   onToggleFavorite?: (item: (typeof mockMenu)[0]) => void;
   isFavorite?: boolean;
 }) => {
-  const statusMap: Record<string, { text: string; color: string; bgColor: string }> = {
+  const statusMap: Record<
+    string,
+    { text: string; color: string; bgColor: string }
+  > = {
     available: { text: "Còn hàng", color: "#27AE60", bgColor: "#D5EDDA" },
     almost_out: { text: "Sắp hết", color: "#F39C12", bgColor: "#FFF3CD" },
     out: { text: "Hết món", color: "#E74C3C", bgColor: "#F8D7DA" },
@@ -240,7 +254,7 @@ const MenuCard = ({
     <Animatable.View animation="fadeInUp" duration={600} style={styles.card}>
       <View style={styles.cardImageContainer}>
         <Image source={{ uri: item.image }} style={styles.image} />
-        
+
         {/* Badges */}
         <View style={styles.badgeContainer}>
           {item.isNew && (
@@ -282,12 +296,18 @@ const MenuCard = ({
           <Text style={styles.foodName}>{item.name}</Text>
           {renderSpicyLevel()}
         </View>
-        
-        <Text style={styles.foodDesc} numberOfLines={2}>{item.desc}</Text>
-        
+
+        <Text style={styles.foodDesc} numberOfLines={2}>
+          {item.desc}
+        </Text>
+
         {/* Vendor info */}
         <View style={styles.vendorInfo}>
-          <Ionicons name={vendor?.icon as any} size={14} color={vendor?.color} />
+          <Ionicons
+            name={vendor?.icon as any}
+            size={14}
+            color={vendor?.color}
+          />
           <Text style={[styles.vendorText, { color: vendor?.color }]}>
             {vendor?.name}
           </Text>
@@ -303,7 +323,9 @@ const MenuCard = ({
               </Text>
             )}
           </View>
-          <View style={[styles.categoryTag, { backgroundColor: cat?.color + '20' }]}>
+          <View
+            style={[styles.categoryTag, { backgroundColor: cat?.color + "20" }]}
+          >
             <Ionicons name={cat?.icon as any} size={14} color={cat?.color} />
             <Text style={[styles.categoryTagText, { color: cat?.color }]}>
               {cat?.name}
@@ -313,13 +335,24 @@ const MenuCard = ({
 
         {/* Status and time */}
         <View style={styles.rowBetween}>
-          <View style={[styles.statusBadge, { backgroundColor: statusMap[item.status]?.bgColor }]}>
-            <Text style={[styles.statusText, { color: statusMap[item.status]?.color }]}>
+          <View
+            style={[
+              styles.statusBadge,
+              { backgroundColor: statusMap[item.status]?.bgColor },
+            ]}
+          >
+            <Text
+              style={[
+                styles.statusText,
+                { color: statusMap[item.status]?.color },
+              ]}
+            >
               {statusMap[item.status]?.text}
             </Text>
           </View>
           <Text style={styles.servingTime}>
-            <Ionicons name="time-outline" size={14} color="#666" /> {item.servingTime}
+            <Ionicons name="time-outline" size={14} color="#666" />{" "}
+            {item.servingTime}
           </Text>
         </View>
 
@@ -330,12 +363,12 @@ const MenuCard = ({
             <Text style={styles.ratingText}>{item.rating}</Text>
             <Text style={styles.reviewText}>({item.reviewCount})</Text>
           </View>
-          
+
           <View style={styles.infoItem}>
             <Ionicons name="fitness-outline" size={14} color="#666" />
             <Text style={styles.infoText}>{item.calories} cal</Text>
           </View>
-          
+
           <View style={styles.infoItem}>
             <Ionicons name="timer-outline" size={14} color="#666" />
             <Text style={styles.infoText}>{item.estimatedWaitTime}</Text>
@@ -346,14 +379,16 @@ const MenuCard = ({
         <TouchableOpacity
           style={[
             styles.orderBtn,
-            item.status === "out" && styles.orderBtnDisabled
+            item.status === "out" && styles.orderBtnDisabled,
           ]}
           onPress={() => onOrder?.(item)}
           disabled={item.status === "out"}
           activeOpacity={item.status === "out" ? 1 : 0.8}
         >
           <LinearGradient
-            colors={item.status === "out" ? ['#CCC', '#999'] : ['#667eea', '#764ba2']}
+            colors={
+              item.status === "out" ? ["#CCC", "#999"] : ["#667eea", "#764ba2"]
+            }
             style={styles.orderBtnGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -379,7 +414,9 @@ const MenuScreen = ({ navigation }: any) => {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [tempVendor, setTempVendor] = useState<string | null>(selectedVendor);
-  const [tempCategory, setTempCategory] = useState<string | null>(selectedCategory);
+  const [tempCategory, setTempCategory] = useState<string | null>(
+    selectedCategory
+  );
   const [tempType, setTempType] = useState<string | null>(selectedType);
   const [tempDay, setTempDay] = useState<string | null>(selectedDay);
   const [vendorDropdownVisible, setVendorDropdownVisible] = useState(false);
@@ -390,27 +427,35 @@ const MenuScreen = ({ navigation }: any) => {
   // Search and filter functions
   const filterMenu = (menu: typeof mockMenu) => {
     return menu.filter((item) => {
-      const searchMatch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.desc.toLowerCase().includes(searchQuery.toLowerCase());
+      const searchMatch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.desc.toLowerCase().includes(searchQuery.toLowerCase());
       const vendorMatch = !selectedVendor || item.vendorId === selectedVendor;
-      const categoryMatch = !selectedCategory || item.category === selectedCategory;
+      const categoryMatch =
+        !selectedCategory || item.category === selectedCategory;
       const typeMatch = !selectedType || item.type === selectedType;
       const favoriteMatch = !showFavoritesOnly || favorites.includes(item.id);
-      
-      return searchMatch && vendorMatch && categoryMatch && typeMatch && favoriteMatch;
+
+      return (
+        searchMatch &&
+        vendorMatch &&
+        categoryMatch &&
+        typeMatch &&
+        favoriteMatch
+      );
     });
   };
 
-  const toggleFavorite = (item: typeof mockMenu[0]) => {
-    setFavorites(prev => 
-      prev.includes(item.id) 
-        ? prev.filter(id => id !== item.id)
+  const toggleFavorite = (item: (typeof mockMenu)[0]) => {
+    setFavorites((prev) =>
+      prev.includes(item.id)
+        ? prev.filter((id) => id !== item.id)
         : [...prev, item.id]
     );
   };
 
   // Get popular items
-  const popularItems = mockMenu.filter(item => item.isPopular).slice(0, 3);
+  const popularItems = mockMenu.filter((item) => item.isPopular).slice(0, 3);
 
   // SectionList data cho toàn tuần
   const weekSections = days.map((d) => ({
@@ -421,15 +466,17 @@ const MenuScreen = ({ navigation }: any) => {
   let content = null;
 
   if (tab === "today") {
-    const todayMenu = filterMenu(getMenuForDay(days[todayIdx] as keyof typeof dayNames));
+    const todayMenu = filterMenu(
+      getMenuForDay(days[todayIdx] as keyof typeof dayNames)
+    );
     content = (
       <FlatList
         data={todayMenu}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <MenuCard 
-            item={item} 
+          <MenuCard
+            item={item}
             onOrder={handleOrder}
             onToggleFavorite={toggleFavorite}
             isFavorite={favorites.includes(item.id)}
@@ -445,15 +492,17 @@ const MenuScreen = ({ navigation }: any) => {
       />
     );
   } else if (tab === "tomorrow") {
-    const tomorrowMenu = filterMenu(getMenuForDay(days[getNextDayIdx()] as keyof typeof dayNames));
+    const tomorrowMenu = filterMenu(
+      getMenuForDay(days[getNextDayIdx()] as keyof typeof dayNames)
+    );
     content = (
       <FlatList
         data={tomorrowMenu}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <MenuCard 
-            item={item} 
+          <MenuCard
+            item={item}
             onOrder={handleOrder}
             onToggleFavorite={toggleFavorite}
             isFavorite={favorites.includes(item.id)}
@@ -475,8 +524,8 @@ const MenuScreen = ({ navigation }: any) => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
         renderItem={({ item }) => (
-          <MenuCard 
-            item={item} 
+          <MenuCard
+            item={item}
             onOrder={handleOrder}
             onToggleFavorite={toggleFavorite}
             isFavorite={favorites.includes(item.id)}
@@ -490,7 +539,9 @@ const MenuScreen = ({ navigation }: any) => {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="restaurant-outline" size={64} color="#DDD" />
-            <Text style={styles.emptyText}>Không có món nào trong tuần này</Text>
+            <Text style={styles.emptyText}>
+              Không có món nào trong tuần này
+            </Text>
           </View>
         }
         showsVerticalScrollIndicator={false}
@@ -525,7 +576,7 @@ const MenuScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       {/* Header với gradient */}
       <LinearGradient
-        colors={['#667eea', '#764ba2']}
+        colors={["#667eea", "#764ba2"]}
         style={styles.header}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -538,13 +589,22 @@ const MenuScreen = ({ navigation }: any) => {
           <View style={styles.headerActions}>
             <TouchableOpacity
               onPress={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              style={[styles.headerBtn, showFavoritesOnly && styles.headerBtnActive]}
+              style={[
+                styles.headerBtn,
+                showFavoritesOnly && styles.headerBtnActive,
+              ]}
             >
-              <Ionicons 
-                name={showFavoritesOnly ? "heart" : "heart-outline"} 
-                size={24} 
-                color={showFavoritesOnly ? "#E74C3C" : "#fff"} 
+              <Ionicons
+                name={showFavoritesOnly ? "heart" : "heart-outline"}
+                size={24}
+                color={showFavoritesOnly ? "#E74C3C" : "#fff"}
               />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation?.navigate("OrderTracking")}
+              style={styles.headerBtn}
+            >
+              <Ionicons name="list-outline" size={24} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => navigation?.navigate("Order", { view: "cart" })}
@@ -563,7 +623,12 @@ const MenuScreen = ({ navigation }: any) => {
 
         {/* Search bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+          <Ionicons
+            name="search"
+            size={20}
+            color="#666"
+            style={styles.searchIcon}
+          />
           <TextInput
             style={styles.searchInput}
             placeholder="Tìm kiếm món ăn..."
@@ -590,9 +655,16 @@ const MenuScreen = ({ navigation }: any) => {
                 style={styles.popularCard}
                 onPress={() => handleOrder(item)}
               >
-                <Image source={{ uri: item.image }} style={styles.popularImage} />
-                <Text style={styles.popularName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.popularPrice}>{item.price.toLocaleString()}đ</Text>
+                <Image
+                  source={{ uri: item.image }}
+                  style={styles.popularImage}
+                />
+                <Text style={styles.popularName} numberOfLines={1}>
+                  {item.name}
+                </Text>
+                <Text style={styles.popularPrice}>
+                  {item.price.toLocaleString()}đ
+                </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -618,22 +690,42 @@ const MenuScreen = ({ navigation }: any) => {
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* Day filter */}
               <Text style={styles.modalLabel}>📅 Chọn ngày</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.filterRow}
+              >
                 <TouchableOpacity
-                  style={[styles.filterChip, tempDay === null && styles.filterChipActive]}
+                  style={[
+                    styles.filterChip,
+                    tempDay === null && styles.filterChipActive,
+                  ]}
                   onPress={() => setTempDay(null)}
                 >
-                  <Text style={[styles.filterChipText, tempDay === null && styles.filterChipTextActive]}>
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      tempDay === null && styles.filterChipTextActive,
+                    ]}
+                  >
                     Tất cả
                   </Text>
                 </TouchableOpacity>
                 {days.map((day) => (
                   <TouchableOpacity
                     key={day}
-                    style={[styles.filterChip, tempDay === day && styles.filterChipActive]}
+                    style={[
+                      styles.filterChip,
+                      tempDay === day && styles.filterChipActive,
+                    ]}
                     onPress={() => setTempDay(day)}
                   >
-                    <Text style={[styles.filterChipText, tempDay === day && styles.filterChipTextActive]}>
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        tempDay === day && styles.filterChipTextActive,
+                      ]}
+                    >
                       {day}
                     </Text>
                   </TouchableOpacity>
@@ -642,23 +734,47 @@ const MenuScreen = ({ navigation }: any) => {
 
               {/* Vendor filter */}
               <Text style={styles.modalLabel}>🏪 Chọn quầy</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.filterRow}
+              >
                 <TouchableOpacity
-                  style={[styles.filterChip, tempVendor === null && styles.filterChipActive]}
+                  style={[
+                    styles.filterChip,
+                    tempVendor === null && styles.filterChipActive,
+                  ]}
                   onPress={() => setTempVendor(null)}
                 >
-                  <Text style={[styles.filterChipText, tempVendor === null && styles.filterChipTextActive]}>
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      tempVendor === null && styles.filterChipTextActive,
+                    ]}
+                  >
                     Tất cả
                   </Text>
                 </TouchableOpacity>
                 {vendors.map((vendor) => (
                   <TouchableOpacity
                     key={vendor.id}
-                    style={[styles.filterChip, tempVendor === vendor.id && styles.filterChipActive]}
+                    style={[
+                      styles.filterChip,
+                      tempVendor === vendor.id && styles.filterChipActive,
+                    ]}
                     onPress={() => setTempVendor(vendor.id)}
                   >
-                    <Ionicons name={vendor.icon as any} size={16} color={tempVendor === vendor.id ? "#fff" : vendor.color} />
-                    <Text style={[styles.filterChipText, tempVendor === vendor.id && styles.filterChipTextActive]}>
+                    <Ionicons
+                      name={vendor.icon as any}
+                      size={16}
+                      color={tempVendor === vendor.id ? "#fff" : vendor.color}
+                    />
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        tempVendor === vendor.id && styles.filterChipTextActive,
+                      ]}
+                    >
                       {vendor.name}
                     </Text>
                   </TouchableOpacity>
@@ -667,23 +783,50 @@ const MenuScreen = ({ navigation }: any) => {
 
               {/* Category filter */}
               <Text style={styles.modalLabel}>🍽️ Chọn thể loại</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.filterRow}
+              >
                 <TouchableOpacity
-                  style={[styles.filterChip, tempCategory === null && styles.filterChipActive]}
+                  style={[
+                    styles.filterChip,
+                    tempCategory === null && styles.filterChipActive,
+                  ]}
                   onPress={() => setTempCategory(null)}
                 >
-                  <Text style={[styles.filterChipText, tempCategory === null && styles.filterChipTextActive]}>
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      tempCategory === null && styles.filterChipTextActive,
+                    ]}
+                  >
                     Tất cả
                   </Text>
                 </TouchableOpacity>
                 {categories.map((category) => (
                   <TouchableOpacity
                     key={category.id}
-                    style={[styles.filterChip, tempCategory === category.id && styles.filterChipActive]}
+                    style={[
+                      styles.filterChip,
+                      tempCategory === category.id && styles.filterChipActive,
+                    ]}
                     onPress={() => setTempCategory(category.id)}
                   >
-                    <Ionicons name={category.icon as any} size={16} color={tempCategory === category.id ? "#fff" : category.color} />
-                    <Text style={[styles.filterChipText, tempCategory === category.id && styles.filterChipTextActive]}>
+                    <Ionicons
+                      name={category.icon as any}
+                      size={16}
+                      color={
+                        tempCategory === category.id ? "#fff" : category.color
+                      }
+                    />
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        tempCategory === category.id &&
+                          styles.filterChipTextActive,
+                      ]}
+                    >
                       {category.name}
                     </Text>
                   </TouchableOpacity>
@@ -692,23 +835,47 @@ const MenuScreen = ({ navigation }: any) => {
 
               {/* Type filter */}
               <Text style={styles.modalLabel}>🥘 Chọn loại món</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.filterRow}
+              >
                 <TouchableOpacity
-                  style={[styles.filterChip, tempType === null && styles.filterChipActive]}
+                  style={[
+                    styles.filterChip,
+                    tempType === null && styles.filterChipActive,
+                  ]}
                   onPress={() => setTempType(null)}
                 >
-                  <Text style={[styles.filterChipText, tempType === null && styles.filterChipTextActive]}>
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      tempType === null && styles.filterChipTextActive,
+                    ]}
+                  >
                     Tất cả
                   </Text>
                 </TouchableOpacity>
                 {types.map((type) => (
                   <TouchableOpacity
                     key={type.id}
-                    style={[styles.filterChip, tempType === type.id && styles.filterChipActive]}
+                    style={[
+                      styles.filterChip,
+                      tempType === type.id && styles.filterChipActive,
+                    ]}
                     onPress={() => setTempType(type.id)}
                   >
-                    <Ionicons name={type.icon as any} size={16} color={tempType === type.id ? "#fff" : "#666"} />
-                    <Text style={[styles.filterChipText, tempType === type.id && styles.filterChipTextActive]}>
+                    <Ionicons
+                      name={type.icon as any}
+                      size={16}
+                      color={tempType === type.id ? "#fff" : "#666"}
+                    />
+                    <Text
+                      style={[
+                        styles.filterChipText,
+                        tempType === type.id && styles.filterChipTextActive,
+                      ]}
+                    >
                       {type.name}
                     </Text>
                   </TouchableOpacity>
@@ -718,12 +885,18 @@ const MenuScreen = ({ navigation }: any) => {
 
             {/* Modal actions */}
             <View style={styles.modalActions}>
-              <TouchableOpacity style={styles.modalBtnSecondary} onPress={resetFilter}>
+              <TouchableOpacity
+                style={styles.modalBtnSecondary}
+                onPress={resetFilter}
+              >
                 <Text style={styles.modalBtnSecondaryText}>Đặt lại</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.modalBtnPrimary} onPress={applyFilter}>
+              <TouchableOpacity
+                style={styles.modalBtnPrimary}
+                onPress={applyFilter}
+              >
                 <LinearGradient
-                  colors={['#667eea', '#764ba2']}
+                  colors={["#667eea", "#764ba2"]}
                   style={styles.modalBtnGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -744,12 +917,14 @@ const MenuScreen = ({ navigation }: any) => {
             style={[styles.tabBtn, tab === t.key && styles.tabBtnActive]}
             onPress={() => setTab(t.key)}
           >
-            <Ionicons 
-              name={t.icon as any} 
-              size={20} 
-              color={tab === t.key ? "#fff" : "#666"} 
+            <Ionicons
+              name={t.icon as any}
+              size={20}
+              color={tab === t.key ? "#fff" : "#666"}
             />
-            <Text style={[styles.tabText, tab === t.key && styles.tabTextActive]}>
+            <Text
+              style={[styles.tabText, tab === t.key && styles.tabTextActive]}
+            >
               {t.label}
             </Text>
           </TouchableOpacity>
