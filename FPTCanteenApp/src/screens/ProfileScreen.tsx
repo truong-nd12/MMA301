@@ -125,6 +125,8 @@ export default function ProfileScreen() {
               style={styles.menuItem}
               onPress={() => {
                 if (item.id === 1) navigation.navigate("OrderHistory");
+                if (item.id === 2) navigation.navigate("FavoriteFoods");
+                if (item.id === 3) navigation.navigate("Wallet");
               }}
             >
               <View

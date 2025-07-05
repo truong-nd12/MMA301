@@ -11,11 +11,17 @@ import NotificationScreen from "../screens/NotificationScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import SupportScreen from "../screens/SupportScreen";
 import NutritionScreen from "../screens/NutritionScreen";
+import FavoriteFoodsScreen from "../screens/FavoriteFoodsScreen";
+import OrderScreen from "../screens/OrderScreen";
+import WalletScreen from "../screens/WalletScreen";
 
 export type AppStackParamList = {
-  MainTabs: undefined;
+  MainTabs: { screen?: string } | undefined;
   OrderTracking: undefined;
   OrderDetail: { orderId: string };
+  Order: { food: any };
+  FavoriteFoods: undefined;
+  Wallet: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -36,6 +42,9 @@ const AppStack = () => (
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="Support" component={SupportScreen} />
       <Stack.Screen name="Nutrition" component={NutritionScreen} />
+      <Stack.Screen name="FavoriteFoods" component={FavoriteFoodsScreen} />
+      <Stack.Screen name="Order" component={OrderScreen} />
+      <Stack.Screen name="Wallet" component={WalletScreen} />
     </Stack.Navigator>
   </View>
 );
