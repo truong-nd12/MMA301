@@ -601,18 +601,6 @@ const MenuScreen = ({ navigation }: any) => {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation?.navigate("OrderTracking")}
-              style={styles.headerBtn}
-            >
-              <Ionicons name="list-outline" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => navigation?.navigate("Order", { view: "cart" })}
-              style={styles.headerBtn}
-            >
-              <Ionicons name="cart" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity
               onPress={() => setModalVisible(true)}
               style={styles.headerBtn}
             >
