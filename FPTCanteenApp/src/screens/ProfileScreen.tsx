@@ -35,21 +35,21 @@ export default function ProfileScreen() {
   const menuItems = [
     {
       id: 1,
-      title: "Lịch sử đặt món",
-      icon: "receipt-outline",
+      title: "Lịch sử đặt hàng",
+      icon: "time-outline",
       color: "#4CAF50",
       badge: user.totalOrders,
     },
     {
       id: 2,
-      title: "Món ăn yêu thích",
+      title: "Món yêu thích",
       icon: "heart-outline",
       color: "#E91E63",
       badge: user.favoriteCount,
     },
     {
       id: 3,
-      title: "Ví của tôi",
+      title: "Ví điện tử",
       icon: "wallet-outline",
       color: "#FF9800",
       subtitle: formatCurrency(user.balance),
@@ -60,17 +60,13 @@ export default function ProfileScreen() {
       icon: "notifications-outline",
       color: "#2196F3",
     },
+    { id: 5, title: "Cài đặt", icon: "settings-outline", color: "#9C27B0" },
+    { id: 6, title: "Hỗ trợ", icon: "help-circle-outline", color: "#607D8B" },
     {
-      id: 5,
-      title: "Cài đặt",
-      icon: "settings-outline",
-      color: "#9C27B0",
-    },
-    {
-      id: 6,
-      title: "Hỗ trợ",
-      icon: "help-circle-outline",
-      color: "#607D8B",
+      id: 7,
+      title: "Theo dõi dinh dưỡng",
+      icon: "nutrition-outline",
+      color: "#4CAF50",
     },
   ];
 
@@ -163,7 +159,16 @@ export default function ProfileScreen() {
           <Text style={styles.sectionTitle}>Khác</Text>
 
           {menuItems.slice(3).map((item) => (
-            <TouchableOpacity key={item.id} style={styles.menuItem}>
+            <TouchableOpacity
+              key={item.id}
+              style={styles.menuItem}
+              onPress={() => {
+                if (item.id === 4) navigation.navigate("Notification");
+                if (item.id === 5) navigation.navigate("Settings");
+                if (item.id === 6) navigation.navigate("Support");
+                if (item.id === 7) navigation.navigate("Nutrition");
+              }}
+            >
               <View
                 style={[
                   styles.iconContainer,
@@ -192,11 +197,6 @@ export default function ProfileScreen() {
           >
             <Ionicons name="create-outline" size={22} color="#667eea" />
             <Text style={styles.editButtonText}>Chỉnh sửa thông tin</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.logoutButton}>
-            <Ionicons name="log-out-outline" size={22} color="#fff" />
-            <Text style={styles.logoutButtonText}>Đăng xuất</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
