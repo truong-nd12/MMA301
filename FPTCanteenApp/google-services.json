@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "379840387491",
+    "project_id": "managerhuman-98b03",
+    "storage_bucket": "managerhuman-98b03.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379840387491:android:54204b105beac5a87a2216",
+        "android_client_info": {
+          "package_name": "com.myapp.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379840387491-un2vpl0j11skgocn8lm1qu7od849hbp7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTAHQKtkIV5Szex07OPvQcQ4om8vGlvI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379840387491-un2vpl0j11skgocn8lm1qu7od849hbp7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379840387491:android:fa1082d2380ac09e7a2216",
+        "android_client_info": {
+          "package_name": "com.truongluxury.Bonus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379840387491-un2vpl0j11skgocn8lm1qu7od849hbp7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTAHQKtkIV5Szex07OPvQcQ4om8vGlvI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379840387491-un2vpl0j11skgocn8lm1qu7od849hbp7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
