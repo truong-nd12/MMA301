@@ -22,7 +22,7 @@ export interface AIResponse {
 class AIService {
   private useLocalAI: boolean = true;
   private useGemini: boolean = false;
-  private geminiApiKey: string = "AIzaSyDddn1w-W-wdPdXMhBg-UbF5wIiAG7qNWM"; // API key của user
+  private geminiApiKey: string = "AIzaSyAzaUvWK25kIxCv2DZgzzthXQPwfBi6lKE"; // API key mới của user
 
   constructor() {
     this.loadGeminiApiKey();
@@ -54,10 +54,11 @@ Hãy trả lời bằng tiếng Việt, chi tiết và hữu ích. Bạn có th�
 
       // Thử các model khác nhau
       const models = [
+        "gemini-2.0-flash",
         "gemini-1.5-flash",
         "gemini-1.5-pro",
         "gemini-pro",
-        "gemini-1.0-pro",
+        // "gemini-1.0-pro",
       ];
 
       let response;
