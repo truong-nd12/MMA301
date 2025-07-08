@@ -1,19 +1,20 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View } from "react-native";
-import OrderTrackingScreen from "../screens/OrderTrackingScreen";
-import OrderDetailScreen from "../screens/OrderDetailScreen";
-import MainTabNavigator from "./MainTabNavigator";
+import AdminSwitchScreen from "../screens/AdminSwitchScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
+import FavoriteFoodsScreen from "../screens/FavoriteFoodsScreen";
+import NotificationScreen from "../screens/NotificationScreen";
+import NutritionScreen from "../screens/NutritionScreen";
+import OrderDetailScreen from "../screens/OrderDetailScreen";
 import OrderHistoryScreen from "../screens/OrderHistoryScreen";
 import OrderReviewScreen from "../screens/OrderReviewScreen";
-import NotificationScreen from "../screens/NotificationScreen";
+import OrderScreen from "../screens/OrderScreen";
+import OrderTrackingScreen from "../screens/OrderTrackingScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import SupportScreen from "../screens/SupportScreen";
-import NutritionScreen from "../screens/NutritionScreen";
-import FavoriteFoodsScreen from "../screens/FavoriteFoodsScreen";
-import OrderScreen from "../screens/OrderScreen";
 import WalletScreen from "../screens/WalletScreen";
+import AdminTabNavigator from "./AdminTabNavigator";
+import MainTabNavigator from "./MainTabNavigator";
 
 export type AppStackParamList = {
   MainTabs: { screen?: string } | undefined;
@@ -22,6 +23,15 @@ export type AppStackParamList = {
   Order: { food: any };
   FavoriteFoods: undefined;
   Wallet: undefined;
+  AdminSwitch: undefined;
+  AdminTabs: undefined;
+  EditProfile: undefined;
+  OrderHistory: undefined;
+  OrderReview: undefined;
+  Notification: undefined;
+  Settings: undefined;
+  Support: undefined;
+  Nutrition: undefined;
 };
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
@@ -45,6 +55,8 @@ const AppStack = () => (
       <Stack.Screen name="FavoriteFoods" component={FavoriteFoodsScreen} />
       <Stack.Screen name="Order" component={OrderScreen} />
       <Stack.Screen name="Wallet" component={WalletScreen} />
+      <Stack.Screen name="AdminSwitch" component={AdminSwitchScreen} />
+      <Stack.Screen name="AdminTabs" component={AdminTabNavigator} />
     </Stack.Navigator>
   </View>
 );

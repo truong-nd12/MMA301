@@ -1,4 +1,3 @@
- truongbranch
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
@@ -14,23 +13,6 @@ import {
   View,
 } from "react-native";
 import { cancelOrder, getOrders, Order, OrderStatus } from "../api/orderApi";
-
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  TextInput,
-  Alert,
-  Dimensions,
-} from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { getOrders, cancelOrder, Order, OrderStatus } from "../api/orderApi";
- main
 
 const { width } = Dimensions.get("window");
 
@@ -79,34 +61,22 @@ export default function OrderTrackingScreen({ navigation }: any) {
   }, [orders, searchQuery, selectedFilter]);
 
   const loadOrders = async () => {
- truongbranch
-  try {
-    const data = await getOrders("user123");
-
-    const sortedData = data.sort((a, b) => {
-      const timeA = new Date(a.orderTime).getTime();
-      const timeB = new Date(b.orderTime).getTime();
-      return timeA - timeB; 
-    });
-
-    setOrders(sortedData);
-  } catch (error) {
-    Alert.alert("Lỗi", "Không thể tải danh sách đơn hàng");
-  } finally {
-    setLoading(false);
-  }
-};
-
     try {
       const data = await getOrders("user123");
-      setOrders(data);
+
+      const sortedData = data.sort((a, b) => {
+        const timeA = new Date(a.orderTime).getTime();
+        const timeB = new Date(b.orderTime).getTime();
+        return timeA - timeB; 
+      });
+
+      setOrders(sortedData);
     } catch (error) {
       Alert.alert("Lỗi", "Không thể tải danh sách đơn hàng");
     } finally {
       setLoading(false);
     }
   };
- main
 
   const onRefresh = async () => {
     setRefreshing(true);

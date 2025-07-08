@@ -1,21 +1,22 @@
-import React, { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import { useCallback, useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Modal,
-  Pressable,
-  SectionList,
-  TextInput,
-  Dimensions,
+    Dimensions,
+    FlatList,
+    Image,
+    Modal,
+    ScrollView,
+    SectionList,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
+import { getMenuItems, MenuItem } from "../api/menuApi";
 
 const { width } = Dimensions.get("window");
 
@@ -46,147 +47,6 @@ const types = [
   { id: "trangmieng", name: "Tráng miệng", icon: "ice-cream" },
 ];
 
-const mockMenu = [
-  {
-    id: "1",
-    name: "Cơm sườn nướng mật ong",
-    price: 30000,
-    originalPrice: 35000,
-    desc: "Cơm sườn nướng tẩm mật ong, ăn kèm dưa leo, trứng kho",
-    image:
-      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80",
-    vendorId: "v1",
-    days: ["T2", "T3", "T4"],
-    category: "man",
-    type: "com",
-    status: "available",
-    servingTime: "11:00 - 13:00",
-    rating: 4.5,
-    reviewCount: 230,
-    isPopular: true,
-    isNew: false,
-    studentDiscount: 15,
-    estimatedWaitTime: "5-10 phút",
-    calories: 650,
-    spicyLevel: 1,
-  },
-  {
-    id: "2",
-    name: "Bún chay đặc biệt",
-    price: 30000,
-    originalPrice: 30000,
-    desc: "Bún, đậu hũ, nấm, rau thơm, nước dùng chay thanh mát",
-    image:
-      "https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80",
-    vendorId: "v3",
-    days: ["T2", "T5", "T6"],
-    category: "chay",
-    type: "bun",
-    status: "almost_out",
-    servingTime: "11:00 - 13:00",
-    rating: 4.7,
-    reviewCount: 120,
-    isPopular: false,
-    isNew: true,
-    studentDiscount: 10,
-    estimatedWaitTime: "3-7 phút",
-    calories: 420,
-    spicyLevel: 0,
-  },
-  {
-    id: "3",
-    name: "Mì xào bò đặc biệt",
-    price: 40000,
-    originalPrice: 45000,
-    desc: "Mì trứng, thịt bò tươi, rau củ, nước sốt đặc biệt của quán",
-    image:
-      "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=400&q=80",
-    vendorId: "v1",
-    days: ["T3", "T4", "T5"],
-    category: "man",
-    type: "mi",
-    status: "available",
-    servingTime: "11:00 - 13:00",
-    rating: 4.2,
-    reviewCount: 80,
-    isPopular: true,
-    isNew: false,
-    studentDiscount: 20,
-    estimatedWaitTime: "8-12 phút",
-    calories: 580,
-    spicyLevel: 2,
-  },
-  {
-    id: "4",
-    name: "Salad rau củ tươi",
-    price: 25000,
-    originalPrice: 25000,
-    desc: "Xà lách, cà chua cherry, dưa leo, sốt mè rang thơm ngon",
-    image:
-      "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80",
-    vendorId: "v3",
-    days: ["T2", "T6", "CN"],
-    category: "chay",
-    type: "an_nhe",
-    status: "out",
-    servingTime: "11:00 - 13:00",
-    rating: 4.8,
-    reviewCount: 60,
-    isPopular: false,
-    isNew: false,
-    studentDiscount: 5,
-    estimatedWaitTime: "2-5 phút",
-    calories: 180,
-    spicyLevel: 0,
-  },
-  {
-    id: "5",
-    name: "Trà đào cam sả",
-    price: 18000,
-    originalPrice: 22000,
-    desc: "Trà đào tươi, cam ngọt, sả thơm, đá mát lạnh - thức uống giải khát tuyệt vời",
-    image:
-      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=400&q=80",
-    vendorId: "v4",
-    days: ["T4", "T5", "T6", "T7"],
-    category: "nuoc",
-    type: "nuoc",
-    status: "available",
-    servingTime: "07:00 - 17:00",
-    rating: 4.6,
-    reviewCount: 150,
-    isPopular: true,
-    isNew: false,
-    studentDiscount: 18,
-    estimatedWaitTime: "1-3 phút",
-    calories: 120,
-    spicyLevel: 0,
-  },
-  {
-    id: "6",
-    name: "Chè đậu xanh dừa",
-    price: 15000,
-    originalPrice: 18000,
-    desc: "Chè đậu xanh mềm, nước cốt dừa thơm, đá bào mát lạnh",
-    image:
-      "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=400&q=80",
-    vendorId: "v5",
-    days: ["T6", "T7", "CN"],
-    category: "an_nhe",
-    type: "trangmieng",
-    status: "available",
-    servingTime: "11:00 - 13:00",
-    rating: 4.9,
-    reviewCount: 45,
-    isPopular: false,
-    isNew: true,
-    studentDiscount: 17,
-    estimatedWaitTime: "2-4 phút",
-    calories: 280,
-    spicyLevel: 0,
-  },
-];
-
 const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
 const dayNames: Record<string, string> = {
@@ -208,8 +68,8 @@ const tabOptions = [
   { key: "week", label: "Toàn tuần", icon: "calendar-outline" },
 ];
 
-const getMenuForDay = (day: keyof typeof dayNames): typeof mockMenu =>
-  mockMenu.filter((item) => item.days.includes(day));
+const getMenuForDay = (day: keyof typeof dayNames, menuItems: MenuItem[]): MenuItem[] =>
+  menuItems.filter((item) => item.days.includes(day));
 
 const MenuCard = ({
   item,
@@ -217,9 +77,9 @@ const MenuCard = ({
   onToggleFavorite,
   isFavorite,
 }: {
-  item: (typeof mockMenu)[0];
-  onOrder?: (item: (typeof mockMenu)[0]) => void;
-  onToggleFavorite?: (item: (typeof mockMenu)[0]) => void;
+  item: MenuItem;
+  onOrder?: (item: MenuItem) => void;
+  onToggleFavorite?: (item: MenuItem) => void;
   isFavorite?: boolean;
 }) => {
   const statusMap: Record<
@@ -423,9 +283,30 @@ const MenuScreen = ({ navigation }: any) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+
+  const fetchMenu = async () => {
+    try {
+      const items = await getMenuItems();
+      setMenuItems(items);
+    } catch (error) {
+      console.error("Failed to fetch menu items:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenu();
+  }, []);
+
+  // Refresh menu when screen comes into focus (e.g., returning from admin)
+  useFocusEffect(
+    useCallback(() => {
+      fetchMenu();
+    }, [])
+  );
 
   // Search and filter functions
-  const filterMenu = (menu: typeof mockMenu) => {
+  const filterMenu = (menu: MenuItem[]) => {
     return menu.filter((item) => {
       const searchMatch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -446,7 +327,7 @@ const MenuScreen = ({ navigation }: any) => {
     });
   };
 
-  const toggleFavorite = (item: (typeof mockMenu)[0]) => {
+  const toggleFavorite = (item: MenuItem) => {
     setFavorites((prev) =>
       prev.includes(item.id)
         ? prev.filter((id) => id !== item.id)
@@ -455,19 +336,19 @@ const MenuScreen = ({ navigation }: any) => {
   };
 
   // Get popular items
-  const popularItems = mockMenu.filter((item) => item.isPopular).slice(0, 3);
+  const popularItems = menuItems.filter((item) => item.isPopular).slice(0, 3);
 
   // SectionList data cho toàn tuần
   const weekSections = days.map((d) => ({
     title: dayNames[d as keyof typeof dayNames],
-    data: filterMenu(getMenuForDay(d as keyof typeof dayNames)),
+    data: filterMenu(getMenuForDay(d as keyof typeof dayNames, menuItems)),
   }));
 
   let content = null;
 
   if (tab === "today") {
     const todayMenu = filterMenu(
-      getMenuForDay(days[todayIdx] as keyof typeof dayNames)
+      getMenuForDay(days[todayIdx] as keyof typeof dayNames, menuItems)
     );
     content = (
       <FlatList
@@ -493,7 +374,7 @@ const MenuScreen = ({ navigation }: any) => {
     );
   } else if (tab === "tomorrow") {
     const tomorrowMenu = filterMenu(
-      getMenuForDay(days[getNextDayIdx()] as keyof typeof dayNames)
+      getMenuForDay(days[getNextDayIdx()] as keyof typeof dayNames, menuItems)
     );
     content = (
       <FlatList
@@ -564,7 +445,7 @@ const MenuScreen = ({ navigation }: any) => {
     setTempDay(null);
   };
 
-  const handleOrder = (item: (typeof mockMenu)[0]) => {
+  const handleOrder = (item: MenuItem) => {
     if (navigation?.navigate) {
       navigation.navigate("Order", { food: item });
     } else {

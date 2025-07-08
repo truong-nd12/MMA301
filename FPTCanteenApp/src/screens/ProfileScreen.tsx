@@ -1,16 +1,15 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  StatusBar,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+    Image,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 export default function ProfileScreen() {
   const navigation = useNavigation() as any;
@@ -189,6 +188,33 @@ export default function ProfileScreen() {
               <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* Admin Mode Button */}
+        <View style={styles.menuSection}>
+          <Text style={styles.sectionTitle}>Quản trị</Text>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate("AdminSwitch")}
+          >
+            <View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: "#3498DB15" },
+              ]}
+            >
+              <Ionicons
+                name="settings-outline"
+                size={24}
+                color="#3498DB"
+              />
+            </View>
+            <View style={styles.menuContent}>
+              <Text style={styles.menuTitle}>Chế độ Admin</Text>
+              <Text style={styles.menuSubtitle}>Quản lý món ăn & thống kê</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
+          </TouchableOpacity>
         </View>
 
         {/* Action Buttons */}
