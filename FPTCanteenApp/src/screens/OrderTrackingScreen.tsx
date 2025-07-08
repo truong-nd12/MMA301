@@ -16,30 +16,33 @@ import { cancelOrder, getOrders, Order, OrderStatus } from "../api/orderApi";
 
 const { width } = Dimensions.get("window");
 
-const statusConfig: Record<OrderStatus, { label: string; color: string; bgColor: string; icon: string }> = {
+const statusConfig: Record<
+  OrderStatus,
+  { label: string; color: string; bgColor: string; icon: string }
+> = {
   preparing: {
     label: "Đang chuẩn bị",
     color: "#F39C12",
     bgColor: "#FEF9E7",
-    icon: "restaurant-outline"
+    icon: "restaurant-outline",
   },
   delivering: {
     label: "Đang giao",
     color: "#3498DB",
     bgColor: "#EBF5FB",
-    icon: "bicycle-outline"
+    icon: "bicycle-outline",
   },
   delivered: {
     label: "Đã giao",
     color: "#27AE60",
     bgColor: "#E8F8F5",
-    icon: "checkmark-circle-outline"
+    icon: "checkmark-circle-outline",
   },
   cancelled: {
     label: "Đã hủy",
     color: "#E74C3C",
     bgColor: "#FDEDEC",
-    icon: "close-circle-outline"
+    icon: "close-circle-outline",
   },
 };
 
@@ -50,7 +53,9 @@ export default function OrderTrackingScreen({ navigation }: any) {
   const [refreshing, setRefreshing] = useState(false);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState<OrderStatus | "all">("all");
+  const [selectedFilter, setSelectedFilter] = useState<OrderStatus | "all">(
+    "all"
+  );
 
   useEffect(() => {
     loadOrders();
@@ -88,13 +93,13 @@ export default function OrderTrackingScreen({ navigation }: any) {
     let filtered = orders;
 
     if (searchQuery) {
-      filtered = filtered.filter(order =>
+      filtered = filtered.filter((order) =>
         order.foodName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (selectedFilter !== "all") {
-      filtered = filtered.filter(order => order.status === selectedFilter);
+      filtered = filtered.filter((order) => order.status === selectedFilter);
     }
 
     setFilteredOrders(filtered);
@@ -126,8 +131,8 @@ export default function OrderTrackingScreen({ navigation }: any) {
             } finally {
               setCancellingId(null);
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -138,7 +143,7 @@ export default function OrderTrackingScreen({ navigation }: any) {
     return steps.map((step, index) => ({
       step,
       completed: index <= currentIndex,
-      active: index === currentIndex
+      active: index === currentIndex,
     }));
   };
 
@@ -146,14 +151,14 @@ export default function OrderTrackingScreen({ navigation }: any) {
     <TouchableOpacity
       style={[
         styles.filterButton,
-        selectedFilter === filter && styles.filterButtonActive
+        selectedFilter === filter && styles.filterButtonActive,
       ]}
       onPress={() => setSelectedFilter(filter)}
     >
       <Text
         style={[
           styles.filterButtonText,
-          selectedFilter === filter && styles.filterButtonTextActive
+          selectedFilter === filter && styles.filterButtonTextActive,
         ]}
       >
         {label}
@@ -163,9 +168,9 @@ export default function OrderTrackingScreen({ navigation }: any) {
 
   const renderProgressBar = (status: OrderStatus) => {
     if (status === "cancelled") return null;
-    
+
     const steps = getProgressSteps(status);
-    
+
     return (
       <View style={styles.progressContainer}>
         {steps.map((step, index) => (
@@ -175,25 +180,29 @@ export default function OrderTrackingScreen({ navigation }: any) {
                 style={[
                   styles.progressDot,
                   step.completed && styles.progressDotCompleted,
-                  step.active && styles.progressDotActive
+                  step.active && styles.progressDotActive,
                 ]}
               >
                 {step.completed && (
                   <Ionicons name="checkmark" size={12} color="#fff" />
                 )}
               </View>
-              <Text style={[
-                styles.progressLabel,
-                step.completed && styles.progressLabelCompleted
-              ]}>
+              <Text
+                style={[
+                  styles.progressLabel,
+                  step.completed && styles.progressLabelCompleted,
+                ]}
+              >
                 {statusConfig[step.step as OrderStatus].label}
               </Text>
             </View>
             {index < steps.length - 1 && (
-              <View style={[
-                styles.progressLine,
-                step.completed && styles.progressLineCompleted
-              ]} />
+              <View
+                style={[
+                  styles.progressLine,
+                  step.completed && styles.progressLineCompleted,
+                ]}
+              />
             )}
           </React.Fragment>
         ))}
@@ -203,16 +212,24 @@ export default function OrderTrackingScreen({ navigation }: any) {
 
   const renderOrderCard = ({ item }: { item: Order }) => {
     const config = statusConfig[item.status];
-    
+
     return (
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.orderInfo}>
             <Text style={styles.foodName}>{item.foodName}</Text>
-            <Text style={styles.orderId}>#{item.id.slice(-6).toUpperCase()}</Text>
+            <Text style={styles.orderId}>
+              #{item.id.slice(-6).toUpperCase()}
+            </Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: config.bgColor }]}>
-            <Ionicons name={config.icon as any} size={16} color={config.color} />
+          <View
+            style={[styles.statusBadge, { backgroundColor: config.bgColor }]}
+          >
+            <Ionicons
+              name={config.icon as any}
+              size={16}
+              color={config.color}
+            />
             <Text style={[styles.statusText, { color: config.color }]}>
               {config.label}
             </Text>
@@ -224,12 +241,12 @@ export default function OrderTrackingScreen({ navigation }: any) {
             <Text style={styles.priceLabel}>Tổng tiền:</Text>
             <Text style={styles.price}>{item.total.toLocaleString()}đ</Text>
           </View>
-          
-          {item.orderTime && (
+
+          {item.createdAt && (
             <View style={styles.timeContainer}>
               <Ionicons name="time-outline" size={16} color="#7f8c8d" />
               <Text style={styles.timeText}>
-                {new Date(item.orderTime).toLocaleString("vi-VN")}
+                {new Date(item.createdAt).toLocaleString("vi-VN")}
               </Text>
             </View>
           )}
@@ -252,7 +269,7 @@ export default function OrderTrackingScreen({ navigation }: any) {
             <TouchableOpacity
               style={[
                 styles.cancelButton,
-                cancellingId === item.id && styles.cancelButtonDisabled
+                cancellingId === item.id && styles.cancelButtonDisabled,
               ]}
               onPress={() => handleCancel(item.id, item.foodName)}
               disabled={cancellingId === item.id}
@@ -265,7 +282,7 @@ export default function OrderTrackingScreen({ navigation }: any) {
               <Text
                 style={[
                   styles.cancelButtonText,
-                  cancellingId === item.id && styles.cancelButtonTextDisabled
+                  cancellingId === item.id && styles.cancelButtonTextDisabled,
                 ]}
               >
                 {cancellingId === item.id ? "Đang hủy..." : "Hủy đơn"}
@@ -306,7 +323,12 @@ export default function OrderTrackingScreen({ navigation }: any) {
       </View>
 
       <View style={styles.searchContainer}>
-        <Ionicons name="search-outline" size={20} color="#7f8c8d" style={styles.searchIcon} />
+        <Ionicons
+          name="search-outline"
+          size={20}
+          color="#7f8c8d"
+          style={styles.searchIcon}
+        />
         <TextInput
           style={styles.searchInput}
           placeholder="Tìm kiếm món ăn..."
