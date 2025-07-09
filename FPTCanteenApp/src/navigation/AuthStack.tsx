@@ -16,16 +16,24 @@ const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack = () => {
   useEffect(() => {
-    // Đăng ký thông báo đẩy khi ứng dụng khởi động
-    registerForPushNotificationsAsync()
-      .then(token => {
-        if (token) {
-          console.log('Đăng ký thành công với token:', token);
-        }
-      })
-      .catch(error => {
-        console.error('Lỗi đăng ký thông báo đẩy:', error);
-      });
+    // Request permissions and register for push notifications
+    const registerForPushNotifications = async () => {
+      const token = await registerForPushNotificationsAsync();
+      if (token) {
+        console.log("Push notification token:", token);
+      }
+    };
+
+    registerForPushNotifications();
+
+    // Handle incoming notifications
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log("Notification received:", notification);
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   return (

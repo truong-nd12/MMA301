@@ -1,41 +1,51 @@
-// filepath: c:\Users\ADMIN\Documents\GitHub\MMA301\FPTCanteenApp\src\screens\ExpoPushNotification.tsx
-import Constants from 'expo-constants';
-import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import * as Device from 'expo-device';
+import { Platform, Alert } from 'react-native';
 
-export async function registerForPushNotificationsAsync(): Promise<string | undefined> {
-  if (!Device.isDevice) {
-    console.warn('Push notifications chỉ hoạt động trên thiết bị thật.');
-    return;
-  }
+/**
+ * Đăng ký và lấy Expo Push Token.
+ * @returns Chuỗi token hoặc null nếu không thành công.
+ */
+export async function registerForPushNotificationsAsync(): Promise<string | null> {
+  let token: string | null = null;
 
-  try {
+  if (Device.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
+    // Yêu cầu quyền nếu chưa được cấp
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
 
+    // Nếu vẫn chưa được cấp quyền
     if (finalStatus !== 'granted') {
-      console.warn('Không cấp quyền gửi thông báo.');
-      return;
+      console.warn('Push notification permission denied.');
+      Alert.alert(
+        'Không thể nhận thông báo',
+        'Bạn cần cho phép quyền để nhận thông báo đẩy.'
+      );
+      return null;
     }
 
-    // Kiểm tra projectId
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId || 
-                     Constants.easConfig?.projectId ||
-                     'managerhuman-98b03';
-
-    const tokenData = await Notifications.getExpoPushTokenAsync({
-      projectId: projectId,
-    });
-    
-    console.log('📱 Expo Push Token:', tokenData.data);
-    return tokenData.data;
-  } catch (error) {
-    console.error('Lỗi khi đăng ký push notification:', error);
-    return undefined;
+    // Lấy Expo push token
+    const pushToken = await Notifications.getExpoPushTokenAsync();
+    token = pushToken.data;
+    console.log('Expo Push Token:', token);
+  } else {
+    Alert.alert('Chỉ hỗ trợ thiết bị thật', 'Thông báo đẩy không hoạt động trên giả lập.');
   }
+
+  // Cấu hình kênh cho Android
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
 }
