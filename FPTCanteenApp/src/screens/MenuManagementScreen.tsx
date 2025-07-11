@@ -57,7 +57,7 @@ const ProductCard = ({
 }: { 
   item: Product; 
   onEdit: (item: Product) => void; 
-  onDelete: (id: string) => void; 
+  onDelete: (id: string) => void;
 }) => {
   const [showMenu, setShowMenu] = useState(false);
 
@@ -208,14 +208,14 @@ const AddEditModal = ({ visible, item, onClose, onSave }: {
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
+        <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>
               {item ? 'Sửa món ăn' : 'Thêm món ăn mới'}
             </Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color="#666" />
-            </TouchableOpacity>
-          </View>
+            <Ionicons name="close" size={24} color="#666" />
+          </TouchableOpacity>
+        </View>
 
           <ScrollView style={styles.form}>
             <TextInput
@@ -233,22 +233,22 @@ const AddEditModal = ({ visible, item, onClose, onSave }: {
               multiline
             />
             
-            <TextInput
+              <TextInput
               style={styles.input}
               placeholder="Giá (VNĐ) *"
-              value={formData.price}
+                value={formData.price}
               onChangeText={(text) => setFormData({ ...formData, price: text })}
-              keyboardType="numeric"
-            />
+                keyboardType="numeric"
+              />
             
-            <TextInput
+              <TextInput
               style={styles.input}
               placeholder="Calories"
               value={formData.calories}
               onChangeText={(text) => setFormData({ ...formData, calories: text })}
-              keyboardType="numeric"
-            />
-            
+                keyboardType="numeric"
+              />
+
             <TextInput
               style={styles.input}
               placeholder="Số lượng tồn kho"
@@ -264,23 +264,23 @@ const AddEditModal = ({ visible, item, onClose, onSave }: {
               onChangeText={(text) => setFormData({ ...formData, images: text })}
             />
             
-            <TextInput
+              <TextInput
               style={styles.input}
               placeholder="ID danh mục *"
               value={formData.category}
               onChangeText={(text) => setFormData({ ...formData, category: text })}
             />
-          </ScrollView>
+        </ScrollView>
 
-          <View style={styles.modalFooter}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Hủy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <View style={styles.modalFooter}>
+          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <Text style={styles.cancelButtonText}>Hủy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
               <Text style={styles.saveButtonText}>
                 {item ? 'Cập nhật' : 'Thêm mới'}
               </Text>
-            </TouchableOpacity>
+          </TouchableOpacity>
           </View>
         </View>
       </View>

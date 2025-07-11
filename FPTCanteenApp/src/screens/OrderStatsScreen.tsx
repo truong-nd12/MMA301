@@ -12,7 +12,7 @@ import {
     View,
 } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import { OrderStats, getOrderStats } from '../api/menuApi';
+import { OrderStats, getOrderStats } from '../api/orderApi';
 
 const { width } = Dimensions.get('window');
 

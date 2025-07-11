@@ -12,21 +12,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { cancelOrder, getOrders, Order, OrderStatus } from "../api/orderApi";
+import { cancelOrder, getUserOrders, Order } from "../api/orderApi";
 
 const { width } = Dimensions.get("window");
 
-const statusConfig: Record<
-  OrderStatus,
-  { label: string; color: string; bgColor: string; icon: string }
-> = {
-  preparing: {
-    label: "Đang chuẩn bị",
+// Sửa lại type OrderStatus cho đúng backend
+export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
+
+const statusConfig: Record<any, any> = {
+  processing: {
+    label: "Đang xử lý",
     color: "#F39C12",
     bgColor: "#FEF9E7",
     icon: "restaurant-outline",
   },
-  delivering: {
+  shipped: {
     label: "Đang giao",
     color: "#3498DB",
     bgColor: "#EBF5FB",
@@ -67,15 +67,8 @@ export default function OrderTrackingScreen({ navigation }: any) {
 
   const loadOrders = async () => {
     try {
-      const data = await getOrders("user123");
-
-      const sortedData = data.sort((a, b) => {
-        const timeA = new Date(a.orderTime).getTime();
-        const timeB = new Date(b.orderTime).getTime();
-        return timeA - timeB; 
-      });
-
-      setOrders(sortedData);
+      const data = await getUserOrders();
+      setOrders(data);
     } catch (error) {
       Alert.alert("Lỗi", "Không thể tải danh sách đơn hàng");
     } finally {
@@ -138,7 +131,7 @@ export default function OrderTrackingScreen({ navigation }: any) {
   };
 
   const getProgressSteps = (status: OrderStatus) => {
-    const steps = ["preparing", "delivering", "delivered"];
+    const steps = ["processing", "shipped", "delivered"];
     const currentIndex = steps.indexOf(status);
     return steps.map((step, index) => ({
       step,
@@ -340,8 +333,8 @@ export default function OrderTrackingScreen({ navigation }: any) {
 
       <View style={styles.filterContainer}>
         {renderFilterButton("all", "Tất cả")}
-        {renderFilterButton("preparing", "Đang chuẩn bị")}
-        {renderFilterButton("delivering", "Đang giao")}
+        {renderFilterButton("processing", "Đang xử lý")}
+        {renderFilterButton("shipped", "Đang giao")}
         {renderFilterButton("delivered", "Đã giao")}
       </View>
 

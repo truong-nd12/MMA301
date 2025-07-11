@@ -146,15 +146,100 @@ function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve: () => void) => setTimeout(resolve, ms));
 }
 
+const API_BASE_URL = 'http://192.168.1.11:8080/api';
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// Helper function to handle API calls
+const apiCall = async (endpoint: string, options: RequestInit = {}) => {
+  const token = await AsyncStorage.getItem('authToken');
+  
+  const config: RequestInit = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+    ...options,
+  };
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  
+  if (!response.ok) {
+    throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+  }
+  
+  return response.json();
+};
+
 // Menu Management APIs
 export const getMenuItems = async (): Promise<MenuItem[]> => {
-  await delay(500);
-  return mockMenuItems;
+  try {
+    const response = await apiCall('/products');
+    return response.products.map((product: any) => ({
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice || product.price,
+      desc: product.description || '',
+      image: product.images?.[0] || 'https://via.placeholder.com/300x200',
+      vendorId: product.vendor || 'v1',
+      days: ['T2', 'T3', 'T4', 'T5', 'T6'],
+      category: product.category || 'man',
+      type: product.type || 'com',
+      status: product.status || 'available',
+      servingTime: '11:00 - 13:00',
+      rating: 4.5,
+      reviewCount: Math.floor(Math.random() * 100) + 10,
+      isPopular: Math.random() > 0.7,
+      isNew: Math.random() > 0.8,
+      studentDiscount: 10,
+      estimatedWaitTime: '5-10 phút',
+      calories: product.calories || 500,
+      spicyLevel: product.spicyLevel || 0,
+      availableQuantity: product.availableQuantity || 50,
+      maxQuantity: product.maxQuantity || 100,
+    }));
+  } catch (error) {
+    console.warn('Failed to fetch menu items from API, using mock data:', error);
+    await delay(500);
+    return mockMenuItems;
+  }
 };
 
 export const getMenuItem = async (id: string): Promise<MenuItem | undefined> => {
-  await delay(300);
-  return mockMenuItems.find(item => item.id === id);
+  try {
+    const response = await apiCall(`/products/${id}`);
+    const product = response.product;
+    return {
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.originalPrice || product.price,
+      desc: product.description || '',
+      image: product.images?.[0] || 'https://via.placeholder.com/300x200',
+      vendorId: product.vendor || 'v1',
+      days: ['T2', 'T3', 'T4', 'T5', 'T6'],
+      category: product.category || 'man',
+      type: product.type || 'com',
+      status: product.status || 'available',
+      servingTime: '11:00 - 13:00',
+      rating: 4.5,
+      reviewCount: Math.floor(Math.random() * 100) + 10,
+      isPopular: Math.random() > 0.7,
+      isNew: Math.random() > 0.8,
+      studentDiscount: 10,
+      estimatedWaitTime: '5-10 phút',
+      calories: product.calories || 500,
+      spicyLevel: product.spicyLevel || 0,
+      availableQuantity: product.availableQuantity || 50,
+      maxQuantity: product.maxQuantity || 100,
+    };
+  } catch (error) {
+    console.warn('Failed to fetch menu item from API, using mock data:', error);
+    await delay(300);
+    return mockMenuItems.find(item => item.id === id);
+  }
 };
 
 export const createMenuItem = async (item: Omit<MenuItem, 'id'>): Promise<MenuItem> => {

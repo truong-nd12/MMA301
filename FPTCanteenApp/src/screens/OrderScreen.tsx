@@ -10,10 +10,12 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Switch,
+  ActivityIndicator,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { createOrder } from '../api/orderApi';
 
 const OrderScreen = ({ route, navigation }: any) => {
   const { food } = route.params || {};
@@ -30,6 +32,8 @@ const OrderScreen = ({ route, navigation }: any) => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [useStudentDiscount, setUseStudentDiscount] = useState(false);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!food) {
     return (
@@ -87,6 +91,48 @@ const OrderScreen = ({ route, navigation }: any) => {
     const discount = useStudentDiscount ? subtotal * 0.1 : 0;
     const shipFee = getShipFee();
     return subtotal - discount + shipFee;
+  };
+
+  const handleOrder = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const orderData = {
+        items: [
+          {
+            product: food.id,
+            quantity,
+            size: 'M',
+            addOns: selectedAddOns.map(id => ({ 
+              name: addOns.find(a => a.id === id)?.name || id,
+              price: addOns.find(a => a.id === id)?.price || 0,
+              calories: 0
+            })),
+            sugarLevel: '100%',
+            iceLevel: 'Normal Ice'
+          },
+        ],
+        notes: note,
+        paymentMethod,
+        deliveryMethod: deliveryMethod === 'ship' ? 'delivery' : deliveryMethod,
+        shippingAddress: deliveryMethod === 'pickup' ? undefined : {
+          fullName: 'User Name',
+          phone: '0123456789',
+          address: customLocation || 'Căng tin A',
+          city: 'Hà Nội',
+          district: 'Cầu Giấy',
+          ward: 'Dịch Vọng',
+          zipCode: '100000'
+        },
+      };
+      await createOrder(orderData);
+      setLoading(false);
+      navigation.navigate('OrderTracking');
+    } catch (err: any) {
+      setLoading(false);
+      setError('Đặt món thất bại. Vui lòng thử lại!');
+      console.error('Order error:', err);
+    }
   };
 
   return (
@@ -552,21 +598,26 @@ const OrderScreen = ({ route, navigation }: any) => {
           <TouchableOpacity
             style={styles.orderBtn}
             activeOpacity={0.8}
-            onPress={() => alert("Đặt món thành công!")}
+            onPress={handleOrder}
           >
-            <LinearGradient
-              colors={["#667eea", "#764ba2"]}
-              style={styles.orderBtnGradient}
-            >
-              <Ionicons
-                name="checkmark-circle-outline"
-                size={22}
-                color="#fff"
-              />
-              <Text style={styles.orderBtnText}>
-                Xác nhận đặt món • {calculateTotal().toLocaleString()}đ
-              </Text>
-            </LinearGradient>
+            {loading ? (
+              <ActivityIndicator size="large" color="#fff" />
+            ) : (
+              <LinearGradient
+                colors={["#667eea", "#764ba2"]}
+                style={styles.orderBtnGradient}
+              >
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={22}
+                  color="#fff"
+                />
+                <Text style={styles.orderBtnText}>
+                  Xác nhận đặt món • {calculateTotal().toLocaleString()}đ
+                </Text>
+              </LinearGradient>
+            )}
+            {error && <Text style={{color: 'red', textAlign: 'center', marginTop: 8}}>{error}</Text>}
           </TouchableOpacity>
         </Animatable.View>
       </ScrollView>
