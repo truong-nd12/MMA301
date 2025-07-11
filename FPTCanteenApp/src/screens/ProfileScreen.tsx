@@ -2,26 +2,48 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-    Image,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Alert,
 } from "react-native";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProfileScreen() {
   const navigation = useNavigation() as any;
-  // Dữ liệu mẫu cho sinh viên
-  const user = {
-    name: "Đoàn Thế Anh",
-    email: "vana@student.hust.edu.vn",
-    studentId: "20210001",
+  const { user, logout } = useAuth();
+
+  // Mock data for demo (sẽ được thay thế bằng data thật từ API sau)
+  const mockData = {
     avatar: require("../assets/images/icon.png"),
     balance: 125000, // Số dư ví
     totalOrders: 47,
     favoriteCount: 12,
+  };
+
+  const handleLogout = () => {
+    Alert.alert("Đăng xuất", "Bạn có chắc chắn muốn đăng xuất?", [
+      {
+        text: "Hủy",
+        style: "cancel",
+      },
+      {
+        text: "Đăng xuất",
+        style: "destructive",
+        onPress: async () => {
+          try {
+            await logout();
+            // Navigation sẽ tự động chuyển về AuthStack
+          } catch (error) {
+            Alert.alert("Lỗi", "Có lỗi xảy ra khi đăng xuất");
+          }
+        },
+      },
+    ]);
   };
 
   const formatCurrency = (amount: number) => {
@@ -37,21 +59,21 @@ export default function ProfileScreen() {
       title: "Lịch sử đặt hàng",
       icon: "time-outline",
       color: "#4CAF50",
-      badge: user.totalOrders,
+      badge: mockData.totalOrders,
     },
     {
       id: 2,
       title: "Món yêu thích",
       icon: "heart-outline",
       color: "#E91E63",
-      badge: user.favoriteCount,
+      badge: user?.favorites?.length || mockData.favoriteCount,
     },
     {
       id: 3,
       title: "Ví điện tử",
       icon: "wallet-outline",
       color: "#FF9800",
-      subtitle: formatCurrency(user.balance),
+      subtitle: formatCurrency(mockData.balance),
     },
     {
       id: 4,
@@ -82,27 +104,34 @@ export default function ProfileScreen() {
       >
         <View style={styles.headerContent}>
           <View style={styles.avatarContainer}>
-            <Image source={user.avatar} style={styles.avatar} />
+            <Image
+              source={user?.avatar ? { uri: user.avatar } : mockData.avatar}
+              style={styles.avatar}
+            />
             <View style={styles.onlineIndicator} />
           </View>
 
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.studentId}>MSSV: {user.studentId}</Text>
-          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.name}>{user?.fullName || "Người dùng"}</Text>
+          <Text style={styles.studentId}>
+            MSSV: {user?.studentCode || "N/A"}
+          </Text>
+          <Text style={styles.email}>{user?.email || "N/A"}</Text>
 
           {/* Stats Cards */}
           <View style={styles.statsContainer}>
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{user.totalOrders}</Text>
+              <Text style={styles.statNumber}>{mockData.totalOrders}</Text>
               <Text style={styles.statLabel}>Đơn hàng</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{user.favoriteCount}</Text>
+              <Text style={styles.statNumber}>
+                {user?.favorites?.length || mockData.favoriteCount}
+              </Text>
               <Text style={styles.statLabel}>Yêu thích</Text>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statNumber}>
-                {formatCurrency(user.balance)}
+                {formatCurrency(mockData.balance)}
               </Text>
               <Text style={styles.statLabel}>Số dư</Text>
             </View>
@@ -190,32 +219,33 @@ export default function ProfileScreen() {
           ))}
         </View>
 
-        {/* Admin Mode Button */}
-        <View style={styles.menuSection}>
-          <Text style={styles.sectionTitle}>Quản trị</Text>
-          <TouchableOpacity
-            style={styles.menuItem}
-            onPress={() => navigation.navigate("AdminSwitch")}
-          >
-            <View
-              style={[
-                styles.iconContainer,
-                { backgroundColor: "#3498DB15" },
-              ]}
+        {/* Admin Mode Button - CHỈ HIỂN THỊ KHI USER LÀ ADMIN */}
+        {user && user.role === "admin" && (
+          <View style={styles.menuSection}>
+            <Text style={styles.sectionTitle}>Quản trị</Text>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate("AdminSwitch")}
             >
-              <Ionicons
-                name="settings-outline"
-                size={24}
-                color="#3498DB"
-              />
-            </View>
-            <View style={styles.menuContent}>
-              <Text style={styles.menuTitle}>Chế độ Admin</Text>
-              <Text style={styles.menuSubtitle}>Quản lý món ăn & thống kê</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
-          </TouchableOpacity>
-        </View>
+              <View
+                style={[styles.iconContainer, { backgroundColor: "#3498DB15" }]}
+              >
+                <Ionicons
+                  name="shield-checkmark-outline"
+                  size={24}
+                  color="#3498DB"
+                />
+              </View>
+              <View style={styles.menuContent}>
+                <Text style={styles.menuTitle}>Chế độ Admin</Text>
+                <Text style={styles.menuSubtitle}>
+                  Quản lý món ăn & thống kê
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
+            </TouchableOpacity>
+          </View>
+        )}
 
         {/* Action Buttons */}
         <View style={styles.actionSection}>
@@ -225,6 +255,11 @@ export default function ProfileScreen() {
           >
             <Ionicons name="create-outline" size={22} color="#667eea" />
             <Text style={styles.editButtonText}>Chỉnh sửa thông tin</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Ionicons name="log-out-outline" size={22} color="#fff" />
+            <Text style={styles.logoutButtonText}>Đăng xuất</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

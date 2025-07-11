@@ -1,55 +1,111 @@
-
-
-import { useState } from "react"
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView, Alert, Dimensions } from "react-native"
-import { LinearGradient } from "expo-linear-gradient"
-import { Ionicons } from "@expo/vector-icons"
-
-const { width } = Dimensions.get("window")
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import { useAuth } from "../context/AuthContext";
+import { userApi } from "../api/userApi";
 
 export default function EditProfileScreen({ navigation }: any) {
-  // Dữ liệu mẫu với thêm thông tin sinh viên
-  const [name, setName] = useState("Đoàn Thế Anh")
-  const [email, setEmail] = useState("vana@student.hust.edu.vn")
-  const [studentId, setStudentId] = useState("20210001")
-  const [phone, setPhone] = useState("0123456789")
-  const [major, setMajor] = useState("Công nghệ thông tin")
-  const [year, setYear] = useState("Năm 3")
-  const [class_, setClass] = useState("CNTT-K65")
-  const [avatar] = useState(require("../assets/images/icon.png"))
+  const { user, updateUser } = useAuth();
 
-  const handleSave = () => {
-    if (!name.trim() || !email.trim() || !studentId.trim()) {
-      Alert.alert("Lỗi", "Vui lòng điền đầy đủ thông tin bắt buộc")
-      return
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+  const [avatarUri, setAvatarUri] = useState(user?.avatar || "");
+
+  // Các trường này không cho phép chỉnh sửa từ app để đảm bảo tính toàn vẹn dữ liệu
+  const email = user?.email || "N/A";
+  const studentId = user?.studentCode || "N/A";
+  const major = user?.major || "N/A";
+  const year = user?.year || "N/A";
+  const class_ = user?.class || "N/A";
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSave = async () => {
+    if (!fullName.trim()) {
+      Alert.alert("Lỗi", "Họ và tên không được để trống");
+      return;
     }
-    Alert.alert("Thành công", "Thông tin đã được cập nhật!")
-  }
+
+    setIsLoading(true);
+    try {
+      const updatedData = {
+        fullName: fullName.trim(),
+        phone: phone.trim(),
+        avatar: avatarUri, // Sẽ implement image upload sau
+      };
+
+      const response = await userApi.updateProfile(updatedData);
+
+      if (response.success) {
+        // Cập nhật user trong context
+        await updateUser(response.user);
+        Alert.alert("Thành công", "Thông tin đã được cập nhật!");
+        navigation.goBack();
+      } else {
+        Alert.alert("Lỗi", "Cập nhật thông tin thất bại");
+      }
+    } catch (error: any) {
+      Alert.alert("Lỗi", error.message || "Có lỗi xảy ra, vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleChangeAvatar = () => {
-    Alert.alert("Thay đổi ảnh đại diện", "Chọn nguồn ảnh", [
-      { text: "Camera", onPress: () => console.log("Camera") },
-      { text: "Thư viện", onPress: () => console.log("Gallery") },
-      { text: "Hủy", style: "cancel" },
-    ])
-  }
+    // Logic image picker sẽ được implement ở đây
+    Alert.alert(
+      "Tính năng đang phát triển",
+      "Chức năng thay đổi ảnh đại diện sẽ sớm được ra mắt!"
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.header} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
+      <LinearGradient
+        colors={["#667eea", "#764ba2"]}
+        style={styles.header}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      >
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={() => navigation.goBack()}
+        >
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
 
         <Text style={styles.headerTitle}>Chỉnh sửa thông tin</Text>
-        <Text style={styles.headerSubtitle}>Cập nhật thông tin cá nhân của bạn</Text>
+        <Text style={styles.headerSubtitle}>
+          Cập nhật thông tin cá nhân của bạn
+        </Text>
 
         <View style={styles.avatarContainer}>
           <View style={styles.avatarWrapper}>
-            <Image source={avatar} style={styles.avatar} />
+            <Image
+              source={
+                avatarUri
+                  ? { uri: avatarUri }
+                  : require("../assets/images/icon.png")
+              }
+              style={styles.avatar}
+            />
             <View style={styles.avatarOverlay} />
           </View>
-          <TouchableOpacity style={styles.editAvatarBtn} onPress={handleChangeAvatar}>
+          <TouchableOpacity
+            style={styles.editAvatarBtn}
+            onPress={handleChangeAvatar}
+          >
             <Ionicons name="camera-outline" size={20} color="#667eea" />
           </TouchableOpacity>
         </View>
@@ -69,11 +125,16 @@ export default function EditProfileScreen({ navigation }: any) {
               Họ và tên <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color="#667eea" style={styles.inputIcon} />
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color="#667eea"
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
-                value={name}
-                onChangeText={setName}
+                value={fullName}
+                onChangeText={setFullName}
                 placeholder="Nhập họ và tên"
                 placeholderTextColor="#999"
               />
@@ -85,12 +146,16 @@ export default function EditProfileScreen({ navigation }: any) {
               Mã số sinh viên <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.inputContainer}>
-              <Ionicons name="card-outline" size={20} color="#667eea" style={styles.inputIcon} />
+              <Ionicons
+                name="card-outline"
+                size={20}
+                color="#667eea"
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 value={studentId}
-                onChangeText={setStudentId}
-                placeholder="Nhập MSSV"
+                editable={false} // Không cho sửa
                 placeholderTextColor="#999"
               />
             </View>
@@ -101,15 +166,17 @@ export default function EditProfileScreen({ navigation }: any) {
               Email <Text style={styles.required}>*</Text>
             </Text>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#667eea" style={styles.inputIcon} />
+              <Ionicons
+                name="mail-outline"
+                size={20}
+                color="#667eea"
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 value={email}
-                onChangeText={setEmail}
-                placeholder="Nhập email"
+                editable={false} // Không cho sửa
                 placeholderTextColor="#999"
-                keyboardType="email-address"
-                autoCapitalize="none"
               />
             </View>
           </View>
@@ -117,7 +184,12 @@ export default function EditProfileScreen({ navigation }: any) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Số điện thoại</Text>
             <View style={styles.inputContainer}>
-              <Ionicons name="call-outline" size={20} color="#667eea" style={styles.inputIcon} />
+              <Ionicons
+                name="call-outline"
+                size={20}
+                color="#667eea"
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 value={phone}
@@ -137,12 +209,16 @@ export default function EditProfileScreen({ navigation }: any) {
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Ngành học</Text>
             <View style={styles.inputContainer}>
-              <Ionicons name="school-outline" size={20} color="#667eea" style={styles.inputIcon} />
+              <Ionicons
+                name="school-outline"
+                size={20}
+                color="#667eea"
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 value={major}
-                onChangeText={setMajor}
-                placeholder="Nhập ngành học"
+                editable={false} // Không cho sửa
                 placeholderTextColor="#999"
               />
             </View>
@@ -152,12 +228,16 @@ export default function EditProfileScreen({ navigation }: any) {
             <View style={[styles.inputGroup, { flex: 1, marginRight: 10 }]}>
               <Text style={styles.label}>Năm học</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="calendar-outline" size={20} color="#667eea" style={styles.inputIcon} />
+                <Ionicons
+                  name="calendar-outline"
+                  size={20}
+                  color="#667eea"
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={styles.input}
                   value={year}
-                  onChangeText={setYear}
-                  placeholder="Năm học"
+                  editable={false} // Không cho sửa
                   placeholderTextColor="#999"
                 />
               </View>
@@ -166,12 +246,16 @@ export default function EditProfileScreen({ navigation }: any) {
             <View style={[styles.inputGroup, { flex: 1, marginLeft: 10 }]}>
               <Text style={styles.label}>Lớp</Text>
               <View style={styles.inputContainer}>
-                <Ionicons name="people-outline" size={20} color="#667eea" style={styles.inputIcon} />
+                <Ionicons
+                  name="people-outline"
+                  size={20}
+                  color="#667eea"
+                  style={styles.inputIcon}
+                />
                 <TextInput
                   style={styles.input}
                   value={class_}
-                  onChangeText={setClass}
-                  placeholder="Lớp"
+                  editable={false} // Không cho sửa
                   placeholderTextColor="#999"
                 />
               </View>
@@ -179,20 +263,34 @@ export default function EditProfileScreen({ navigation }: any) {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
+        <TouchableOpacity
+          style={styles.saveBtn}
+          onPress={handleSave}
+          disabled={isLoading}
+        >
           <LinearGradient
-            colors={["#667eea", "#764ba2"]}
+            colors={isLoading ? ["#ccc", "#999"] : ["#667eea", "#764ba2"]}
             style={styles.saveBtnGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Ionicons name="checkmark-circle-outline" size={22} color="#fff" />
-            <Text style={styles.saveBtnText}>Lưu thay đổi</Text>
+            {isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Ionicons
+                  name="checkmark-circle-outline"
+                  size={22}
+                  color="#fff"
+                />
+                <Text style={styles.saveBtnText}>Lưu thay đổi</Text>
+              </>
+            )}
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -221,7 +319,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 25,
     padding: 10,
-    backdropFilter: "blur(10px)",
   },
   headerTitle: {
     fontSize: 24,
@@ -358,4 +455,4 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     letterSpacing: 0.5,
   },
-})
+});

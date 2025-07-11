@@ -9,20 +9,66 @@ import {
   StatusBar,
   KeyboardAvoidingView,
   Platform,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Ionicons } from "@expo/vector-icons";
+import { authApi } from "../api/authApi";
+import { useAuth } from "../context/AuthContext";
+// import NetworkDebug from "../components/NetworkDebug"; // BƯỚC 1: Xóa import
 
 const { width } = Dimensions.get("window");
 
 const LoginScreen = ({ navigation }: any) => {
-  const [identifier, setIdentifier] = useState("");
+  const { login } = useAuth();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [secure, setSecure] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    // Xử lý đăng nhập ở đây
-    navigation.replace("App");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Lỗi", "Vui lòng nhập đầy đủ email và mật khẩu");
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert("Lỗi", "Email không hợp lệ");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await authApi.login({
+        email: email.trim(),
+        password: password.trim(),
+      });
+
+      if (response.success) {
+        // Sử dụng AuthContext để login
+        await login(response.user, response.token);
+
+        Alert.alert(
+          "Đăng nhập thành công",
+          `Chào mừng ${response.user.fullName}!`
+        );
+        // Navigation sẽ tự động thay đổi nhờ AuthStack
+      } else {
+        Alert.alert("Lỗi", "Đăng nhập thất bại");
+      }
+    } catch (error: any) {
+      console.error("Login error:", error);
+      Alert.alert(
+        "Đăng nhập thất bại",
+        error.message || "Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại."
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -35,21 +81,25 @@ const LoginScreen = ({ navigation }: any) => {
         duration={700}
         style={styles.container}
       >
+        {/* <NetworkDebug apiUrl="http://localhost:8080/api" /> */}{" "}
+        {/* BƯỚC 2: Xóa component */}
         <Text style={styles.title}>Đăng nhập</Text>
         <View style={styles.inputContainer}>
           <Ionicons
-            name="person-outline"
+            name="mail-outline"
             size={22}
             color="#aaa"
             style={styles.icon}
           />
           <TextInput
             style={styles.input}
-            placeholder="Email / SĐT / Mã SV-NV"
-            value={identifier}
-            onChangeText={setIdentifier}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
             autoCapitalize="none"
+            keyboardType="email-address"
             placeholderTextColor="#aaa"
+            editable={!isLoading}
           />
         </View>
         <View style={styles.inputContainer}>
@@ -66,6 +116,7 @@ const LoginScreen = ({ navigation }: any) => {
             onChangeText={setPassword}
             secureTextEntry={secure}
             placeholderTextColor="#aaa"
+            editable={!isLoading}
           />
           <TouchableOpacity onPress={() => setSecure(!secure)}>
             <Ionicons
@@ -76,11 +127,16 @@ const LoginScreen = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
         <TouchableOpacity
-          style={styles.button}
+          style={[styles.button, isLoading && styles.buttonDisabled]}
           activeOpacity={0.8}
           onPress={handleLogin}
+          disabled={isLoading}
         >
-          <Text style={styles.buttonText}>Đăng nhập</Text>
+          {isLoading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <Text style={styles.buttonText}>Đăng nhập</Text>
+          )}
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Register")}>
           <Text style={styles.link}>
@@ -156,6 +212,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
     textAlign: "center",
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });
 
