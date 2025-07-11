@@ -1,5 +1,7 @@
 const Product = require('../models/Product');
 const Category = require('../models/Category');
+const Brand = require('../models/Brand');
+const Tag = require('../models/Tag');
 
 // @desc    Get all products
 // @route   GET /api/products

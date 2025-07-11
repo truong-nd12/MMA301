@@ -1,7 +1,7 @@
 import { User } from "./authApi";
 import { tokenStorage } from "./authApi";
 
-const API_BASE_URL = "http://192.168.1.2:8080/api"; // ✅ Using your computer's IP
+const API_BASE_URL = "http://192.168.1.11:8080/api"; // ✅ Using your computer's IP
 
 export interface UpdateProfileData {
   fullName?: string;

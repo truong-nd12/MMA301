@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // --- API Configuration ---
 // IMPORTANT: If testing on a physical device, replace 'localhost' with your computer's IP address.
 // Example: "http://192.168.1.100:8080/api"
-const API_BASE_URL = "http://192.168.1.2:8080/api";
+const API_BASE_URL = "http://192.168.1.11:8080/api";
 
 // --- Type Definitions ---
 export interface LoginData {

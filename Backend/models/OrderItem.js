@@ -1,14 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const orderItemSchema = new mongoose.Schema({
-  order: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Order",
-    required: true
-  },
   product: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
+    ref: 'Product',
     required: true
   },
   quantity: {
@@ -16,27 +11,35 @@ const orderItemSchema = new mongoose.Schema({
     required: true,
     min: 1
   },
-  price: {
+  itemPrice: {
     type: Number,
-    required: true
+    required: true,
+    min: 0
   },
-  subtotal: {
-    type: Number,
-    required: true
+  size: {
+    type: String,
+    enum: ['S', 'M', 'L', null],
+    default: null
   },
-  selectedSize: String,
-  selectedAddOns: [
+  addOns: [
     {
-      name: String,
-      price: Number
+      name: { type: String },
+      price: { type: Number, min: 0 },
+      calories: { type: Number, min: 0, default: 0 }
     }
   ],
-  options: {
-    sugar: String,
-    ice: String
+  sugarLevel: {
+    type: String,
+    enum: ['0%', '50%', '100%', null],
+    default: null
+  },
+  iceLevel: {
+    type: String,
+    enum: ['No Ice', 'Less Ice', 'Normal Ice', null],
+    default: null
   }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model("OrderItem", orderItemSchema);
+module.exports = mongoose.model('OrderItem', orderItemSchema);

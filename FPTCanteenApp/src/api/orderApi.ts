@@ -4,6 +4,7 @@ export type OrderStatus =
   | "delivering"
   | "delivered"
   | "cancelled";
+
 export interface Order {
   id: string;
   foodName: string;
