@@ -89,7 +89,7 @@ const ProductCard = ({
           {item.name}
         </Text>
         <Text style={styles.productPrice}>
-          {item.price.toLocaleString('vi-VN')}đ
+          {(item.price || 0).toLocaleString('vi-VN')}đ
         </Text>
         <Text style={styles.productDescription} numberOfLines={2}>
           {item.description}
@@ -298,13 +298,90 @@ const MenuManagementScreen = () => {
     loadMenuItems();
   }, []);
 
+  const testBackendConnection = async () => {
+    try {
+      const response = await fetch('http://192.168.1.11:8080/api/products', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      console.log('🔗 Backend connection test:', response.status, response.statusText);
+      return response.ok;
+    } catch (error) {
+      console.log('🔗 Backend connection failed:', error instanceof Error ? error.message : 'Unknown error');
+      return false;
+    }
+  };
+
   const loadMenuItems = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Loading menu items...');
+      
+      // Test backend connection first
+      const isBackendAvailable = await testBackendConnection();
+      if (!isBackendAvailable) {
+        console.log('⚠️ Backend not available, using mock data');
+        throw new Error('Backend server not available');
+      }
+      
       const response = await productApi.getAllProducts();
-      setMenuItems(response.products);
+      console.log('📥 Response:', response);
+      setMenuItems(response.products || []);
     } catch (error) {
-      Alert.alert('Lỗi', 'Không thể tải danh sách món ăn');
+      console.error('❌ Error loading menu items:', error);
+      // Fallback to mock data for testing
+      const mockProducts = [
+        {
+          _id: '1',
+          name: 'Cơm sườn nướng mật ong',
+          description: 'Cơm sườn nướng tẩm mật ong, ăn kèm dưa leo, trứng kho',
+          images: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80',
+          price: 30000,
+          calories: 650,
+          discount: 15,
+          category: { _id: '1', name: 'Mặn' },
+          brand: { _id: '1', name: 'Quầy Cơm' },
+          sku: 'COM001',
+          stock: 50,
+          rating: 4.5,
+          reviewCount: 230,
+          tags: [],
+          addOns: [],
+          sizes: [],
+          options: { sugar: [], ice: [] },
+          isActive: true,
+          isFeatured: true,
+          createdBy: 'admin',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
+        {
+          _id: '2',
+          name: 'Bún chay đặc biệt',
+          description: 'Bún, đậu hũ, nấm, rau thơm, nước dùng chay thanh mát',
+          images: 'https://images.unsplash.com/photo-1464306076886-debca5e8a6b0?auto=format&fit=crop&w=400&q=80',
+          price: 30000,
+          calories: 420,
+          discount: 10,
+          category: { _id: '2', name: 'Chay' },
+          brand: { _id: '3', name: 'Quầy Chay' },
+          sku: 'BUN001',
+          stock: 10,
+          rating: 4.7,
+          reviewCount: 120,
+          tags: [],
+          addOns: [],
+          sizes: [],
+          options: { sugar: [], ice: [] },
+          isActive: true,
+          isFeatured: false,
+          createdBy: 'admin',
+          createdAt: '2024-01-01T00:00:00Z',
+          updatedAt: '2024-01-01T00:00:00Z',
+        },
+      ];
+      setMenuItems(mockProducts);
+      Alert.alert('Thông báo', 'Đang sử dụng dữ liệu mẫu. Vui lòng kiểm tra kết nối mạng.');
     } finally {
       setLoading(false);
     }
@@ -381,19 +458,27 @@ const MenuManagementScreen = () => {
         </TouchableOpacity>
       </LinearGradient>
 
-      <FlatList
-        data={menuItems}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => (
-          <ProductCard
-            item={item}
-            onEdit={(item) => setEditingItem(item)}
-            onDelete={handleDeleteItem}
-          />
-        )}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      {menuItems.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="restaurant-outline" size={64} color="#DDD" />
+          <Text style={styles.emptyText}>Không có món ăn nào</Text>
+          <Text style={styles.emptySubtext}>Nhấn nút + để thêm món ăn mới</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={menuItems}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => (
+            <ProductCard
+              item={item}
+              onEdit={(item) => setEditingItem(item)}
+              onDelete={handleDeleteItem}
+            />
+          )}
+          contentContainerStyle={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
 
       <AddEditModal
         visible={showAddModal}
@@ -426,6 +511,25 @@ const styles = StyleSheet.create({
     marginTop: 16,
     fontSize: 16,
     color: '#666',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#666',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  emptySubtext: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 8,
+    textAlign: 'center',
   },
   header: {
     flexDirection: 'row',

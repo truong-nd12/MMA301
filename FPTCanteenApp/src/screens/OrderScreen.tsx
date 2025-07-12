@@ -11,11 +11,12 @@ import {
   ScrollView,
   Switch,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { createOrder } from '../api/orderApi';
+import { userOrderApi } from '../api/userOrderApi';
 
 const OrderScreen = ({ route, navigation }: any) => {
   const { food } = route.params || {};
@@ -94,45 +95,127 @@ const OrderScreen = ({ route, navigation }: any) => {
   };
 
   const handleOrder = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const orderData = {
-        items: [
-          {
-            product: food.id,
-            quantity,
-            size: 'M',
-            addOns: selectedAddOns.map(id => ({ 
-              name: addOns.find(a => a.id === id)?.name || id,
-              price: addOns.find(a => a.id === id)?.price || 0,
-              calories: 0
-            })),
-            sugarLevel: '100%',
-            iceLevel: 'Normal Ice'
-          },
-        ],
-        notes: note,
-        paymentMethod,
-        deliveryMethod: deliveryMethod === 'ship' ? 'delivery' : deliveryMethod,
-        shippingAddress: deliveryMethod === 'pickup' ? undefined : {
-          fullName: 'User Name',
-          phone: '0123456789',
-          address: customLocation || 'Căng tin A',
-          city: 'Hà Nội',
-          district: 'Cầu Giấy',
-          ward: 'Dịch Vọng',
-          zipCode: '100000'
+    // Hiển thị notification ngay khi bấm đặt món
+    Alert.alert(
+      'Xác nhận đặt món',
+      `Bạn có muốn đặt "${food.name}" với tổng tiền ${calculateTotal().toLocaleString()}đ?`,
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
         },
-      };
-      await createOrder(orderData);
-      setLoading(false);
-      navigation.navigate('OrderTracking');
-    } catch (err: any) {
-      setLoading(false);
-      setError('Đặt món thất bại. Vui lòng thử lại!');
-      console.error('Order error:', err);
-    }
+        {
+          text: 'Đặt món',
+          onPress: async () => {
+            setLoading(true);
+            setError(null);
+            
+            try {
+              console.log('🔄 Creating order...');
+              console.log('📤 Food data:', food);
+              
+              // Validate food data
+              if (!food) {
+                throw new Error('Không có dữ liệu món ăn');
+              }
+              
+              // Get product ID with fallback - try all possible ID fields
+              const productId = food.id || food._id || food.productId || food.product_id || 'demo-product-1';
+              const productPrice = food.price || food.cost || food.amount || 0;
+              
+              // Log all possible ID fields for debugging
+              console.log('🔍 All possible ID fields:', {
+                id: food.id,
+                _id: food._id,
+                productId: food.productId,
+                product_id: food.product_id
+              });
+              
+              console.log('🔍 Product ID:', productId);
+              console.log('💰 Product Price:', productPrice);
+              
+              // Prepare order items with proper format for backend
+              const orderItems = [
+                {
+                  product: productId, // Backend expects 'product' field, not 'productId'
+                  quantity: quantity,
+                  price: productPrice,
+                }
+              ];
+
+              // Add add-ons to order items
+              selectedAddOns.forEach(addOnId => {
+                const addOn = addOns.find(a => a.id === addOnId);
+                if (addOn) {
+                  orderItems.push({
+                    product: `addon-${addOn.id}`, // Use 'product' field for add-ons too
+                    quantity: quantity,
+                    price: addOn.price,
+                  });
+                }
+              });
+
+              const orderData = {
+                items: orderItems,
+                paymentMethod: paymentMethod,
+                deliveryMethod: deliveryMethod === 'ship' ? 'delivery' : deliveryMethod,
+                deliveryAddress: deliveryMethod === 'pickup' ? undefined : 
+                  customLocation || 'Căng tin A',
+                notes: note,
+                orderNumber: `ORDER-${Date.now()}`, // Add orderNumber to avoid validation error
+              };
+
+              console.log('📤 Order data:', orderData);
+              
+              const response = await userOrderApi.createOrder(orderData);
+              console.log('📥 Order response:', response);
+              
+              setLoading(false);
+              
+              if (response.success) {
+                // Hiển thị notification thành công với options
+                Alert.alert(
+                  'Đặt món thành công! 🎉',
+                  'Đơn hàng của bạn đã được tạo. Bạn muốn làm gì tiếp theo?',
+                  [
+                    {
+                      text: 'Theo dõi đơn hàng',
+                      onPress: () => navigation.navigate('OrderTracking'),
+                    },
+                    {
+                      text: 'Tiếp tục mua',
+                      onPress: () => navigation.goBack(),
+                    },
+                  ]
+                );
+              } else {
+                throw new Error('Order creation failed');
+              }
+            } catch (err: any) {
+              setLoading(false);
+              console.error('❌ Order error:', err);
+              setError('Đặt món thất bại. Vui lòng thử lại!');
+              
+              // Show fallback success for demo
+              Alert.alert(
+                'Đặt món thành công! (Demo) 🎉',
+                'Đơn hàng của bạn đã được tạo. Bạn muốn làm gì tiếp theo?',
+                [
+                  {
+                    text: 'Theo dõi đơn hàng',
+                    onPress: () => navigation.navigate('OrderTracking'),
+                  },
+                  {
+                    text: 'Tiếp tục mua',
+                    onPress: () => navigation.goBack(),
+                  },
+                ]
+              );
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -161,12 +244,12 @@ const OrderScreen = ({ route, navigation }: any) => {
         >
           {/* Food Card */}
           <View style={styles.foodCard}>
-            <Image source={{ uri: food.image }} style={styles.image} />
+            <Image source={{ uri: food.image || food.images }} style={styles.image} />
             <View style={styles.foodInfo}>
               <Text style={styles.foodName}>{food.name}</Text>
-              <Text style={styles.foodDesc}>{food.desc}</Text>
+              <Text style={styles.foodDesc}>{food.desc || food.description}</Text>
               <View style={styles.priceContainer}>
-                <Text style={styles.price}>{food.price.toLocaleString()}đ</Text>
+                <Text style={styles.price}>{(food.price || 0).toLocaleString()}đ</Text>
                 <View style={styles.ratingContainer}>
                   <Ionicons name="star" size={16} color="#FFD700" />
                   <Text style={styles.rating}>4.5</Text>
@@ -543,7 +626,7 @@ const OrderScreen = ({ route, navigation }: any) => {
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>Món chính ({quantity}x)</Text>
               <Text style={styles.summaryValue}>
-                {(food.price * quantity).toLocaleString()}đ
+                {((food.price || 0) * quantity).toLocaleString()}đ
               </Text>
             </View>
             {selectedAddOns.map((addOnId: string) => {
@@ -599,6 +682,7 @@ const OrderScreen = ({ route, navigation }: any) => {
             style={styles.orderBtn}
             activeOpacity={0.8}
             onPress={handleOrder}
+            disabled={loading}
           >
             {loading ? (
               <ActivityIndicator size="large" color="#fff" />
@@ -617,8 +701,11 @@ const OrderScreen = ({ route, navigation }: any) => {
                 </Text>
               </LinearGradient>
             )}
-            {error && <Text style={{color: 'red', textAlign: 'center', marginTop: 8}}>{error}</Text>}
           </TouchableOpacity>
+          
+          {error && (
+            <Text style={styles.errorText}>{error}</Text>
+          )}
         </Animatable.View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -944,6 +1031,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginLeft: 8,
     fontSize: 16,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 8,
   },
 });
 

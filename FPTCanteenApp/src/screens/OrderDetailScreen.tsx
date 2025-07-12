@@ -9,8 +9,8 @@ import {
 import { getOrderDetail, Order, OrderStatus } from "../api/orderApi";
 
 const statusLabel: Record<OrderStatus, string> = {
-  preparing: "Đang chuẩn bị",
-  delivering: "Đang giao",
+  processing: "Đang chuẩn bị",
+  shipped: "Đang giao",
   delivered: "Đã giao",
   cancelled: "Đã hủy",
 };

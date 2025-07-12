@@ -72,7 +72,7 @@ const orderSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate order number before save
+// Generate order number before save (only if not provided)
 orderSchema.pre("save", async function (next) {
   if (!this.orderNumber) {
     const count = await this.constructor.countDocuments();

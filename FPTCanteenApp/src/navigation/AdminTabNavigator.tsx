@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MenuManagementScreen from "../screens/MenuManagementScreen";
-import OrderStatsScreen from "../screens/OrderStatsScreen";
+import OrderManagementScreen from "../screens/OrderManagementScreen";
+import AdminStatsScreen from "../screens/AdminStatsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -12,7 +13,8 @@ export default function AdminTabNavigator() {
         tabBarIcon: ({ color, size }) => {
           let iconName = "ellipse";
           if (route.name === "MenuManagement") iconName = "restaurant-outline";
-          if (route.name === "OrderStats") iconName = "analytics-outline";
+          if (route.name === "OrderManagement") iconName = "receipt-outline";
+          if (route.name === "AdminStats") iconName = "analytics-outline";
           return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#3498DB",
@@ -31,8 +33,18 @@ export default function AdminTabNavigator() {
         }}
       />
       <Tab.Screen 
-        name="OrderStats" 
-        component={OrderStatsScreen}
+        name="OrderManagement" 
+        component={OrderManagementScreen}
+        options={{
+          title: "Đơn hàng",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="receipt-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen 
+        name="AdminStats" 
+        component={AdminStatsScreen}
         options={{
           title: "Thống kê",
           tabBarIcon: ({ color, size }) => (

@@ -31,6 +31,34 @@ const getOrders = async (req, res) => {
     }
 };
 
+// @desc    Get user's orders
+// @route   GET /api/orders/my-orders
+// @access  Private
+const getUserOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({ user: req.user.id })
+            .populate({
+                path: 'items',
+                populate: {
+                    path: 'product',
+                    select: 'name price images'
+                }
+            })
+            .sort('-createdAt');
+
+        res.json({
+            success: true,
+            count: orders.length,
+            orders
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
 // @desc    Get single order
 // @route   GET /api/orders/:id
 // @access  Private
@@ -114,7 +142,12 @@ const createOrder = async (req, res) => {
         const tax = totalAmount * 0.1; // 10% tax
         const finalAmount = totalAmount + shippingFee + tax;
 
+        // Generate order number
+        const orderCount = await Order.countDocuments();
+        const orderNumber = `ORDER-${Date.now()}-${orderCount + 1}`;
+
         const order = await Order.create({
+            orderNumber,
             user: req.user.id,
             items: orderItems,
             totalAmount,
@@ -140,6 +173,66 @@ const createOrder = async (req, res) => {
         res.status(201).json({
             success: true,
             order: populatedOrder
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// @desc    Cancel order (User)
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelOrder = async (req, res) => {
+    try {
+        const { cancelReason } = req.body;
+
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        // Check if user owns this order or is admin
+        if (req.user.role !== 'admin' && order.user.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied'
+            });
+        }
+
+        // Check if order can be cancelled
+        if (order.status === 'delivered' || order.status === 'cancelled') {
+            return res.status(400).json({
+                success: false,
+                message: 'Order cannot be cancelled'
+            });
+        }
+
+        const updatedOrder = await Order.findByIdAndUpdate(
+            req.params.id,
+            { 
+                status: 'cancelled',
+                cancelReason: cancelReason || 'Cancelled by user'
+            },
+            { new: true, runValidators: true }
+        ).populate('user', 'fullName email')
+         .populate({
+             path: 'items',
+             populate: {
+                 path: 'product',
+                 select: 'name price images'
+             }
+         });
+
+        res.json({
+            success: true,
+            order: updatedOrder
         });
     } catch (error) {
         res.status(500).json({
@@ -406,8 +499,10 @@ const getTopSellingItems = async (req, res) => {
 
 module.exports = {
     getOrders,
+    getUserOrders,
     getOrder,
     createOrder,
+    cancelOrder,
     updateOrderStatus,
     getOrderStats,
     getOrdersByDateRange,

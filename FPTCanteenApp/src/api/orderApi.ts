@@ -40,22 +40,33 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const token = await AsyncStorage.getItem('authToken');
   
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+  
   const config: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
       ...(token && { Authorization: `Bearer ${token}` }),
       ...options.headers,
     },
+    signal: controller.signal,
     ...options,
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-  
-  if (!response.ok) {
-    throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+    }
+    
+    return response.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
   }
-  
-  return response.json();
 };
 
 // Mock data for fallback

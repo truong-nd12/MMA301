@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 const {
     getOrders,
+    getUserOrders,
     getOrder,
     createOrder,
+    cancelOrder,
     updateOrderStatus,
     getOrderStats,
     getOrdersByDateRange,
@@ -15,6 +17,11 @@ const { auth, adminAuth } = require('../middleware/auth');
 // @desc    Get all orders (Admin only)
 // @access  Private/Admin
 router.get('/', auth, adminAuth, getOrders);
+
+// @route   GET /api/orders/my-orders
+// @desc    Get user's orders
+// @access  Private
+router.get('/my-orders', auth, getUserOrders);
 
 // @route   GET /api/orders/stats
 // @desc    Get order statistics (Admin only)
@@ -40,6 +47,11 @@ router.get('/:id', auth, getOrder);
 // @desc    Create new order
 // @access  Private
 router.post('/', auth, createOrder);
+
+// @route   PUT /api/orders/:id/cancel
+// @desc    Cancel order (User)
+// @access  Private
+router.put('/:id/cancel', auth, cancelOrder);
 
 // @route   PUT /api/orders/:id/status
 // @desc    Update order status (Admin only)

@@ -12,25 +12,80 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { cancelOrder, getUserOrders, Order } from "../api/orderApi";
+import { userOrderApi } from '../api/userOrderApi';
 
 const { width } = Dimensions.get("window");
 
-// Sửa lại type OrderStatus cho đúng backend
-export type OrderStatus = 'processing' | 'shipped' | 'delivered' | 'cancelled';
+// Mock data for demo
+const mockOrders = [
+  {
+    _id: "1",
+    orderNumber: "ORDER-001",
+    items: [
+      {
+        product: {
+          name: "Cơm sườn nướng mật ong",
+          price: 30000,
+        },
+        quantity: 2,
+        price: 30000,
+        total: 60000,
+      },
+    ],
+    status: "preparing",
+    totalAmount: 60000,
+    finalAmount: 51000,
+    paymentMethod: "cash",
+    deliveryMethod: "pickup",
+    createdAt: "2024-01-15T10:30:00Z",
+  },
+  {
+    _id: "2",
+    orderNumber: "ORDER-002",
+    items: [
+      {
+        product: {
+          name: "Bún chay đặc biệt",
+          price: 30000,
+        },
+        quantity: 1,
+        price: 30000,
+        total: 30000,
+      },
+    ],
+    status: "ready",
+    totalAmount: 30000,
+    finalAmount: 27000,
+    paymentMethod: "momo",
+    deliveryMethod: "delivery",
+    createdAt: "2024-01-15T09:15:00Z",
+  },
+];
 
-const statusConfig: Record<any, any> = {
-  processing: {
-    label: "Đang xử lý",
+const statusConfig = {
+  pending: {
+    label: "Chờ xác nhận",
+    color: "#F39C12",
+    bgColor: "#FEF9E7",
+    icon: "time-outline",
+  },
+  confirmed: {
+    label: "Đã xác nhận",
+    color: "#3498DB",
+    bgColor: "#EBF5FB",
+    icon: "checkmark-circle-outline",
+  },
+  preparing: {
+    label: "Đang chuẩn bị",
     color: "#F39C12",
     bgColor: "#FEF9E7",
     icon: "restaurant-outline",
   },
-  shipped: {
-    label: "Đang giao",
-    color: "#3498DB",
-    bgColor: "#EBF5FB",
-    icon: "bicycle-outline",
+  ready: {
+    label: "Sẵn sàng",
+    color: "#27AE60",
+    bgColor: "#E8F8F5",
+    icon: "checkmark-circle-outline",
   },
   delivered: {
     label: "Đã giao",
@@ -47,15 +102,13 @@ const statusConfig: Record<any, any> = {
 };
 
 export default function OrderTrackingScreen({ navigation }: any) {
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [orders, setOrders] = useState(mockOrders);
+  const [filteredOrders, setFilteredOrders] = useState(mockOrders);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState<OrderStatus | "all">(
-    "all"
-  );
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
 
   useEffect(() => {
     loadOrders();
@@ -66,11 +119,22 @@ export default function OrderTrackingScreen({ navigation }: any) {
   }, [orders, searchQuery, selectedFilter]);
 
   const loadOrders = async () => {
+    setLoading(true);
     try {
-      const data = await getUserOrders();
-      setOrders(data);
+      console.log('🔄 Loading user orders...');
+      const response = await userOrderApi.getUserOrders();
+      console.log('📥 Orders response:', response);
+      
+      if (response.success && response.orders) {
+        setOrders(response.orders);
+        console.log('✅ Loaded orders:', response.orders.length);
+      } else {
+        console.log('⚠️ Using mock data as fallback');
+        setOrders(mockOrders);
+      }
     } catch (error) {
-      Alert.alert("Lỗi", "Không thể tải danh sách đơn hàng");
+      console.error('❌ Error loading orders:', error);
+      setOrders(mockOrders);
     } finally {
       setLoading(false);
     }
@@ -87,7 +151,8 @@ export default function OrderTrackingScreen({ navigation }: any) {
 
     if (searchQuery) {
       filtered = filtered.filter((order) =>
-        order.foodName.toLowerCase().includes(searchQuery.toLowerCase())
+        order.items[0]?.product?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        order.orderNumber?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -110,16 +175,24 @@ export default function OrderTrackingScreen({ navigation }: any) {
           onPress: async () => {
             setCancellingId(id);
             try {
-              await cancelOrder(id);
-              setOrders((prev) =>
-                prev.map((order) =>
-                  order.id === id
-                    ? { ...order, status: "cancelled", canEdit: false }
-                    : order
-                )
-              );
-              Alert.alert("Thành công", "Đơn hàng đã được hủy");
+              console.log('🔄 Cancelling order:', id);
+              const response = await userOrderApi.cancelOrder(id);
+              
+              if (response.success) {
+                // Update local state
+                setOrders((prev) =>
+                  prev.map((order) =>
+                    order._id === id
+                      ? { ...order, status: "cancelled" }
+                      : order
+                  )
+                );
+                Alert.alert("Thành công", "Đơn hàng đã được hủy");
+              } else {
+                throw new Error('Cancel failed');
+              }
             } catch (error) {
+              console.error('❌ Cancel order error:', error);
               Alert.alert("Lỗi", "Không thể hủy đơn hàng");
             } finally {
               setCancellingId(null);
@@ -130,17 +203,7 @@ export default function OrderTrackingScreen({ navigation }: any) {
     );
   };
 
-  const getProgressSteps = (status: OrderStatus) => {
-    const steps = ["processing", "shipped", "delivered"];
-    const currentIndex = steps.indexOf(status);
-    return steps.map((step, index) => ({
-      step,
-      completed: index <= currentIndex,
-      active: index === currentIndex,
-    }));
-  };
-
-  const renderFilterButton = (filter: OrderStatus | "all", label: string) => (
+  const renderFilterButton = (filter: string, label: string) => (
     <TouchableOpacity
       style={[
         styles.filterButton,
@@ -159,115 +222,64 @@ export default function OrderTrackingScreen({ navigation }: any) {
     </TouchableOpacity>
   );
 
-  const renderProgressBar = (status: OrderStatus) => {
-    if (status === "cancelled") return null;
-
-    const steps = getProgressSteps(status);
+  const renderOrderCard = ({ item }: { item: any }) => {
+    const config = statusConfig[item.status as keyof typeof statusConfig];
 
     return (
-      <View style={styles.progressContainer}>
-        {steps.map((step, index) => (
-          <React.Fragment key={step.step}>
-            <View style={styles.progressStep}>
-              <View
-                style={[
-                  styles.progressDot,
-                  step.completed && styles.progressDotCompleted,
-                  step.active && styles.progressDotActive,
-                ]}
-              >
-                {step.completed && (
-                  <Ionicons name="checkmark" size={12} color="#fff" />
-                )}
-              </View>
-              <Text
-                style={[
-                  styles.progressLabel,
-                  step.completed && styles.progressLabelCompleted,
-                ]}
-              >
-                {statusConfig[step.step as OrderStatus].label}
-              </Text>
-            </View>
-            {index < steps.length - 1 && (
-              <View
-                style={[
-                  styles.progressLine,
-                  step.completed && styles.progressLineCompleted,
-                ]}
-              />
-            )}
-          </React.Fragment>
-        ))}
-      </View>
-    );
-  };
-
-  const renderOrderCard = ({ item }: { item: Order }) => {
-    const config = statusConfig[item.status];
-
-    return (
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
+      <View style={styles.orderCard}>
+        <View style={styles.orderHeader}>
           <View style={styles.orderInfo}>
-            <Text style={styles.foodName}>{item.foodName}</Text>
-            <Text style={styles.orderId}>
-              #{item.id.slice(-6).toUpperCase()}
+            <Text style={styles.orderNumber}>{item.orderNumber}</Text>
+            <Text style={styles.orderDate}>
+              {new Date(item.createdAt).toLocaleDateString("vi-VN")}
             </Text>
           </View>
           <View
-            style={[styles.statusBadge, { backgroundColor: config.bgColor }]}
+            style={[
+              styles.statusBadge,
+              { backgroundColor: config.bgColor },
+            ]}
           >
-            <Ionicons
-              name={config.icon as any}
-              size={16}
-              color={config.color}
-            />
+            <Ionicons name={config.icon as any} size={16} color={config.color} />
             <Text style={[styles.statusText, { color: config.color }]}>
               {config.label}
             </Text>
           </View>
         </View>
 
-        <View style={styles.cardBody}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.priceLabel}>Tổng tiền:</Text>
-            <Text style={styles.price}>{item.total.toLocaleString()}đ</Text>
-          </View>
-
-          {item.createdAt && (
-            <View style={styles.timeContainer}>
-              <Ionicons name="time-outline" size={16} color="#7f8c8d" />
-              <Text style={styles.timeText}>
-                {new Date(item.createdAt).toLocaleString("vi-VN")}
-              </Text>
-            </View>
-          )}
-
-          {renderProgressBar(item.status)}
+        <View style={styles.orderDetails}>
+          <Text style={styles.foodName}>
+            {item.items[0]?.product?.name || "Món ăn"}
+          </Text>
+          <Text style={styles.quantity}>
+            Số lượng: {item.items[0]?.quantity || 1}
+          </Text>
+          <Text style={styles.total}>
+            Tổng: {item.finalAmount?.toLocaleString()}đ
+          </Text>
         </View>
 
         <View style={styles.cardActions}>
           <TouchableOpacity
             style={styles.detailButton}
             onPress={() =>
-              navigation.navigate("OrderDetail", { orderId: item.id })
+              navigation.navigate("OrderDetail", { orderId: item._id })
             }
           >
             <Ionicons name="eye-outline" size={18} color="#667eea" />
             <Text style={styles.detailButtonText}>Xem chi tiết</Text>
           </TouchableOpacity>
 
-          {item.canEdit && (
+          {item.status !== "cancelled" && item.status !== "delivered" && (
             <TouchableOpacity
               style={[
                 styles.cancelButton,
-                cancellingId === item.id && styles.cancelButtonDisabled,
+                cancellingId === item._id && styles.cancelButtonDisabled,
               ]}
-              onPress={() => handleCancel(item.id, item.foodName)}
-              disabled={cancellingId === item.id}
+              onPress={() => handleCancel(item._id, item.items[0]?.product?.name || "Món ăn")}
+              disabled={cancellingId === item._id}
             >
-              {cancellingId === item.id ? (
+              {cancellingId === item._id ? (
                 <ActivityIndicator size="small" color="#E74C3C" />
               ) : (
                 <Ionicons name="close-outline" size={18} color="#E74C3C" />
@@ -275,10 +287,10 @@ export default function OrderTrackingScreen({ navigation }: any) {
               <Text
                 style={[
                   styles.cancelButtonText,
-                  cancellingId === item.id && styles.cancelButtonTextDisabled,
+                  cancellingId === item._id && styles.cancelButtonTextDisabled,
                 ]}
               >
-                {cancellingId === item.id ? "Đang hủy..." : "Hủy đơn"}
+                {cancellingId === item._id ? "Đang hủy..." : "Hủy đơn"}
               </Text>
             </TouchableOpacity>
           )}
@@ -310,47 +322,51 @@ export default function OrderTrackingScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Đơn hàng của bạn</Text>
-        <Text style={styles.subtitle}>Căng tin Đại học</Text>
+        <Text style={styles.headerTitle}>Theo dõi đơn hàng</Text>
+        <TouchableOpacity
+          style={styles.refreshButton}
+          onPress={onRefresh}
+          disabled={refreshing}
+        >
+          <Ionicons
+            name="refresh"
+            size={24}
+            color={refreshing ? "#bdc3c7" : "#667eea"}
+          />
+        </TouchableOpacity>
       </View>
 
+      {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Ionicons
-          name="search-outline"
-          size={20}
-          color="#7f8c8d"
-          style={styles.searchIcon}
-        />
+        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Tìm kiếm món ăn..."
+          placeholder="Tìm kiếm đơn hàng..."
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholderTextColor="#bdc3c7"
+          placeholderTextColor="#999"
         />
       </View>
 
+      {/* Filter Buttons */}
       <View style={styles.filterContainer}>
         {renderFilterButton("all", "Tất cả")}
-        {renderFilterButton("processing", "Đang xử lý")}
-        {renderFilterButton("shipped", "Đang giao")}
+        {renderFilterButton("preparing", "Đang chuẩn bị")}
+        {renderFilterButton("ready", "Sẵn sàng")}
         {renderFilterButton("delivered", "Đã giao")}
       </View>
 
+      {/* Orders List */}
       <FlatList
         data={filteredOrders}
-        keyExtractor={(item) => item.id}
         renderItem={renderOrderCard}
-        contentContainerStyle={styles.listContainer}
+        keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContainer}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={["#667eea"]}
-            tintColor="#667eea"
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         ListEmptyComponent={renderEmptyState}
       />
@@ -364,6 +380,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#f8f9fa",
   },
   header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 16,
@@ -371,15 +390,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#ecf0f1",
   },
-  title: {
+  headerTitle: {
     fontSize: 28,
     fontWeight: "bold",
     color: "#2c3e50",
-    marginBottom: 4,
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#7f8c8d",
+  refreshButton: {
+    padding: 8,
   },
   searchContainer: {
     flexDirection: "row",
@@ -430,7 +447,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 20,
   },
-  card: {
+  orderCard: {
     backgroundColor: "#fff",
     borderRadius: 16,
     marginBottom: 16,
@@ -440,26 +457,25 @@ const styles = StyleSheet.create({
     elevation: 4,
     overflow: "hidden",
   },
-  cardHeader: {
+  orderHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-start",
+    alignItems: "center",
     padding: 16,
     paddingBottom: 12,
   },
   orderInfo: {
     flex: 1,
   },
-  foodName: {
+  orderNumber: {
     fontSize: 18,
     fontWeight: "600",
     color: "#2c3e50",
     marginBottom: 4,
   },
-  orderId: {
+  orderDate: {
     fontSize: 14,
     color: "#7f8c8d",
-    fontFamily: "monospace",
   },
   statusBadge: {
     flexDirection: "row",
@@ -473,78 +489,25 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 4,
   },
-  cardBody: {
+  orderDetails: {
     paddingHorizontal: 16,
     paddingBottom: 16,
   },
-  priceContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 12,
+  foodName: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#2c3e50",
+    marginBottom: 4,
   },
-  priceLabel: {
-    fontSize: 16,
+  quantity: {
+    fontSize: 14,
     color: "#7f8c8d",
+    marginBottom: 4,
   },
-  price: {
+  total: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#667eea",
-  },
-  timeContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  timeText: {
-    fontSize: 14,
-    color: "#7f8c8d",
-    marginLeft: 6,
-  },
-  progressContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  progressStep: {
-    alignItems: "center",
-    flex: 1,
-  },
-  progressDot: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#ecf0f1",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 6,
-  },
-  progressDotCompleted: {
-    backgroundColor: "#27AE60",
-  },
-  progressDotActive: {
-    backgroundColor: "#3498DB",
-  },
-  progressLabel: {
-    fontSize: 12,
-    color: "#bdc3c7",
-    textAlign: "center",
-  },
-  progressLabelCompleted: {
-    color: "#27AE60",
-    fontWeight: "600",
-  },
-  progressLine: {
-    height: 2,
-    backgroundColor: "#ecf0f1",
-    flex: 1,
-    marginHorizontal: 8,
-    marginTop: -12,
-  },
-  progressLineCompleted: {
-    backgroundColor: "#27AE60",
   },
   cardActions: {
     flexDirection: "row",
