@@ -288,9 +288,11 @@ const MenuScreen = ({ navigation }: any) => {
   const fetchMenu = async () => {
     try {
       const items = await getMenuItems();
+      console.log('Fetched menu items:', items); // Debug dữ liệu trả về
       setMenuItems(items);
     } catch (error) {
       console.error("Failed to fetch menu items:", error);
+      setMenuItems([]);
     }
   };
 
@@ -309,14 +311,12 @@ const MenuScreen = ({ navigation }: any) => {
   const filterMenu = (menu: MenuItem[]) => {
     return menu.filter((item) => {
       const searchMatch =
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.desc.toLowerCase().includes(searchQuery.toLowerCase());
+        item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.desc?.toLowerCase().includes(searchQuery.toLowerCase());
       const vendorMatch = !selectedVendor || item.vendorId === selectedVendor;
-      const categoryMatch =
-        !selectedCategory || item.category === selectedCategory;
+      const categoryMatch = !selectedCategory || item.category === selectedCategory;
       const typeMatch = !selectedType || item.type === selectedType;
       const favoriteMatch = !showFavoritesOnly || favorites.includes(item.id);
-
       return (
         searchMatch &&
         vendorMatch &&
@@ -350,19 +350,28 @@ const MenuScreen = ({ navigation }: any) => {
     const todayMenu = filterMenu(
       getMenuForDay(days[todayIdx] as keyof typeof dayNames, menuItems)
     );
-    content = (
-      <FlatList
-        data={todayMenu}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <MenuCard
-            item={item}
-            onOrder={handleOrder}
-            onToggleFavorite={toggleFavorite}
-            isFavorite={favorites.includes(item.id)}
-          />
-        )}
+    if (menuItems.length === 0) {
+      content = (
+        <View style={styles.emptyContainer}>
+          <Ionicons name="restaurant-outline" size={64} color="#DDD" />
+          <Text style={styles.emptyText}>Không có dữ liệu món ăn. Kiểm tra API hoặc dữ liệu trả về.</Text>
+        </View>
+      );
+    } else {
+      content = (
+        <FlatList
+          data={todayMenu}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContainer}
+          renderItem={({ item }) => (
+            <MenuCard
+              item={item}
+              onOrder={handleOrder}
+              onToggleFavorite={toggleFavorite}
+              isFavorite={favorites.includes(item.id)}
+            />
+          )
+        }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Ionicons name="restaurant-outline" size={64} color="#DDD" />
@@ -372,6 +381,7 @@ const MenuScreen = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
       />
     );
+    }
   } else if (tab === "tomorrow") {
     const tomorrowMenu = filterMenu(
       getMenuForDay(days[getNextDayIdx()] as keyof typeof dayNames, menuItems)

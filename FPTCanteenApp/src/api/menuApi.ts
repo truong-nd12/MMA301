@@ -175,35 +175,94 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
 // Menu Management APIs
 export const getMenuItems = async (): Promise<MenuItem[]> => {
   try {
-    const response = await apiCall('/products');
-    return response.products.map((product: any) => ({
-      id: product._id,
-      name: product.name,
-      price: product.price,
-      originalPrice: product.originalPrice || product.price,
-      desc: product.description || '',
-      image: product.images?.[0] || 'https://via.placeholder.com/300x200',
-      vendorId: product.vendor || 'v1',
-      days: ['T2', 'T3', 'T4', 'T5', 'T6'],
-      category: product.category || 'man',
-      type: product.type || 'com',
-      status: product.status || 'available',
-      servingTime: '11:00 - 13:00',
-      rating: 4.5,
-      reviewCount: Math.floor(Math.random() * 100) + 10,
-      isPopular: Math.random() > 0.7,
-      isNew: Math.random() > 0.8,
-      studentDiscount: 10,
-      estimatedWaitTime: '5-10 phút',
-      calories: product.calories || 500,
-      spicyLevel: product.spicyLevel || 0,
-      availableQuantity: product.availableQuantity || 50,
-      maxQuantity: product.maxQuantity || 100,
-    }));
+    const response = await fetch('http://192.168.99.106:8080/api/products');
+    if (!response.ok) throw new Error('Failed to fetch menu items');
+    const data = await response.json();
+    const products = data.products || data;
+
+    // Helper: map brand name to vendorId
+    const brandToVendorId = {
+      'Quầy Cơm': 'v1',
+      'Quầy Bún, Phở': 'v2',
+      'Quầy Chay': 'v3',
+      'Quầy Đồ Uống': 'v4',
+      'Quầy Tráng Miệng': 'v5',
+      'Quầy Xôi, Bánh Mì': 'v6',
+    };
+    // Helper: map category name to id
+    const categoryToId = {
+      'Mặn': 'man',
+      'Chay': 'chay',
+      'Ăn nhẹ': 'an_nhe',
+      'Nước': 'nuoc',
+    };
+    // Helper: map weekday string to T2-T7,CN
+    const dayMap = {
+      'monday': 'T2',
+      'tuesday': 'T3',
+      'wednesday': 'T4',
+      'thursday': 'T5',
+      'friday': 'T6',
+      'saturday': 'T7',
+      'sunday': 'CN',
+    };
+    // Helper: guess type from name/tags
+    function guessType(product: any) {
+      const name = product.name?.toLowerCase() || '';
+      if (name.includes('cơm')) return 'com';
+      if (name.includes('bún')) return 'bun';
+      if (name.includes('mì')) return 'mi';
+      if (name.includes('tráng miệng')) return 'trangmieng';
+      if (name.includes('xôi')) return 'xoi';
+      if (name.includes('bánh mì')) return 'banhmi';
+      if (product.category?.name === 'Nước') return 'nuoc';
+      return 'com';
+    }
+
+    return products.map((product: any) => {
+      // Map days
+      let days: string[] = Array.isArray(product.availableDays)
+        ? product.availableDays.map((d: string) => dayMap[d as keyof typeof dayMap] || d)
+        : ['T2', 'T3', 'T4', 'T5', 'T6'];
+      // Map image
+      let image = typeof product.images === 'string'
+        ? product.images
+        : Array.isArray(product.images) ? product.images[0] : 'https://via.placeholder.com/300x200';
+      // Map vendorId
+      let vendorId = product.brand?.name ? brandToVendorId[product.brand.name as keyof typeof brandToVendorId] || 'v1' : 'v1';
+      // Map category
+      let category = product.category?.name ? categoryToId[product.category.name as keyof typeof categoryToId] || 'man' : 'man';
+      // Map type
+      let type = guessType(product);
+
+      return {
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        originalPrice: product.sizes?.[1]?.price || product.price,
+        desc: product.description || '',
+        image,
+        vendorId,
+        days,
+        category,
+        type,
+        status: product.stock > 0 ? (product.stock <= 10 ? 'almost_out' : 'available') : 'out',
+        servingTime: '11:00 - 13:00',
+        rating: product.rating || 0,
+        reviewCount: product.reviewCount || 0,
+        isPopular: !!product.isFeatured,
+        isNew: false,
+        studentDiscount: product.discount || 0,
+        estimatedWaitTime: '5-10 phút',
+        calories: product.calories || 0,
+        spicyLevel: 0,
+        availableQuantity: product.stock || 0,
+        maxQuantity: 100,
+      };
+    });
   } catch (error) {
-    console.warn('Failed to fetch menu items from API, using mock data:', error);
-    await delay(500);
-    return mockMenuItems;
+    console.error('Error fetching menu items:', error);
+    return [];
   }
 };
 
@@ -392,4 +451,4 @@ export const getTopSellingItems = async (limit: number = 10): Promise<Array<{ id
     .map(([id, stats]) => ({ id, ...stats }))
     .sort((a, b) => b.quantity - a.quantity)
     .slice(0, limit);
-}; 
+};
