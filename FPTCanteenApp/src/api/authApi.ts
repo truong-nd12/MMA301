@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // Hoặc dùng biến môi trường nếu build production
 // IMPORTANT: Nếu test trên thiết bị thật, hãy thay 'localhost' bằng IP LAN của máy tính.
 // Ví dụ: http://192.168.1.100:8080/api
-const API_BASE_URL = "http://192.168.2.6:8080/api";
+import { API_BASE_URL } from "./config";
 
 
 // --- Type Definitions ---

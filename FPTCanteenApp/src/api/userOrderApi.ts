@@ -1,11 +1,6 @@
 import { tokenStorage } from "./authApi";
+import { API_BASE_URL } from "./config";
 
-<<<<<<< HEAD
-const API_BASE_URL = "http://192.168.2.6:8080/api";
-=======
-// const API_BASE_URL = "http://192.168.2.41:8080/api";
-const API_BASE_URL = "http://192.168.1.8:8080/api";
->>>>>>> d34fdde6 (add favorites , notifications)
 
 export interface UserOrderItem {
   _id: string;

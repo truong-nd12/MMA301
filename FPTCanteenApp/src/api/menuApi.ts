@@ -150,14 +150,12 @@ function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve: () => void) => setTimeout(resolve, ms));
 }
 
-<<<<<<< HEAD
-const API_BASE_URL = 'http://192.168.2.6:8080/api';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-=======
-// const API_BASE_URL = "http://192.168.2.41:8080/api";
-const API_BASE_URL = "http://192.168.1.8:8080/api";
->>>>>>> d34fdde6 (add favorites , notifications)
+import { API_BASE_URL } from "./config";
+
+
+
+
 
 // Helper function to handle API calls
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {

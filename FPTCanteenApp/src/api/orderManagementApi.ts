@@ -1,7 +1,6 @@
 import { tokenStorage } from "./authApi";
+import { API_BASE_URL } from "./config";
 
-
-const API_BASE_URL = "http://192.168.2.6:8080/api";
 
 
 export interface OrderItem {

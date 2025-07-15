@@ -2,7 +2,8 @@ import { User, tokenStorage } from "./authApi";
 import { Product } from "./productApi";
 
 
-const API_BASE_URL = "http://192.168.2.6:8080/api"; // ✅ Using your computer's IP
+import { API_BASE_URL } from "./config";
+
 
 
 export interface UpdateProfileData {

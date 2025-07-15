@@ -35,7 +35,8 @@ export interface OrderStats {
 }
 
 
-const API_BASE_URL = 'http://192.168.2.6:8080/api';
+import { API_BASE_URL } from "./config";
+
 
 // Helper function to handle API calls
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {

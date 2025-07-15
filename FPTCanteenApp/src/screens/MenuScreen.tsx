@@ -50,22 +50,20 @@ const types = [
 const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 
 const dayNames: Record<string, string> = {
-  T2: "Thứ 2",
-  T3: "Thứ 3",
-  T4: "Thứ 4",
-  T5: "Thứ 5",
-  T6: "Thứ 6",
-  T7: "Thứ 7",
-  CN: "Chủ nhật",
+  T2: "",
+  T3: "",
+  T4: "",
+  T5: "",
+  T6: "",
+  T7: "",
+  CN: "",
 };
 
 const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
 const getNextDayIdx = () => (todayIdx + 1) % 7;
 
 const tabOptions = [
-  { key: "today", label: "Hôm nay", icon: "today" },
-  { key: "tomorrow", label: "Ngày mai", icon: "calendar" },
-  { key: "week", label: "Toàn tuần", icon: "calendar-outline" },
+  { key: "week", label: "Thực Đơn", icon: "calendar-outline" },
 ];
 
 const getMenuForDay = (day: keyof typeof dayNames, menuItems: MenuItem[]): MenuItem[] =>
@@ -348,69 +346,7 @@ const MenuScreen = ({ navigation }: any) => {
 
   let content = null;
 
-  if (tab === "today") {
-    const todayMenu = filterMenu(
-      getMenuForDay(days[todayIdx] as keyof typeof dayNames, menuItems)
-    );
-    if (menuItems.length === 0) {
-      content = (
-        <View style={styles.emptyContainer}>
-          <Ionicons name="restaurant-outline" size={64} color="#DDD" />
-          <Text style={styles.emptyText}>Không có dữ liệu món ăn. Kiểm tra API hoặc dữ liệu trả về.</Text>
-        </View>
-      );
-    } else {
-      content = (
-        <FlatList
-          data={todayMenu}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-          renderItem={({ item }) => (
-            <MenuCard
-              item={item}
-              onOrder={handleOrder}
-              onToggleFavorite={toggleFavorite}
-              isFavorite={favorites.includes(item.id)}
-            />
-          )
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="restaurant-outline" size={64} color="#DDD" />
-            <Text style={styles.emptyText}>Không có món nào hôm nay</Text>
-          </View>
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    );
-    }
-  } else if (tab === "tomorrow") {
-    const tomorrowMenu = filterMenu(
-      getMenuForDay(days[getNextDayIdx()] as keyof typeof dayNames, menuItems)
-    );
-    content = (
-      <FlatList
-        data={tomorrowMenu}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <MenuCard
-            item={item}
-            onOrder={handleOrder}
-            onToggleFavorite={toggleFavorite}
-            isFavorite={favorites.includes(item.id)}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="restaurant-outline" size={64} color="#DDD" />
-            <Text style={styles.emptyText}>Không có món nào ngày mai</Text>
-          </View>
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    );
-  } else {
+  {
     content = (
       <SectionList
         sections={weekSections}
@@ -477,7 +413,7 @@ const MenuScreen = ({ navigation }: any) => {
         <View style={styles.headerContent}>
           <View>
             <Text style={styles.headerTitle}>Căng tin ĐH</Text>
-            <Text style={styles.headerSubtitle}>Thực đơn hôm nay</Text>
+          
           </View>
           <View style={styles.headerActions}>
             <TouchableOpacity
@@ -525,32 +461,7 @@ const MenuScreen = ({ navigation }: any) => {
         </View>
       </LinearGradient>
 
-      {/* Popular items section */}
-      {!searchQuery && !showFavoritesOnly && tab === "today" && (
-        <View style={styles.popularSection}>
-          <Text style={styles.popularTitle}>🔥 Món phổ biến</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {popularItems.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={styles.popularCard}
-                onPress={() => handleOrder(item)}
-              >
-                <Image
-                  source={{ uri: item.image }}
-                  style={styles.popularImage}
-                />
-                <Text style={styles.popularName} numberOfLines={1}>
-                  {item.name}
-                </Text>
-                <Text style={styles.popularPrice}>
-                  {item.price.toLocaleString()}đ
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      )}
+      {/* Popular items section removed */}
 
       {/* Filter Modal */}
       <Modal
@@ -790,27 +701,7 @@ const MenuScreen = ({ navigation }: any) => {
         </View>
       </Modal>
 
-      {/* Tab bar */}
-      <View style={styles.tabBar}>
-        {tabOptions.map((t) => (
-          <TouchableOpacity
-            key={t.key}
-            style={[styles.tabBtn, tab === t.key && styles.tabBtnActive]}
-            onPress={() => setTab(t.key)}
-          >
-            <Ionicons
-              name={t.icon as any}
-              size={20}
-              color={tab === t.key ? "#fff" : "#666"}
-            />
-            <Text
-              style={[styles.tabText, tab === t.key && styles.tabTextActive]}
-            >
-              {t.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {/* ...existing code... */}
 
       {/* Content */}
       {content}
@@ -917,42 +808,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#667eea",
   },
-  tabBar: {
-    flexDirection: "row",
-    backgroundColor: "#fff",
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  tabBtn: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 25,
-    backgroundColor: "#f8f9fa",
-    marginHorizontal: 4,
-  },
-  tabBtnActive: {
-    backgroundColor: "#667eea",
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#666",
-    marginLeft: 6,
-  },
-  tabTextActive: {
-    color: "#fff",
-  },
+  // ...existing code...
   listContainer: {
-    padding: 20,
-    paddingBottom: 100,
+    padding: 0,
+    backgroundColor: 'transparent',
   },
   card: {
     backgroundColor: "#fff",

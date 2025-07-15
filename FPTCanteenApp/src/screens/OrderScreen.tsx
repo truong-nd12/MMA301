@@ -44,23 +44,8 @@ const OrderScreen = ({ route, navigation }: any) => {
     );
   }
 
-  const addOns = [
-    { id: "rice", name: "Thêm cơm", price: 5000 },
-    { id: "egg", name: "Thêm trứng", price: 8000 },
-    { id: "vegetables", name: "Thêm rau", price: 3000 },
-    { id: "soup", name: "Canh", price: 10000 },
-  ];
-
   const increase = () => setQuantity((q: number) => q + 1);
   const decrease = () => setQuantity((q: number) => (q > 1 ? q - 1 : 1));
-
-  const toggleAddOn = (addOnId: string) => {
-    setSelectedAddOns((prev: string[]) =>
-      prev.includes(addOnId)
-        ? prev.filter((id: string) => id !== addOnId)
-        : [...prev, addOnId]
-    );
-  };
 
   let estimatedTime = "10-15 phút";
   if (deliveryMethod === "delivery") estimatedTime = "20-30 phút";
@@ -81,17 +66,9 @@ const OrderScreen = ({ route, navigation }: any) => {
 
   const calculateTotal = () => {
     const basePrice = food.price * quantity;
-    const addOnPrice = selectedAddOns.reduce(
-      (total: number, addOnId: string) => {
-        const addOn = addOns.find((a) => a.id === addOnId);
-        return total + (addOn ? addOn.price * quantity : 0);
-      },
-      0
-    );
-    const subtotal = basePrice + addOnPrice;
-    const discount = useStudentDiscount ? subtotal * 0.1 : 0;
+    const discount = useStudentDiscount ? basePrice * 0.1 : 0;
     const shipFee = getShipFee();
-    return subtotal - discount + shipFee;
+    return basePrice - discount + shipFee;
   };
 
   const handleOrder = async () => {
@@ -144,16 +121,7 @@ const OrderScreen = ({ route, navigation }: any) => {
               ];
 
               // Add add-ons to order items
-              selectedAddOns.forEach(addOnId => {
-                const addOn = addOns.find(a => a.id === addOnId);
-                if (addOn) {
-                  orderItems.push({
-                    product: `addon-${addOn.id}`, // Use 'product' field for add-ons too
-                    quantity: quantity,
-                    price: addOn.price,
-                  });
-                }
-              });
+              
 
               const orderData = {
                 items: orderItems,
@@ -272,38 +240,7 @@ const OrderScreen = ({ route, navigation }: any) => {
             </View>
           </View>
 
-          {/* Add-ons Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Thêm món</Text>
-            {addOns.map((addOn) => (
-              <TouchableOpacity
-                key={addOn.id}
-                style={[
-                  styles.addOnItem,
-                  selectedAddOns.includes(addOn.id) && styles.addOnItemSelected,
-                ]}
-                onPress={() => toggleAddOn(addOn.id)}
-              >
-                <View style={styles.addOnInfo}>
-                  <Text style={styles.addOnName}>{addOn.name}</Text>
-                  <Text style={styles.addOnPrice}>
-                    +{addOn.price.toLocaleString()}đ
-                  </Text>
-                </View>
-                <View
-                  style={[
-                    styles.checkbox,
-                    selectedAddOns.includes(addOn.id) &&
-                      styles.checkboxSelected,
-                  ]}
-                >
-                  {selectedAddOns.includes(addOn.id) && (
-                    <Ionicons name="checkmark" size={16} color="#fff" />
-                  )}
-                </View>
-              </TouchableOpacity>
-            ))}
-          </View>
+          {/* ...existing code... */}
 
           {/* Delivery/Pickup Section */}
           <View style={styles.section}>
@@ -329,28 +266,6 @@ const OrderScreen = ({ route, navigation }: any) => {
                   ]}
                 >
                   Tự đến lấy
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.deliveryOption,
-                  deliveryMethod === "delivery" && styles.deliveryOptionActive,
-                ]}
-                onPress={() => setDeliveryMethod("delivery")}
-              >
-                <Ionicons
-                  name="bicycle-outline"
-                  size={20}
-                  color={deliveryMethod === "delivery" ? "#fff" : "#667eea"}
-                />
-                <Text
-                  style={[
-                    styles.deliveryOptionText,
-                    deliveryMethod === "delivery" &&
-                      styles.deliveryOptionTextActive,
-                  ]}
-                >
-                  Giao tận nơi
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -491,24 +406,7 @@ const OrderScreen = ({ route, navigation }: any) => {
                     </Text>
                   </Text>
                 </View>
-                <View
-                  style={{
-                    marginTop: 10,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <Ionicons name="navigate-outline" size={18} color="#667eea" />
-                  <Text
-                    style={{
-                      marginLeft: 8,
-                      color: "#7f8c8d",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    Đang tìm shipper cho bạn...
-                  </Text>
-                </View>
+          
               </View>
             )}
           </View>
@@ -537,23 +435,7 @@ const OrderScreen = ({ route, navigation }: any) => {
             />
           </View>
 
-          {/* Student Discount */}
-          <View style={styles.section}>
-            <View style={styles.discountContainer}>
-              <View style={styles.discountInfo}>
-                <Ionicons name="school-outline" size={20} color="#667eea" />
-                <Text style={styles.discountText}>
-                  Giảm giá sinh viên (10%)
-                </Text>
-              </View>
-              <Switch
-                value={useStudentDiscount}
-                onValueChange={setUseStudentDiscount}
-                trackColor={{ false: "#e0e0e0", true: "#667eea" }}
-                thumbColor={useStudentDiscount ? "#fff" : "#f4f3f4"}
-              />
-            </View>
-          </View>
+  
 
           {/* Payment Method */}
           <View style={styles.section}>
@@ -561,7 +443,6 @@ const OrderScreen = ({ route, navigation }: any) => {
             <View style={styles.paymentMethods}>
               {[
                 { id: "cash", name: "Tiền mặt", icon: "cash-outline" },
-                { id: "card", name: "Thẻ sinh viên", icon: "card-outline" },
                 { id: "momo", name: "MoMo", icon: "phone-portrait-outline" },
               ].map((method) => (
                 <TouchableOpacity
@@ -629,19 +510,7 @@ const OrderScreen = ({ route, navigation }: any) => {
                 {((food.price || 0) * quantity).toLocaleString()}đ
               </Text>
             </View>
-            {selectedAddOns.map((addOnId: string) => {
-              const addOn = addOns.find((a) => a.id === addOnId);
-              return addOn ? (
-                <View key={addOnId} style={styles.summaryRow}>
-                  <Text style={styles.summaryLabel}>
-                    {addOn.name} ({quantity}x)
-                  </Text>
-                  <Text style={styles.summaryValue}>
-                    {(addOn.price * quantity).toLocaleString()}đ
-                  </Text>
-                </View>
-              ) : null;
-            })}
+            {/* ...existing code... */}
             {useStudentDiscount && (
               <View style={styles.summaryRow}>
                 <Text style={[styles.summaryLabel, { color: "#4CAF50" }]}>
