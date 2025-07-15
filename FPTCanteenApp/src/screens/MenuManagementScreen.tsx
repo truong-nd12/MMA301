@@ -300,7 +300,7 @@ const MenuManagementScreen = () => {
 
   const testBackendConnection = async () => {
     try {
-      const response = await fetch('http://192.168.1.11:8080/api/products', {
+      const response = await fetch('http://192.168.2.6:8080/api/products', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });

@@ -32,7 +32,7 @@ export interface OrderStats {
   }>;
 }
 
-const API_BASE_URL = 'http://192.168.1.11:8080/api';
+const API_BASE_URL = 'http://192.168.2.6:8080/api';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -110,7 +110,7 @@ export const getOrders = async (userId: string): Promise<Order[]> => {
       foodName: order.items?.[0]?.product?.name || 'Unknown',
       total: order.finalAmount,
       status: order.status,
-      canEdit: order.status === 'preparing',
+      canEdit: order.status === 'processing',
       createdAt: order.createdAt,
     }));
   } catch (error) {
@@ -131,7 +131,7 @@ export const getOrderDetail = async (
       foodName: order.items?.[0]?.product?.name || 'Unknown',
       total: order.finalAmount,
       status: order.status,
-      canEdit: order.status === 'preparing',
+      canEdit: order.status === 'processing',
       createdAt: order.createdAt,
     };
   } catch (error) {
@@ -281,7 +281,7 @@ export const getOrdersByDateRange = async (startDate: string, endDate: string): 
       foodName: order.items?.[0]?.product?.name || 'Unknown',
       total: order.finalAmount,
       status: order.status,
-      canEdit: order.status === 'preparing',
+      canEdit: order.status === 'processing',
       createdAt: order.createdAt,
     }));
   } catch (error) {

@@ -146,7 +146,7 @@ function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve: () => void) => setTimeout(resolve, ms));
 }
 
-const API_BASE_URL = 'http://192.168.1.11:8080/api';
+const API_BASE_URL = 'http://192.168.2.6:8080/api';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -189,7 +189,7 @@ export const getMenuItems = async (): Promise<MenuItem[]> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
-    const response = await fetch('http://192.168.1.11:8080/api/products', {
+    const response = await fetch('http://192.168.2.6:8080/api/products', {
       signal: controller.signal
     });
     

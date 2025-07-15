@@ -1,6 +1,6 @@
 import { tokenStorage } from "./authApi";
 
-const API_BASE_URL = "http://192.168.1.11:8080/api";
+const API_BASE_URL = "http://192.168.2.6:8080/api";
 
 export interface UserOrderItem {
   _id: string;
@@ -19,7 +19,7 @@ export interface UserOrder {
   _id: string;
   orderNumber: string;
   items: UserOrderItem[];
-  status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   totalAmount: number;
   finalAmount: number;
   discount: number;
@@ -67,7 +67,7 @@ const mockUserOrders: UserOrder[] = [
         total: 60000
       }
     ],
-    status: 'preparing',
+    status: 'processing',
     totalAmount: 60000,
     finalAmount: 51000,
     discount: 9000,
@@ -99,7 +99,7 @@ const mockUserOrders: UserOrder[] = [
         total: 30000
       }
     ],
-    status: 'ready',
+    status: 'shipped',
     totalAmount: 30000,
     finalAmount: 27000,
     discount: 3000,

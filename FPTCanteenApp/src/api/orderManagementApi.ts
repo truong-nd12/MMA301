@@ -1,6 +1,6 @@
 import { tokenStorage } from "./authApi";
 
-const API_BASE_URL = "http://192.168.1.11:8080/api";
+const API_BASE_URL = "http://192.168.2.6:8080/api";
 
 export interface OrderItem {
   _id: string;
@@ -23,7 +23,7 @@ export interface Order {
     email: string;
   };
   items: OrderItem[];
-  status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   totalAmount: number;
   finalAmount: number;
   discount: number;
@@ -78,7 +78,7 @@ const mockOrders: Order[] = [
         total: 60000
       }
     ],
-    status: 'preparing',
+    status: 'processing',
     totalAmount: 60000,
     finalAmount: 51000,
     discount: 9000,
@@ -111,7 +111,7 @@ const mockOrders: Order[] = [
         total: 30000
       }
     ],
-    status: 'ready',
+    status: 'shipped',
     totalAmount: 30000,
     finalAmount: 27000,
     discount: 3000,
@@ -184,6 +184,15 @@ const getAuthHeaders = async () => {
       "Content-Type": "application/json",
     } as Record<string, string>;
   }
+};
+
+const statusMap: Record<string, string> = {
+  pending: 'pending',
+  confirmed: 'confirmed',
+  preparing: 'processing',
+  ready: 'shipped',
+  delivered: 'delivered',
+  cancelled: 'cancelled'
 };
 
 export const orderManagementApi = {
@@ -263,10 +272,11 @@ export const orderManagementApi = {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
       
+      const backendStatus = statusMap[status] || status;
       const response = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
         method: "PUT",
         headers,
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status: backendStatus }),
         signal: controller.signal,
       });
 
@@ -376,7 +386,7 @@ export const orderManagementApi = {
             pending: 3,
             confirmed: 2,
             preparing: 4,
-            ready: 2,
+            shipped: 2,
             delivered: 3,
             cancelled: 1
           },

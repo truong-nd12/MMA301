@@ -1,6 +1,6 @@
 import { tokenStorage } from "./authApi";
 
-const API_BASE_URL = "http://192.168.1.11:8080/api";
+const API_BASE_URL = "http://192.168.2.6:8080/api";
 
 // Type definitions
 export interface Product {

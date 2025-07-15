@@ -1,9 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // --- API Configuration ---
-// IMPORTANT: If testing on a physical device, replace 'localhost' with your computer's IP address.
-// Example: "http://192.168.1.100:8080/api"
-const API_BASE_URL = "http://192.168.1.11:8080/api";
+// Để không phải đổi IP LAN, hãy dùng public URL (ngrok, cloud, ...)
+// Đổi URL này thành URL ngrok/public của bạn khi cần, ví dụ:
+// const API_BASE_URL = "https://your-ngrok-url.ngrok-free.app/api";
+// Hoặc dùng biến môi trường nếu build production
+// IMPORTANT: Nếu test trên thiết bị thật, hãy thay 'localhost' bằng IP LAN của máy tính.
+// Ví dụ: http://192.168.1.100:8080/api
+const API_BASE_URL = "http://192.168.2.6:8080/api";
 
 // --- Type Definitions ---
 export interface LoginData {
