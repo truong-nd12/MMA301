@@ -1,6 +1,8 @@
 import { tokenStorage } from "./authApi";
 
+
 const API_BASE_URL = "http://192.168.2.6:8080/api";
+
 
 export interface OrderItem {
   _id: string;
@@ -43,16 +45,16 @@ export interface OrderStats {
   ordersByStatus: { [key: string]: number };
   ordersByDay: { [key: string]: number };
   ordersByHour: { [key: string]: number };
-  topSellingItems: Array<{
+  topSellingItems: {
     productId: string;
     productName: string;
     quantity: number;
     revenue: number;
-  }>;
-  peakHours: Array<{
+  }[];
+  peakHours: {
     hour: string;
     orderCount: number;
-  }>;
+  }[];
 }
 
 // Mock data for fallback

@@ -1,127 +1,72 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Image,
-  Alert,
-  TextInput,
-  Share,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Product, productApi } from "../api/productApi";
+import { userApi } from "../api/userApi";
 import FavoriteStats from "../components/FavoriteStats";
 
-interface FavoriteFood {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  category: string;
-  rating: number;
-  orderCount: number;
-  lastOrdered: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
 
 export default function FavoriteFoodsScreen({ navigation }: any) {
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
   const [sortBy, setSortBy] = useState("name"); // name, price, rating, orderCount
   const [showSortMenu, setShowSortMenu] = useState(false);
+  const [favoriteFoods, setFavoriteFoods] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>([]);
 
-  // Dữ liệu mẫu món yêu thích
-  const [favoriteFoods] = useState<FavoriteFood[]>([
-    {
-      id: "1",
-      name: "Cơm gà xối mỡ",
-      price: 45000,
-      image: "🍗",
-      category: "Món chính",
-      rating: 4.8,
-      orderCount: 15,
-      lastOrdered: "2 ngày trước",
-      calories: 650,
-      protein: 25,
-      carbs: 85,
-      fat: 22,
-    },
-    {
-      id: "2",
-      name: "Phở bò",
-      price: 35000,
-      image: "🍜",
-      category: "Món chính",
-      rating: 4.6,
-      orderCount: 12,
-      lastOrdered: "1 tuần trước",
-      calories: 450,
-      protein: 18,
-      carbs: 65,
-      fat: 15,
-    },
-    {
-      id: "3",
-      name: "Bún chả",
-      price: 40000,
-      image: "🥢",
-      category: "Món chính",
-      rating: 4.7,
-      orderCount: 8,
-      lastOrdered: "3 ngày trước",
-      calories: 550,
-      protein: 20,
-      carbs: 75,
-      fat: 18,
-    },
-    {
-      id: "4",
-      name: "Sinh tố trái cây",
-      price: 25000,
-      image: "🥤",
-      category: "Đồ uống",
-      rating: 4.5,
-      orderCount: 20,
-      lastOrdered: "Hôm nay",
-      calories: 120,
-      protein: 2,
-      carbs: 25,
-      fat: 0,
-    },
-    {
-      id: "5",
-      name: "Salad gà",
-      price: 30000,
-      image: "🥗",
-      category: "Món chính",
-      rating: 4.4,
-      orderCount: 6,
-      lastOrdered: "1 tuần trước",
-      calories: 300,
-      protein: 25,
-      carbs: 15,
-      fat: 12,
-    },
-  ]);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await productApi.getCategories();
+        setCategories(["Tất cả", ...data.categories.map((cat) => cat.name)]);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu món yêu thích:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const categories = ["Tất cả", "Món chính", "Đồ uống", "Tráng miệng"];
+    fetchCategories();
+  }, [])
 
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const data = await userApi.getFavorites();
+        setFavoriteFoods(data.favorites);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu món yêu thích:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavorites();
+  }, []);
   // Tính toán thống kê
-  const totalSpent = favoriteFoods.reduce(
-    (sum, food) => sum + food.price * food.orderCount,
-    0
-  );
+  const totalSpent = favoriteFoods.reduce((sum, food) => sum + food.price * food.orderCount, 0);
   const averageRating =
-    favoriteFoods.reduce((sum, food) => sum + food.rating, 0) /
-    favoriteFoods.length;
-  const mostOrdered = favoriteFoods.reduce((max, food) =>
-    food.orderCount > max.orderCount ? food : max
-  ).name;
+    favoriteFoods.length > 0
+      ? favoriteFoods.reduce((sum, food) => sum + food.rating, 0) / favoriteFoods.length
+      : 0;
+
+  const mostOrdered =
+    favoriteFoods.length > 0
+      ? favoriteFoods.reduce((max, food) => food.orderCount > max.orderCount ? food : max).name
+      : "Không có món";
+
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -136,7 +81,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
         .toLowerCase()
         .includes(searchText.toLowerCase());
       const matchesCategory =
-        selectedCategory === "Tất cả" || food.category === selectedCategory;
+        selectedCategory === "Tất cả" || food.category.name === selectedCategory;
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
@@ -154,7 +99,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
       }
     });
 
-  const handleOrderNow = (food: FavoriteFood) => {
+  const handleOrderNow = (food: Product) => {
     Alert.alert(
       "Đặt hàng nhanh",
       `Bạn có muốn đặt "${food.name}" ngay bây giờ?`,
@@ -165,7 +110,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
           onPress: () => {
             // Convert FavoriteFood to food object for OrderScreen
             const foodForOrder = {
-              id: food.id,
+              id: food._id,
               name: food.name,
               price: food.price,
               image:
@@ -180,7 +125,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
     );
   };
 
-  const handleRemoveFavorite = (food: FavoriteFood) => {
+  const handleRemoveFavorite = (food: Product) => {
     Alert.alert(
       "Xóa khỏi yêu thích",
       `Bạn có muốn xóa "${food.name}" khỏi danh sách yêu thích?`,
@@ -189,8 +134,19 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
         {
           text: "Xóa",
           style: "destructive",
-          onPress: () => {
-            Alert.alert("Thành công", "Đã xóa khỏi danh sách yêu thích!");
+          onPress: async () => {
+            try {
+              await userApi.removeFavorite(food._id); // Gọi API
+              Alert.alert("Thành công", "Đã xóa khỏi danh sách yêu thích!");
+
+              // ✅ Cập nhật danh sách nếu dùng state
+              setFavoriteFoods((prev) =>
+                prev.filter((item) => item._id !== food._id)
+              );
+            } catch (error) {
+              console.error("❌ Lỗi xóa:", error);
+              Alert.alert("Lỗi", "Không thể xóa món yêu thích.");
+            }
           },
         },
       ]
@@ -217,15 +173,20 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
     }
   };
 
-  const renderFoodCard = (food: FavoriteFood) => (
-    <View key={food.id} style={styles.foodCard}>
+  const renderFoodCard = (food: Product) => (
+    <View key={food._id} style={styles.foodCard}>
       <View style={styles.foodHeader}>
         <View style={styles.foodImageContainer}>
-          <Text style={styles.foodImage}>{food.image}</Text>
+          <Image
+            source={{ uri: food.images }}
+            style={styles.foodImage}
+            resizeMode="cover"
+          />
+
         </View>
         <View style={styles.foodInfo}>
           <Text style={styles.foodName}>{food.name}</Text>
-          <Text style={styles.foodCategory}>{food.category}</Text>
+          <Text style={styles.foodCategory}>{food.category.name}</Text>
           <View style={styles.ratingContainer}>
             <Ionicons name="star" size={16} color="#FFD700" />
             <Text style={styles.rating}>{food.rating}</Text>
@@ -245,26 +206,11 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
           <Text style={styles.nutritionLabel}>Calo</Text>
           <Text style={styles.nutritionValue}>{food.calories}</Text>
         </View>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionLabel}>Protein</Text>
-          <Text style={styles.nutritionValue}>{food.protein}g</Text>
-        </View>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionLabel}>Carbs</Text>
-          <Text style={styles.nutritionValue}>{food.carbs}g</Text>
-        </View>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionLabel}>Fat</Text>
-          <Text style={styles.nutritionValue}>{food.fat}g</Text>
-        </View>
       </View>
 
       <View style={styles.foodFooter}>
         <View style={styles.priceContainer}>
           <Text style={styles.price}>{formatCurrency(food.price)}</Text>
-          <Text style={styles.lastOrdered}>
-            Đặt lần cuối: {food.lastOrdered}
-          </Text>
         </View>
         <TouchableOpacity
           style={styles.orderButton}
@@ -607,7 +553,9 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   foodImage: {
-    fontSize: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 10,
   },
   foodInfo: {
     flex: 1,

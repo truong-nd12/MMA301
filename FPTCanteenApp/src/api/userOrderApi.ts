@@ -1,6 +1,11 @@
 import { tokenStorage } from "./authApi";
 
+<<<<<<< HEAD
 const API_BASE_URL = "http://192.168.2.6:8080/api";
+=======
+// const API_BASE_URL = "http://192.168.2.41:8080/api";
+const API_BASE_URL = "http://192.168.1.8:8080/api";
+>>>>>>> d34fdde6 (add favorites , notifications)
 
 export interface UserOrderItem {
   _id: string;
@@ -36,11 +41,11 @@ export interface UserOrder {
 }
 
 export interface CreateOrderData {
-  items: Array<{
+  items: {
     product: string; // Backend expects 'product' field
     quantity: number;
     price: number;
-  }>;
+  }[];
   paymentMethod: string;
   deliveryMethod: string;
   deliveryAddress?: string;

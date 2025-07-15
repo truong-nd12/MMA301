@@ -223,7 +223,23 @@ const getProductsByCategory = async (req, res) => {
     }
 };
 
+const getCategories = async (req, res) => {
+  try {
+    const categories = await Category.find().sort('name');
+    res.json({
+      success: true,
+      categories,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
+    getCategories,
     getProducts,
     getProduct,
     createProduct,

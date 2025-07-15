@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {
+    getCategories,
     getProducts,
     getProduct,
     createProduct,
@@ -20,6 +21,11 @@ router.get('/', getProducts);
 // @desc    Get featured products
 // @access  Public
 router.get('/featured', getFeaturedProducts);
+
+// @route   GET /api/categories/
+// @desc    Get categories
+// @access  Public
+router.get('/categories', getCategories);
 
 // @route   GET /api/products/category/:categoryId
 // @desc    Get products by category

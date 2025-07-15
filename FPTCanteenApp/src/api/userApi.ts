@@ -1,7 +1,9 @@
-import { User } from "./authApi";
-import { tokenStorage } from "./authApi";
+import { User, tokenStorage } from "./authApi";
+import { Product } from "./productApi";
+
 
 const API_BASE_URL = "http://192.168.2.6:8080/api"; // ✅ Using your computer's IP
+
 
 export interface UpdateProfileData {
   fullName?: string;
@@ -14,6 +16,31 @@ export interface UpdateProfileData {
 interface UpdateProfileResponse {
   success: boolean;
   user: User;
+}
+
+export interface GetFavoritesResponse {
+  success: boolean;
+  favorites: Product[];
+}
+
+export interface Notification {
+  _id: string;
+  user?: string | null;
+  title: string;
+  message: string;
+  type: "system" | "order" | "promotion" | "custom";
+  relatedPromotion?: {
+    _id: string;
+    title: string;
+  };
+  read: boolean;
+  createdAt: string;
+}
+
+export interface GetNotificationsResponse {
+  success: boolean;
+  count: number;
+  notifications: Notification[];
 }
 
 // Helper function to handle API response
@@ -54,5 +81,85 @@ export const userApi = {
       console.error("❌ Update profile error:", error);
       throw error;
     }
+  },
+  getFavorites: async (): Promise<GetFavoritesResponse> => {
+    const token = await tokenStorage.getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+    const response = await fetch(`${API_BASE_URL}/users/favorites`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch favorites");
+
+    return await response.json();
+  },
+  removeFavorite: async (productId: string): Promise<{ success: boolean }> => {
+    const token = await tokenStorage.getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(
+      `${API_BASE_URL}/users/favorites/${productId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Failed to remove favorite");
+    }
+
+    return await response.json();
+  },
+  getNotifications: async (): Promise<GetNotificationsResponse> => {
+    const token = await tokenStorage.getToken();
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await fetch(`${API_BASE_URL}/users/notifications`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to fetch notifications");
+    }
+
+    return await response.json();
+  },
+
+  deleteNotification: async (
+    notificationId: string
+  ): Promise<{ success: boolean; message: string }> => {
+    const token = await tokenStorage.getToken();
+    if (!token) throw new Error("No authentication token found");
+
+    const response = await fetch(
+      `${API_BASE_URL}/users/notifications/${notificationId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete notification");
+    }
+
+    return await response.json();
   },
 };

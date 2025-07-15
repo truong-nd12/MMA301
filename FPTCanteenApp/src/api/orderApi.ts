@@ -1,4 +1,6 @@
 // API cho quản lý đơn hàng và thống kê
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export type OrderStatus =
   | "processing"
   | "shipped"
@@ -20,21 +22,20 @@ export interface OrderStats {
   averageOrderValue: number;
   ordersByDay: { [key: string]: number };
   ordersByHour: { [key: string]: number };
-  topSellingItems: Array<{
+  topSellingItems: {
     id: string;
     name: string;
     quantity: number;
     revenue: number;
-  }>;
-  peakHours: Array<{
+  }[];
+  peakHours: {
     hour: string;
     orderCount: number;
-  }>;
+  }[];
 }
 
-const API_BASE_URL = 'http://192.168.2.6:8080/api';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
+const API_BASE_URL = 'http://192.168.2.6:8080/api';
 
 // Helper function to handle API calls
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {
@@ -296,7 +297,7 @@ export const getOrdersByDateRange = async (startDate: string, endDate: string): 
   }
 };
 
-export const getTopSellingItems = async (limit: number = 10): Promise<Array<{ id: string; name: string; quantity: number; revenue: number }>> => {
+export const getTopSellingItems = async (limit: number = 10): Promise<{ id: string; name: string; quantity: number; revenue: number }[]> => {
   try {
     const response = await apiCall(`/orders/top-selling?limit=${limit}`);
     return response.items.map((item: any) => ({

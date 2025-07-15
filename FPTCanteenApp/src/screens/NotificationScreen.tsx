@@ -1,55 +1,75 @@
-import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { userApi } from "../api/userApi";
 
-const notifications = [
-  {
-    id: "1",
-    type: "order",
-    title: "Đơn hàng đã hoàn thành",
-    content: "Đơn hàng #1234 của bạn đã được giao thành công. Cảm ơn bạn!",
-    time: "2 phút trước",
-    icon: "checkmark-done-circle-outline",
-    color: "#4CAF50",
-  },
-  {
-    id: "2",
-    type: "promo",
-    title: "Ưu đãi mới!",
-    content: "Nhận ngay voucher giảm 20% cho đơn hàng tiếp theo.",
-    time: "1 giờ trước",
-    icon: "gift-outline",
-    color: "#FF9800",
-  },
-  {
-    id: "3",
-    type: "system",
-    title: "Bảo trì hệ thống",
-    content: "Căng tin sẽ bảo trì từ 22:00 đến 23:00 hôm nay.",
-    time: "Hôm nay, 09:00",
-    icon: "information-circle-outline",
-    color: "#2196F3",
-  },
-  {
-    id: "4",
-    type: "feedback",
-    title: "Phản hồi đánh giá",
-    content:
-      "Cảm ơn bạn đã đánh giá món ăn. Chúng tôi sẽ cải thiện chất lượng phục vụ!",
-    time: "Hôm qua",
-    icon: "chatbubble-ellipses-outline",
-    color: "#9C27B0",
-  },
-];
+// const notifications = [
+//   {
+//     id: "1",
+//     type: "order",
+//     title: "Đơn hàng đã hoàn thành",
+//     content: "Đơn hàng #1234 của bạn đã được giao thành công. Cảm ơn bạn!",
+//     time: "2 phút trước",
+//     icon: "checkmark-done-circle-outline",
+//     color: "#4CAF50",
+//   },
+//   {
+//     id: "2",
+//     type: "promo",
+//     title: "Ưu đãi mới!",
+//     content: "Nhận ngay voucher giảm 20% cho đơn hàng tiếp theo.",
+//     time: "1 giờ trước",
+//     icon: "gift-outline",
+//     color: "#FF9800",
+//   },
+//   {
+//     id: "3",
+//     type: "system",
+//     title: "Bảo trì hệ thống",
+//     content: "Căng tin sẽ bảo trì từ 22:00 đến 23:00 hôm nay.",
+//     time: "Hôm nay, 09:00",
+//     icon: "information-circle-outline",
+//     color: "#2196F3",
+//   },
+//   {
+//     id: "4",
+//     type: "feedback",
+//     title: "Phản hồi đánh giá",
+//     content:
+//       "Cảm ơn bạn đã đánh giá món ăn. Chúng tôi sẽ cải thiện chất lượng phục vụ!",
+//     time: "Hôm qua",
+//     icon: "chatbubble-ellipses-outline",
+//     color: "#9C27B0",
+//   },
+// ];
 
 export default function NotificationScreen({ navigation }: any) {
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchNoti = async () => {
+      try {
+        const res = await userApi.getNotifications();
+        setNotifications(res.notifications);
+      } catch (err) {
+        console.error("❌ Lỗi khi gọi API:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNoti();
+  }, []);
+
   return (
     <View style={styles.container}>
       <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.header}>
@@ -61,33 +81,79 @@ export default function NotificationScreen({ navigation }: any) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Thông báo</Text>
       </LinearGradient>
-      <FlatList
-        data={notifications}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <View
-              style={[styles.iconBox, { backgroundColor: item.color + "22" }]}
-            >
-              <Ionicons name={item.icon as any} size={28} color={item.color} />
+
+      {loading ? (
+        <ActivityIndicator style={{ marginTop: 50 }} size="large" color="#764ba2" />
+      ) : (
+        <FlatList
+          data={notifications}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={styles.list}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <View
+                style={[
+                  styles.iconBox,
+                  {
+                    backgroundColor:
+                      getColorByType(item.type).bg,
+                  },
+                ]}
+              >
+                <Ionicons
+                  name={getIconByType(item.type)}
+                  size={28}
+                  color={getColorByType(item.type).color}
+                />
+              </View>
+              <View style={styles.contentBox}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.content}>{item.message}</Text>
+                <Text style={styles.time}>
+                  {new Date(item.createdAt).toLocaleString()}
+                </Text>
+              </View>
             </View>
-            <View style={styles.contentBox}>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.content}>{item.content}</Text>
-              <Text style={styles.time}>{item.time}</Text>
-            </View>
-          </View>
-        )}
-        ListEmptyComponent={
-          <Text style={styles.empty}>Không có thông báo nào</Text>
-        }
-        showsVerticalScrollIndicator={false}
-      />
+          )}
+          ListEmptyComponent={
+            <Text style={styles.empty}>Không có thông báo nào</Text>
+          }
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
 }
 
+const getIconByType = (type: string): any => {
+  switch (type) {
+    case "order":
+      return "checkmark-done-circle-outline";
+    case "promotion":
+      return "gift-outline";
+    case "system":
+      return "information-circle-outline";
+    case "custom":
+      return "notifications-outline";
+    default:
+      return "alert-circle-outline";
+  }
+};
+
+const getColorByType = (type: string) => {
+  switch (type) {
+    case "order":
+      return { color: "#4CAF50", bg: "#4CAF5022" };
+    case "promotion":
+      return { color: "#FF9800", bg: "#FF980022" };
+    case "system":
+      return { color: "#2196F3", bg: "#2196F322" };
+    case "custom":
+      return { color: "#9C27B0", bg: "#9C27B022" };
+    default:
+      return { color: "#607D8B", bg: "#607D8B22" };
+  }
+};
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#f8f9fa" },
   header: {

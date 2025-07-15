@@ -3,17 +3,17 @@ import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useState } from "react";
 import {
-    Dimensions,
-    FlatList,
-    Image,
-    Modal,
-    ScrollView,
-    SectionList,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Dimensions,
+  FlatList,
+  Image,
+  Modal,
+  ScrollView,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { getMenuItems, MenuItem } from "../api/menuApi";
@@ -95,6 +95,8 @@ const MenuCard = ({
   const vendor = vendors.find((v) => v.id === item.vendorId);
 
   const renderSpicyLevel = () => {
+    // console.log(item);
+    
     if (item.spicyLevel === 0) return null;
     return (
       <View style={styles.spicyContainer}>

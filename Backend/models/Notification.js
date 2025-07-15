@@ -1,4 +1,5 @@
 // models/Notification.js
+const Promotion = require("../models/Promotion");
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({

@@ -1,6 +1,11 @@
 import { tokenStorage } from "./authApi";
 
+<<<<<<< HEAD
 const API_BASE_URL = "http://192.168.2.6:8080/api";
+=======
+// const API_BASE_URL = "http://192.168.2.41:8080/api";
+const API_BASE_URL = "http://192.168.1.8:8080/api";
+>>>>>>> d34fdde6 (add favorites , notifications)
 
 // Type definitions
 export interface Product {
@@ -23,17 +28,18 @@ export interface Product {
   stock: number;
   rating: number;
   reviewCount: number;
-  tags: Array<{ _id: string; name: string }>;
-  addOns: Array<{
+  orderCount: number;
+  tags: { _id: string; name: string }[];
+  addOns: {
     name: string;
     price: number;
     calories: number;
-  }>;
-  sizes: Array<{
+  }[];
+  sizes: {
     size: "S" | "M" | "L";
     price: number;
     calories: number;
-  }>;
+  }[];
   options: {
     sugar: string[];
     ice: string[];
@@ -57,16 +63,16 @@ export interface CreateProductData {
   sku?: string;
   stock?: number;
   tags?: string[];
-  addOns?: Array<{
+  addOns?: {
     name: string;
     price: number;
     calories: number;
-  }>;
-  sizes?: Array<{
+  }[];
+  sizes?: {
     size: "S" | "M" | "L";
     price: number;
     calories: number;
-  }>;
+  }[];
   options?: {
     sugar: string[];
     ice: string[];
@@ -74,6 +80,12 @@ export interface CreateProductData {
   isActive?: boolean;
   isFeatured?: boolean;
 }
+
+export interface Category {
+  _id: string;
+  name: string;
+}
+
 
 export interface UpdateProductData extends Partial<CreateProductData> {}
 
@@ -121,6 +133,7 @@ const mockProducts: Product[] = [
     stock: 50,
     rating: 4.5,
     reviewCount: 230,
+    orderCount: 100,
     tags: [],
     addOns: [],
     sizes: [],
@@ -145,6 +158,7 @@ const mockProducts: Product[] = [
     stock: 10,
     rating: 4.7,
     reviewCount: 120,
+    orderCount: 50,
     tags: [],
     addOns: [],
     sizes: [],
@@ -169,6 +183,7 @@ const mockProducts: Product[] = [
     stock: 25,
     rating: 4.8,
     reviewCount: 180,
+    orderCount: 80,
     tags: [],
     addOns: [],
     sizes: [],
@@ -193,6 +208,7 @@ const mockProducts: Product[] = [
     stock: 100,
     rating: 4.6,
     reviewCount: 95,
+    orderCount: 200,
     tags: [],
     addOns: [],
     sizes: [],
@@ -209,7 +225,6 @@ export const productApi = {
   // Get all products (Public - no auth required)
   getAllProducts: async (): Promise<{ success: boolean; products: Product[] }> => {
     try {
-      console.log("🔄️ Fetching all products from:", `${API_BASE_URL}/products`);
       
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -223,18 +238,14 @@ export const productApi = {
       });
 
       clearTimeout(timeoutId);
-      console.log("📥 Response status:", response.status);
       
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       
       const data = await response.json();
-      console.log("📦 Response data:", data);
       return data;
     } catch (error) {
-      console.error("❌ Get all products error:", error);
-      console.log("💡 Using mock data as fallback");
       return { success: true, products: mockProducts };
     }
   },
@@ -277,6 +288,7 @@ export const productApi = {
         stock: productData.stock || 0,
         rating: 0,
         reviewCount: 0,
+        orderCount: 0,
         tags: [],
         addOns: [],
         sizes: [],
@@ -329,6 +341,7 @@ export const productApi = {
         stock: productData.stock || 0,
         rating: 0,
         reviewCount: 0,
+        orderCount: 0,
         tags: [],
         addOns: [],
         sizes: [],
@@ -396,34 +409,31 @@ export const productApi = {
   },
 
   // Get categories
-  getCategories: async (): Promise<{ success: boolean; categories: any[] }> => {
-    try {
-      console.log("🔄️ Fetching categories...");
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-      
-      const response = await fetch(`${API_BASE_URL}/categories`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        signal: controller.signal,
-      });
+getCategories: async (): Promise<{ success: boolean; categories: Category[] }> => {
+  try {
+    console.log("🔄️ Fetching categories...");
 
-      clearTimeout(timeoutId);
-      return await handleResponse(response);
-    } catch (error) {
-      console.error("❌ Get categories error:", error);
-      return { 
-        success: true, 
-        categories: [
-          { _id: '1', name: 'Mặn' },
-          { _id: '2', name: 'Chay' },
-          { _id: '3', name: 'Ăn nhẹ' },
-          { _id: '4', name: 'Nước' }
-        ] 
-      };
-    }
-  },
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    const response = await fetch(`${API_BASE_URL}/products/categories`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+    return await handleResponse(response);
+  } catch (error) {
+    console.error("❌ Get categories error:", error);
+    return {
+      success: false,
+      categories: [
+      ],
+    };
+  }
+},
+
 
   // Get brands
   getBrands: async (): Promise<{ success: boolean; brands: any[] }> => {
