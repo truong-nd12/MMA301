@@ -1,10 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useCallback, useEffect, useState } from "react";
 import {
   Dimensions,
-  FlatList,
   Image,
   Modal,
   ScrollView,
@@ -13,10 +11,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Alert,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import { getMenuItems, MenuItem } from "../api/menuApi";
+import * as Haptics from "expo-haptics";
+import { getMenuItems, type MenuItem } from "../api/menuApi";
+import { userApi } from "../api/userApi";
 
 const { width } = Dimensions.get("window");
 
@@ -48,26 +49,22 @@ const types = [
 ];
 
 const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
-
 const dayNames: Record<string, string> = {
-  T2: "",
-  T3: "",
-  T4: "",
-  T5: "",
-  T6: "",
-  T7: "",
-  CN: "",
+  T2: "Thứ 2",
+  T3: "Thứ 3",
+  T4: "Thứ 4",
+  T5: "Thứ 5",
+  T6: "Thứ 6",
+  T7: "Thứ 7",
+  CN: "Chủ nhật",
 };
 
 const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
-const getNextDayIdx = () => (todayIdx + 1) % 7;
 
-const tabOptions = [
-  { key: "week", label: "Thực Đơn", icon: "calendar-outline" },
-];
-
-const getMenuForDay = (day: keyof typeof dayNames, menuItems: MenuItem[]): MenuItem[] =>
-  menuItems.filter((item) => item.days.includes(day));
+const getMenuForDay = (
+  day: keyof typeof dayNames,
+  menuItems: MenuItem[]
+): MenuItem[] => menuItems.filter((item) => item.days.includes(day));
 
 const MenuCard = ({
   item,
@@ -84,17 +81,15 @@ const MenuCard = ({
     string,
     { text: string; color: string; bgColor: string }
   > = {
-    available: { text: "Còn hàng", color: "#27AE60", bgColor: "#D5EDDA" },
-    almost_out: { text: "Sắp hết", color: "#F39C12", bgColor: "#FFF3CD" },
-    out: { text: "Hết món", color: "#E74C3C", bgColor: "#F8D7DA" },
+    available: { text: "Còn hàng", color: "#27AE60", bgColor: "#E8F5E8" },
+    almost_out: { text: "Sắp hết", color: "#F39C12", bgColor: "#FFF8E1" },
+    out: { text: "Hết món", color: "#E74C3C", bgColor: "#FFEBEE" },
   };
 
   const cat = categories.find((c) => c.id === item.category);
   const vendor = vendors.find((v) => v.id === item.vendorId);
 
   const renderSpicyLevel = () => {
-    // console.log(item);
-    
     if (item.spicyLevel === 0) return null;
     return (
       <View style={styles.spicyContainer}>
@@ -103,7 +98,7 @@ const MenuCard = ({
             key={i}
             name="flame"
             size={12}
-            color={i < item.spicyLevel ? "#E74C3C" : "#DDD"}
+            color={i < item.spicyLevel ? "#FF6347" : "#DDD"}
           />
         ))}
       </View>
@@ -138,7 +133,7 @@ const MenuCard = ({
           <Ionicons
             name={isFavorite ? "heart" : "heart-outline"}
             size={20}
-            color={isFavorite ? "#E74C3C" : "#666"}
+            color={isFavorite ? "#FF6347" : "#666"}
           />
         </TouchableOpacity>
 
@@ -173,8 +168,8 @@ const MenuCard = ({
           </Text>
         </View>
 
-        {/* Price and category */}
-        <View style={styles.rowBetween}>
+        {/* Price and rating row */}
+        <View style={styles.priceRatingRow}>
           <View style={styles.priceContainer}>
             <Text style={styles.price}>{item.price.toLocaleString()}đ</Text>
             {item.originalPrice > item.price && (
@@ -183,18 +178,14 @@ const MenuCard = ({
               </Text>
             )}
           </View>
-          <View
-            style={[styles.categoryTag, { backgroundColor: cat?.color + "20" }]}
-          >
-            <Ionicons name={cat?.icon as any} size={14} color={cat?.color} />
-            <Text style={[styles.categoryTagText, { color: cat?.color }]}>
-              {cat?.name}
-            </Text>
+          <View style={styles.ratingContainer}>
+            <Ionicons name="star" size={14} color="#FFD700" />
+            <Text style={styles.ratingText}>{item.rating}</Text>
           </View>
         </View>
 
-        {/* Status and time */}
-        <View style={styles.rowBetween}>
+        {/* Status and category */}
+        <View style={styles.statusCategoryRow}>
           <View
             style={[
               styles.statusBadge,
@@ -210,28 +201,13 @@ const MenuCard = ({
               {statusMap[item.status]?.text}
             </Text>
           </View>
-          <Text style={styles.servingTime}>
-            <Ionicons name="time-outline" size={14} color="#666" />{" "}
-            {item.servingTime}
-          </Text>
-        </View>
-
-        {/* Rating, calories, and wait time */}
-        <View style={styles.infoRow}>
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={14} color="#FFD700" />
-            <Text style={styles.ratingText}>{item.rating}</Text>
-            <Text style={styles.reviewText}>({item.reviewCount})</Text>
-          </View>
-
-          <View style={styles.infoItem}>
-            <Ionicons name="fitness-outline" size={14} color="#666" />
-            <Text style={styles.infoText}>{item.calories} cal</Text>
-          </View>
-
-          <View style={styles.infoItem}>
-            <Ionicons name="timer-outline" size={14} color="#666" />
-            <Text style={styles.infoText}>{item.estimatedWaitTime}</Text>
+          <View
+            style={[styles.categoryTag, { backgroundColor: cat?.color + "20" }]}
+          >
+            <Ionicons name={cat?.icon as any} size={12} color={cat?.color} />
+            <Text style={[styles.categoryTagText, { color: cat?.color }]}>
+              {cat?.name}
+            </Text>
           </View>
         </View>
 
@@ -245,27 +221,41 @@ const MenuCard = ({
           disabled={item.status === "out"}
           activeOpacity={item.status === "out" ? 1 : 0.8}
         >
-          <LinearGradient
-            colors={
-              item.status === "out" ? ["#CCC", "#999"] : ["#667eea", "#764ba2"]
-            }
-            style={styles.orderBtnGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            <Ionicons name="cart-outline" size={18} color="#fff" />
-            <Text style={styles.orderBtnText}>
-              {item.status === "out" ? "Hết món" : "Đặt món"}
-            </Text>
-          </LinearGradient>
+          <Text style={styles.orderBtnText}>
+            {item.status === "out" ? "Hết món" : "ĐẶT MÓN"}
+          </Text>
         </TouchableOpacity>
       </View>
     </Animatable.View>
   );
 };
 
+const PromoBanner = () => (
+  <View style={styles.promoBanner}>
+    <View style={styles.promoContent}>
+      <View style={styles.promoTextContainer}>
+        <Text style={styles.promoLabel}>ĐẶC BIỆT CHO BẠN</Text>
+        <Text style={styles.promoTitle}>Giảm giá đặc biệt hôm nay</Text>
+        <Text style={styles.promoSubtitle}>Nhà hàng Flamingo</Text>
+        <View style={styles.discountContainer}>
+          <Text style={styles.discountPercentage}>45%</Text>
+          <Text style={styles.discountLabel}>giảm giá</Text>
+        </View>
+      </View>
+      <View style={styles.promoImageContainer}>
+        <Image
+          source={{ uri: "/placeholder.svg?height=120&width=120" }}
+          style={styles.promoImage}
+        />
+      </View>
+    </View>
+    <TouchableOpacity style={styles.promoButton}>
+      <Text style={styles.promoButtonText}>ĐẶT NGAY</Text>
+    </TouchableOpacity>
+  </View>
+);
+
 const MenuScreen = ({ navigation }: any) => {
-  const [tab, setTab] = useState<string>("today");
   const [selectedDay, setSelectedDay] = useState<keyof typeof dayNames>(
     days[todayIdx] as keyof typeof dayNames
   );
@@ -279,7 +269,6 @@ const MenuScreen = ({ navigation }: any) => {
   );
   const [tempType, setTempType] = useState<string | null>(selectedType);
   const [tempDay, setTempDay] = useState<string | null>(selectedDay);
-  const [vendorDropdownVisible, setVendorDropdownVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
@@ -288,7 +277,6 @@ const MenuScreen = ({ navigation }: any) => {
   const fetchMenu = async () => {
     try {
       const items = await getMenuItems();
-      console.log('Fetched menu items:', items); // Debug dữ liệu trả về
       setMenuItems(items);
     } catch (error) {
       console.error("Failed to fetch menu items:", error);
@@ -296,27 +284,40 @@ const MenuScreen = ({ navigation }: any) => {
     }
   };
 
+  const fetchFavorites = async () => {
+    try {
+      const data = await userApi.getFavorites();
+      // Extract product IDs from favorites
+      const favoriteIds = data.favorites.map((fav: any) => fav._id);
+      setFavorites(favoriteIds);
+    } catch (error) {
+      console.error("Failed to fetch favorites:", error);
+    }
+  };
+
   useEffect(() => {
     fetchMenu();
+    fetchFavorites();
   }, []);
 
-  // Refresh menu when screen comes into focus (e.g., returning from admin)
   useFocusEffect(
     useCallback(() => {
       fetchMenu();
+      fetchFavorites();
     }, [])
   );
 
-  // Search and filter functions
   const filterMenu = (menu: MenuItem[]) => {
     return menu.filter((item) => {
       const searchMatch =
         item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.desc?.toLowerCase().includes(searchQuery.toLowerCase());
       const vendorMatch = !selectedVendor || item.vendorId === selectedVendor;
-      const categoryMatch = !selectedCategory || item.category === selectedCategory;
+      const categoryMatch =
+        !selectedCategory || item.category === selectedCategory;
       const typeMatch = !selectedType || item.type === selectedType;
       const favoriteMatch = !showFavoritesOnly || favorites.includes(item.id);
+
       return (
         searchMatch &&
         vendorMatch &&
@@ -327,56 +328,44 @@ const MenuScreen = ({ navigation }: any) => {
     });
   };
 
-  const toggleFavorite = (item: MenuItem) => {
-    setFavorites((prev) =>
-      prev.includes(item.id)
-        ? prev.filter((id) => id !== item.id)
-        : [...prev, item.id]
-    );
+  const toggleFavorite = async (item: MenuItem) => {
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      const isFavorite = favorites.includes(item.id);
+
+      if (isFavorite) {
+        // Remove from favorites
+        await userApi.removeFavorite(item.id);
+        setFavorites((prev) => prev.filter((id) => id !== item.id));
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        Alert.alert(
+          "💔 Đã xóa",
+          `Đã xóa "${item.name}" khỏi danh sách yêu thích`
+        );
+      } else {
+        // Add to favorites
+        await userApi.addFavorite(item.id);
+        setFavorites((prev) => [...prev, item.id]);
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        Alert.alert(
+          "💖 Đã thêm",
+          `Đã thêm "${item.name}" vào danh sách yêu thích`
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      Alert.alert(
+        "❌ Lỗi",
+        "Không thể cập nhật danh sách yêu thích. Vui lòng thử lại."
+      );
+    }
   };
 
-  // Get popular items
-  const popularItems = menuItems.filter((item) => item.isPopular).slice(0, 3);
-
-  // SectionList data cho toàn tuần
   const weekSections = days.map((d) => ({
     title: dayNames[d as keyof typeof dayNames],
     data: filterMenu(getMenuForDay(d as keyof typeof dayNames, menuItems)),
   }));
-
-  let content = null;
-
-  {
-    content = (
-      <SectionList
-        sections={weekSections}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContainer}
-        renderItem={({ item }) => (
-          <MenuCard
-            item={item}
-            onOrder={handleOrder}
-            onToggleFavorite={toggleFavorite}
-            isFavorite={favorites.includes(item.id)}
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <View style={styles.sectionHeaderContainer}>
-            <Text style={styles.sectionHeader}>{title}</Text>
-          </View>
-        )}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="restaurant-outline" size={64} color="#DDD" />
-            <Text style={styles.emptyText}>
-              Không có món nào trong tuần này
-            </Text>
-          </View>
-        }
-        showsVerticalScrollIndicator={false}
-      />
-    );
-  }
 
   const applyFilter = () => {
     setSelectedVendor(tempVendor);
@@ -403,39 +392,19 @@ const MenuScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      {/* Header với gradient */}
-      <LinearGradient
-        colors={["#667eea", "#764ba2"]}
-        style={styles.header}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={styles.headerContent}>
-          <View>
-            <Text style={styles.headerTitle}>Căng tin ĐH</Text>
-          
-          </View>
-          <View style={styles.headerActions}>
-            <TouchableOpacity
-              onPress={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              style={[
-                styles.headerBtn,
-                showFavoritesOnly && styles.headerBtnActive,
-              ]}
-            >
-              <Ionicons
-                name={showFavoritesOnly ? "heart" : "heart-outline"}
-                size={24}
-                color={showFavoritesOnly ? "#E74C3C" : "#fff"}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              style={styles.headerBtn}
-            >
-              <Ionicons name="filter" size={24} color="#fff" />
-            </TouchableOpacity>
-          </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <TouchableOpacity style={styles.menuButton}>
+            <Ionicons name="menu" size={24} color="#333" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Trang chủ</Text>
+          <TouchableOpacity style={styles.profileButton}>
+            <Image
+              source={{ uri: "/placeholder.svg?height=32&width=32" }}
+              style={styles.profileImage}
+            />
+          </TouchableOpacity>
         </View>
 
         {/* Search bar */}
@@ -443,25 +412,61 @@ const MenuScreen = ({ navigation }: any) => {
           <Ionicons
             name="search"
             size={20}
-            color="#666"
+            color="#999"
             style={styles.searchIcon}
           />
           <TextInput
             style={styles.searchInput}
-            placeholder="Tìm kiếm món ăn..."
+            placeholder="Tìm kiếm"
             value={searchQuery}
             onChangeText={setSearchQuery}
             placeholderTextColor="#999"
           />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery("")}>
-              <Ionicons name="close-circle" size={20} color="#666" />
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={styles.filterButton}
+          >
+            <Ionicons name="options" size={20} color="#999" />
+          </TouchableOpacity>
         </View>
-      </LinearGradient>
+      </View>
 
-      {/* Popular items section removed */}
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Promo Banner */}
+        <PromoBanner />
+
+        {/* Restaurant Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={styles.sectionTitle}>NHÀ HÀNG</Text>
+
+          <SectionList
+            sections={weekSections}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <MenuCard
+                item={item}
+                onOrder={handleOrder}
+                onToggleFavorite={toggleFavorite}
+                isFavorite={favorites.includes(item.id)}
+              />
+            )}
+            renderSectionHeader={({ section: { title } }) => (
+              <View style={styles.daySectionHeader}>
+                <Text style={styles.daySectionTitle}>{title}</Text>
+              </View>
+            )}
+            ListEmptyComponent={
+              <View style={styles.emptyContainer}>
+                <Ionicons name="restaurant-outline" size={64} color="#DDD" />
+                <Text style={styles.emptyText}>
+                  Không có món nào trong tuần này
+                </Text>
+              </View>
+            }
+            scrollEnabled={false}
+          />
+        </View>
+      </ScrollView>
 
       {/* Filter Modal */}
       <Modal
@@ -687,24 +692,12 @@ const MenuScreen = ({ navigation }: any) => {
                 style={styles.modalBtnPrimary}
                 onPress={applyFilter}
               >
-                <LinearGradient
-                  colors={["#667eea", "#764ba2"]}
-                  style={styles.modalBtnGradient}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Text style={styles.modalBtnPrimaryText}>Áp dụng</Text>
-                </LinearGradient>
+                <Text style={styles.modalBtnPrimaryText}>Áp dụng</Text>
               </TouchableOpacity>
             </View>
           </Animatable.View>
         </View>
       </Modal>
-
-      {/* ...existing code... */}
-
-      {/* Content */}
-      {content}
     </View>
   );
 };
@@ -712,115 +705,160 @@ const MenuScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#F8F9FA",
   },
   header: {
+    backgroundColor: "#fff",
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 5,
   },
-  headerContent: {
+  headerTop: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 20,
   },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: "#fff",
-    opacity: 0.8,
-    marginTop: 4,
-  },
-  headerActions: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: "rgba(255,255,255,0.2)",
+  menuButton: {
+    width: 40,
+    height: 40,
     justifyContent: "center",
     alignItems: "center",
-    marginLeft: 12,
   },
-  headerBtnActive: {
-    backgroundColor: "#fff",
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#333",
+  },
+  profileButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  profileImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 20,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5",
     borderRadius: 25,
-    paddingHorizontal: 16,
+    paddingHorizontal: 15,
     paddingVertical: 12,
-    marginTop: 10,
   },
   searchIcon: {
-    marginRight: 12,
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
     color: "#333",
   },
-  popularSection: {
-    backgroundColor: "#fff",
-    paddingVertical: 20,
-    paddingLeft: 20,
+  filterButton: {
+    marginLeft: 10,
   },
-  popularTitle: {
+  content: {
+    flex: 1,
+  },
+  promoBanner: {
+    backgroundColor: "#FF6347",
+    borderRadius: 20,
+    margin: 20,
+    padding: 20,
+    shadowColor: "#FF6347",
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  promoContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  promoTextContainer: {
+    flex: 1,
+  },
+  promoLabel: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "600",
+    opacity: 0.9,
+    marginBottom: 5,
+  },
+  promoTitle: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 2,
+  },
+  promoSubtitle: {
+    color: "#fff",
+    fontSize: 14,
+    opacity: 0.9,
+    marginBottom: 10,
+  },
+  discountContainer: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
+  discountPercentage: {
+    color: "#fff",
+    fontSize: 32,
+    fontWeight: "bold",
+  },
+  discountLabel: {
+    color: "#fff",
+    fontSize: 14,
+    marginLeft: 5,
+    opacity: 0.9,
+  },
+  promoImageContainer: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  promoImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+  },
+  promoButton: {
+    backgroundColor: "#fff",
+    borderRadius: 25,
+    paddingVertical: 12,
+    alignItems: "center",
+  },
+  promoButtonText: {
+    color: "#FF6347",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  sectionContainer: {
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
     marginBottom: 15,
-  },
-  popularCard: {
-    width: 120,
-    marginRight: 15,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 12,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  popularImage: {
-    width: "100%",
-    height: 80,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  popularName: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 4,
-  },
-  popularPrice: {
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#667eea",
-  },
-  // ...existing code...
-  listContainer: {
-    padding: 0,
-    backgroundColor: 'transparent',
+    letterSpacing: 1,
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 16,
-    marginBottom: 20,
+    borderRadius: 15,
+    marginBottom: 15,
     shadowColor: "#000",
     shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 6,
+    shadowRadius: 10,
+    elevation: 5,
     overflow: "hidden",
   },
   cardImageContainer: {
@@ -828,7 +866,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: "100%",
-    height: 200,
+    height: 180,
     backgroundColor: "#f0f0f0",
   },
   badgeContainer: {
@@ -853,9 +891,9 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: "#fff",
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: "bold",
-    marginLeft: 4,
+    marginLeft: 2,
   },
   favoriteBtn: {
     position: "absolute",
@@ -888,7 +926,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
   },
   cardContent: {
-    padding: 16,
+    padding: 15,
   },
   cardHeader: {
     flexDirection: "row",
@@ -897,7 +935,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   foodName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#333",
     flex: 1,
@@ -910,23 +948,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     lineHeight: 20,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   vendorInfo: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 10,
   },
   vendorText: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 12,
+    fontWeight: "500",
     marginLeft: 6,
   },
-  rowBetween: {
+  priceRatingRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   priceContainer: {
     flexDirection: "row",
@@ -935,44 +973,13 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#667eea",
+    color: "#FF6347",
   },
   originalPrice: {
     fontSize: 14,
     color: "#999",
     textDecorationLine: "line-through",
     marginLeft: 8,
-  },
-  categoryTag: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  categoryTagText: {
-    fontSize: 12,
-    fontWeight: "600",
-    marginLeft: 4,
-  },
-  statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  servingTime: {
-    fontSize: 12,
-    color: "#666",
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 16,
   },
   ratingContainer: {
     flexDirection: "row",
@@ -984,52 +991,62 @@ const styles = StyleSheet.create({
     color: "#333",
     marginLeft: 4,
   },
-  reviewText: {
-    fontSize: 12,
-    color: "#666",
-    marginLeft: 2,
-  },
-  infoItem: {
+  statusCategoryRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
   },
-  infoText: {
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusText: {
     fontSize: 12,
-    color: "#666",
+    fontWeight: "600",
+  },
+  categoryTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  categoryTagText: {
+    fontSize: 12,
+    fontWeight: "500",
     marginLeft: 4,
   },
   orderBtn: {
-    borderRadius: 12,
-    overflow: "hidden",
+    backgroundColor: "#FF6347",
+    borderRadius: 25,
+    paddingVertical: 12,
+    alignItems: "center",
+    shadowColor: "#FF6347",
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   orderBtnDisabled: {
-    opacity: 0.6,
-  },
-  orderBtnGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    backgroundColor: "#CCC",
+    shadowOpacity: 0,
+    elevation: 0,
   },
   orderBtnText: {
     color: "#fff",
+    fontWeight: "bold",
+    fontSize: 14,
+    letterSpacing: 1,
+  },
+  daySectionHeader: {
+    paddingVertical: 15,
+    paddingTop: 25,
+  },
+  daySectionTitle: {
     fontSize: 16,
-    fontWeight: "bold",
-    marginLeft: 8,
-  },
-  sectionHeaderContainer: {
-    backgroundColor: "#f8f9fa",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  sectionHeader: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#667eea",
+    fontWeight: "600",
+    color: "#333",
   },
   emptyContainer: {
     alignItems: "center",
@@ -1089,8 +1106,8 @@ const styles = StyleSheet.create({
     borderColor: "#e0e0e0",
   },
   filterChipActive: {
-    backgroundColor: "#667eea",
-    borderColor: "#667eea",
+    backgroundColor: "#FF6347",
+    borderColor: "#FF6347",
   },
   filterChipText: {
     fontSize: 14,
@@ -1123,11 +1140,9 @@ const styles = StyleSheet.create({
   },
   modalBtnPrimary: {
     flex: 2,
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  modalBtnGradient: {
     paddingVertical: 14,
+    borderRadius: 12,
+    backgroundColor: "#FF6347",
     alignItems: "center",
   },
   modalBtnPrimaryText: {

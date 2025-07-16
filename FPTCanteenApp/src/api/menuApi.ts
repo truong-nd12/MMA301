@@ -150,19 +150,14 @@ function delay(ms: number): Promise<void> {
   return new Promise<void>((resolve: () => void) => setTimeout(resolve, ms));
 }
 
-
 import { API_BASE_URL } from "./config";
-
-
-
-
 
 // Helper function to handle API calls
 const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const token = await AsyncStorage.getItem("authToken");
 
-  const controller = new AbortController(); // 10 second timeout
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
   const config: RequestInit = {
     headers: {
       "Content-Type": "application/json",
@@ -195,7 +190,7 @@ const apiCall = async (endpoint: string, options: RequestInit = {}) => {
 export const getMenuItems = async (): Promise<MenuItem[]> => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     const response = await fetch(`${API_BASE_URL}/products`, {
       signal: controller.signal,

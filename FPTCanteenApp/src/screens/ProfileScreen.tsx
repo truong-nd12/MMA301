@@ -1,6 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Animatable from "react-native-animatable";
+import * as Haptics from "expo-haptics";
 import {
   Image,
   ScrollView,
@@ -10,12 +12,18 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  RefreshControl,
+  Dimensions,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
+
+const { width } = Dimensions.get("window");
 
 export default function ProfileScreen() {
   const navigation = useNavigation() as any;
   const { user, logout } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
 
   // Mock data for demo (sẽ được thay thế bằng data thật từ API sau)
   const mockData = {
@@ -23,9 +31,21 @@ export default function ProfileScreen() {
     balance: 125000, // Số dư ví
     totalOrders: 47,
     favoriteCount: 12,
+    points: 850, // Điểm tích lũy
+    level: "VIP", // Cấp độ thành viên
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // Simulate API call
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
   };
 
   const handleLogout = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     Alert.alert("Đăng xuất", "Bạn có chắc chắn muốn đăng xuất?", [
       {
         text: "Hủy",
@@ -36,6 +56,7 @@ export default function ProfileScreen() {
         style: "destructive",
         onPress: async () => {
           try {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             await logout();
             // Navigation sẽ tự động chuyển về AuthStack
           } catch (error) {
@@ -53,215 +74,374 @@ export default function ProfileScreen() {
     }).format(amount);
   };
 
+  const handleMenuPress = async (item: any) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    switch (item.id) {
+      case 1:
+        navigation.navigate("OrderHistory");
+        break;
+      case 2:
+        navigation.navigate("FavoriteFoods");
+        break;
+      case 3:
+        navigation.navigate("Wallet");
+        break;
+      case 4:
+        navigation.navigate("Notification");
+        break;
+      case 5:
+        navigation.navigate("Settings");
+        break;
+      case 6:
+        navigation.navigate("Support");
+        break;
+      case 7:
+        navigation.navigate("Nutrition");
+        break;
+    }
+  };
+
   const menuItems = [
     {
       id: 1,
       title: "Lịch sử đặt hàng",
-      icon: "time-outline",
-      color: "#4CAF50",
+      icon: "receipt-outline",
+      color: "#FF6B6B",
       badge: mockData.totalOrders,
+      description: "Xem tất cả đơn hàng",
     },
     {
       id: 2,
       title: "Món yêu thích",
       icon: "heart-outline",
-      color: "#E91E63",
+      color: "#FF8E53",
       badge: user?.favorites?.length || mockData.favoriteCount,
+      description: "Danh sách món ưa thích",
     },
     {
       id: 3,
       title: "Ví điện tử",
       icon: "wallet-outline",
-      color: "#FF9800",
+      color: "#4ECDC4",
       subtitle: formatCurrency(mockData.balance),
+      description: "Quản lý số dư",
     },
     {
       id: 4,
       title: "Thông báo",
       icon: "notifications-outline",
-      color: "#2196F3",
+      color: "#45B7D1",
+      description: "Cài đặt thông báo",
     },
-    { id: 5, title: "Cài đặt", icon: "settings-outline", color: "#9C27B0" },
-    { id: 6, title: "Hỗ trợ", icon: "help-circle-outline", color: "#607D8B" },
+    {
+      id: 5,
+      title: "Cài đặt",
+      icon: "settings-outline",
+      color: "#96CEB4",
+      description: "Tùy chỉnh ứng dụng",
+    },
+    {
+      id: 6,
+      title: "Hỗ trợ",
+      icon: "help-circle-outline",
+      color: "#FFEAA7",
+      description: "Liên hệ hỗ trợ",
+    },
     {
       id: 7,
       title: "Theo dõi dinh dưỡng",
       icon: "nutrition-outline",
-      color: "#4CAF50",
+      color: "#DDA0DD",
+      description: "Phân tích dinh dưỡng",
     },
   ];
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#667eea" />
+      <StatusBar barStyle="light-content" backgroundColor="#FF6B6B" />
 
       {/* Header với gradient */}
-      <LinearGradient
-        colors={["#667eea", "#764ba2"]}
-        style={styles.header}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-      >
-        <View style={styles.headerContent}>
-          <View style={styles.avatarContainer}>
-            <Image
-              source={user?.avatar ? { uri: user.avatar } : mockData.avatar}
-              style={styles.avatar}
-            />
-            <View style={styles.onlineIndicator} />
-          </View>
+      <Animatable.View animation="fadeIn" duration={1000}>
+        <LinearGradient
+          colors={["#FF6B6B", "#FF8E53"]}
+          style={styles.header}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <View style={styles.headerContent}>
+            <Animatable.View
+              animation="bounceIn"
+              delay={300}
+              style={styles.avatarContainer}
+            >
+              <Image
+                source={user?.avatar ? { uri: user.avatar } : mockData.avatar}
+                style={styles.avatar}
+              />
+              <View style={styles.onlineIndicator} />
+              <View style={styles.levelBadge}>
+                <Text style={styles.levelText}>{mockData.level}</Text>
+              </View>
+            </Animatable.View>
 
-          <Text style={styles.name}>{user?.fullName || "Người dùng"}</Text>
-          <Text style={styles.studentId}>
-            MSSV: {user?.studentCode || "N/A"}
-          </Text>
-          <Text style={styles.email}>{user?.email || "N/A"}</Text>
+            <Animatable.Text
+              animation="fadeInUp"
+              delay={500}
+              style={styles.name}
+            >
+              {user?.fullName || "Người dùng"}
+            </Animatable.Text>
+            <Animatable.Text
+              animation="fadeInUp"
+              delay={600}
+              style={styles.studentId}
+            >
+              MSSV: {user?.studentCode || "N/A"}
+            </Animatable.Text>
+            <Animatable.Text
+              animation="fadeInUp"
+              delay={700}
+              style={styles.email}
+            >
+              {user?.email || "N/A"}
+            </Animatable.Text>
 
-          {/* Stats Cards */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>{mockData.totalOrders}</Text>
-              <Text style={styles.statLabel}>Đơn hàng</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>
-                {user?.favorites?.length || mockData.favoriteCount}
-              </Text>
-              <Text style={styles.statLabel}>Yêu thích</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statNumber}>
-                {formatCurrency(mockData.balance)}
-              </Text>
-              <Text style={styles.statLabel}>Số dư</Text>
-            </View>
+            {/* Enhanced Stats Cards */}
+            <Animatable.View
+              animation="fadeInUp"
+              delay={800}
+              style={styles.statsContainer}
+            >
+              <View style={styles.statCard}>
+                <LinearGradient
+                  colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
+                  style={styles.statCardGradient}
+                >
+                  <Ionicons name="receipt-outline" size={24} color="#fff" />
+                  <Text style={styles.statNumber}>{mockData.totalOrders}</Text>
+                  <Text style={styles.statLabel}>Đơn hàng</Text>
+                </LinearGradient>
+              </View>
+
+              <View style={styles.statCard}>
+                <LinearGradient
+                  colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
+                  style={styles.statCardGradient}
+                >
+                  <Ionicons name="heart-outline" size={24} color="#fff" />
+                  <Text style={styles.statNumber}>
+                    {user?.favorites?.length || mockData.favoriteCount}
+                  </Text>
+                  <Text style={styles.statLabel}>Yêu thích</Text>
+                </LinearGradient>
+              </View>
+
+              <View style={styles.statCard}>
+                <LinearGradient
+                  colors={["rgba(255,255,255,0.2)", "rgba(255,255,255,0.1)"]}
+                  style={styles.statCardGradient}
+                >
+                  <Ionicons name="star-outline" size={24} color="#fff" />
+                  <Text style={styles.statNumber}>{mockData.points}</Text>
+                  <Text style={styles.statLabel}>Điểm</Text>
+                </LinearGradient>
+              </View>
+            </Animatable.View>
           </View>
-        </View>
-      </LinearGradient>
+        </LinearGradient>
+      </Animatable.View>
 
       {/* Menu Items */}
       <ScrollView
         style={styles.menuContainer}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#FF6B6B"]}
+            tintColor="#FF6B6B"
+          />
+        }
       >
-        <View style={styles.menuSection}>
-          <Text style={styles.sectionTitle}>Tài khoản</Text>
+        <Animatable.View
+          animation="fadeInUp"
+          delay={900}
+          style={styles.menuSection}
+        >
+          <Text style={styles.sectionTitle}>💳 Tài khoản & Ví</Text>
 
-          {menuItems.slice(0, 3).map((item) => (
-            <TouchableOpacity
+          {menuItems.slice(0, 3).map((item, index) => (
+            <Animatable.View
               key={item.id}
-              style={styles.menuItem}
-              onPress={() => {
-                if (item.id === 1) navigation.navigate("OrderHistory");
-                if (item.id === 2) navigation.navigate("FavoriteFoods");
-                if (item.id === 3) navigation.navigate("Wallet");
-              }}
+              animation="fadeInUp"
+              delay={1000 + index * 100}
             >
-              <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: `${item.color}15` },
-                ]}
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => handleMenuPress(item)}
+                activeOpacity={0.8}
               >
-                <Ionicons
-                  name={item.icon as any}
-                  size={24}
-                  color={item.color}
-                />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>{item.title}</Text>
-                {item.subtitle && (
-                  <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
-                )}
-              </View>
-              {item.badge && (
-                <View style={[styles.badge, { backgroundColor: item.color }]}>
-                  <Text style={styles.badgeText}>{item.badge}</Text>
+                <LinearGradient
+                  colors={[`${item.color}20`, `${item.color}10`]}
+                  style={styles.iconContainer}
+                >
+                  <Ionicons
+                    name={item.icon as any}
+                    size={26}
+                    color={item.color}
+                  />
+                </LinearGradient>
+
+                <View style={styles.menuContent}>
+                  <Text style={styles.menuTitle}>{item.title}</Text>
+                  <Text style={styles.menuDescription}>{item.description}</Text>
+                  {item.subtitle && (
+                    <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
+                  )}
                 </View>
-              )}
-              <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
-            </TouchableOpacity>
+
+                {item.badge && (
+                  <View style={[styles.badge, { backgroundColor: item.color }]}>
+                    <Text style={styles.badgeText}>{item.badge}</Text>
+                  </View>
+                )}
+
+                <View style={styles.chevronContainer}>
+                  <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
+                </View>
+              </TouchableOpacity>
+            </Animatable.View>
           ))}
-        </View>
+        </Animatable.View>
 
-        <View style={styles.menuSection}>
-          <Text style={styles.sectionTitle}>Khác</Text>
+        <Animatable.View
+          animation="fadeInUp"
+          delay={1300}
+          style={styles.menuSection}
+        >
+          <Text style={styles.sectionTitle}>⚙️ Tiện ích & Hỗ trợ</Text>
 
-          {menuItems.slice(3).map((item) => (
-            <TouchableOpacity
+          {menuItems.slice(3).map((item, index) => (
+            <Animatable.View
               key={item.id}
-              style={styles.menuItem}
-              onPress={() => {
-                if (item.id === 4) navigation.navigate("Notification");
-                if (item.id === 5) navigation.navigate("Settings");
-                if (item.id === 6) navigation.navigate("Support");
-                if (item.id === 7) navigation.navigate("Nutrition");
-              }}
+              animation="fadeInUp"
+              delay={1400 + index * 100}
             >
-              <View
-                style={[
-                  styles.iconContainer,
-                  { backgroundColor: `${item.color}15` },
-                ]}
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => handleMenuPress(item)}
+                activeOpacity={0.8}
               >
-                <Ionicons
-                  name={item.icon as any}
-                  size={24}
-                  color={item.color}
-                />
-              </View>
-              <View style={styles.menuContent}>
-                <Text style={styles.menuTitle}>{item.title}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={[`${item.color}20`, `${item.color}10`]}
+                  style={styles.iconContainer}
+                >
+                  <Ionicons
+                    name={item.icon as any}
+                    size={26}
+                    color={item.color}
+                  />
+                </LinearGradient>
+
+                <View style={styles.menuContent}>
+                  <Text style={styles.menuTitle}>{item.title}</Text>
+                  <Text style={styles.menuDescription}>{item.description}</Text>
+                </View>
+
+                <View style={styles.chevronContainer}>
+                  <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
+                </View>
+              </TouchableOpacity>
+            </Animatable.View>
           ))}
-        </View>
+        </Animatable.View>
 
         {/* Admin Mode Button - CHỈ HIỂN THỊ KHI USER LÀ ADMIN */}
         {user && user.role === "admin" && (
-          <View style={styles.menuSection}>
-            <Text style={styles.sectionTitle}>Quản trị</Text>
+          <Animatable.View
+            animation="fadeInUp"
+            delay={1700}
+            style={styles.menuSection}
+          >
+            <Text style={styles.sectionTitle}>👑 Quản trị viên</Text>
             <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => navigation.navigate("AdminSwitch")}
+              style={[styles.menuItem, styles.adminMenuItem]}
+              onPress={async () => {
+                await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("AdminSwitch");
+              }}
+              activeOpacity={0.8}
             >
-              <View
-                style={[styles.iconContainer, { backgroundColor: "#3498DB15" }]}
+              <LinearGradient
+                colors={["#3498DB20", "#3498DB10"]}
+                style={styles.iconContainer}
               >
                 <Ionicons
                   name="shield-checkmark-outline"
-                  size={24}
+                  size={26}
                   color="#3498DB"
                 />
-              </View>
+              </LinearGradient>
+
               <View style={styles.menuContent}>
                 <Text style={styles.menuTitle}>Chế độ Admin</Text>
-                <Text style={styles.menuSubtitle}>
+                <Text style={styles.menuDescription}>
                   Quản lý món ăn & thống kê
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
+
+              <View style={styles.adminBadge}>
+                <Text style={styles.adminBadgeText}>ADMIN</Text>
+              </View>
+
+              <View style={styles.chevronContainer}>
+                <Ionicons name="chevron-forward" size={20} color="#C5C5C7" />
+              </View>
             </TouchableOpacity>
-          </View>
+          </Animatable.View>
         )}
 
         {/* Action Buttons */}
-        <View style={styles.actionSection}>
+        <Animatable.View
+          animation="fadeInUp"
+          delay={1800}
+          style={styles.actionSection}
+        >
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => navigation.navigate("EditProfile")}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("EditProfile");
+            }}
+            activeOpacity={0.8}
           >
-            <Ionicons name="create-outline" size={22} color="#667eea" />
-            <Text style={styles.editButtonText}>Chỉnh sửa thông tin</Text>
+            <LinearGradient
+              colors={["#FF6B6B", "#FF8E53"]}
+              style={styles.editButtonGradient}
+            >
+              <Ionicons name="create-outline" size={22} color="#fff" />
+              <Text style={styles.editButtonText}>Chỉnh sửa thông tin</Text>
+            </LinearGradient>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={22} color="#fff" />
-            <Text style={styles.logoutButtonText}>Đăng xuất</Text>
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={handleLogout}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={["#FF6B6B", "#E74C3C"]}
+              style={styles.logoutButtonGradient}
+            >
+              <Ionicons name="log-out-outline" size={22} color="#fff" />
+              <Text style={styles.logoutButtonText}>Đăng xuất</Text>
+            </LinearGradient>
           </TouchableOpacity>
-        </View>
+        </Animatable.View>
+
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </View>
   );
@@ -270,13 +450,21 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#f8faff",
   },
   header: {
     paddingTop: 50,
-    paddingBottom: 30,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    paddingBottom: 40,
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+    shadowColor: "#FF6B6B",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   headerContent: {
     alignItems: "center",
@@ -284,104 +472,147 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     position: "relative",
-    marginBottom: 16,
+    marginBottom: 20,
   },
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 4,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 5,
     borderColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   onlineIndicator: {
     position: "absolute",
-    bottom: 5,
-    right: 5,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    bottom: 8,
+    right: 8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: "#4CAF50",
-    borderWidth: 3,
+    borderWidth: 4,
     borderColor: "#fff",
   },
+  levelBadge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    backgroundColor: "#FFD700",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: "#fff",
+  },
+  levelText: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: "#333",
+  },
   name: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 4,
+    marginBottom: 6,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   studentId: {
     fontSize: 16,
     color: "#E8E8E8",
     marginBottom: 4,
+    fontWeight: "500",
   },
   email: {
     fontSize: 14,
     color: "#D0D0D0",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   statsContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
+    paddingHorizontal: 10,
   },
   statCard: {
+    flex: 1,
+    marginHorizontal: 5,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  statCardGradient: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 15,
-    minWidth: 80,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   statNumber: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
+    marginTop: 8,
+    marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
     color: "#E8E8E8",
-    marginTop: 2,
+    fontWeight: "500",
   },
   menuContainer: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 25,
   },
   menuSection: {
-    marginBottom: 25,
+    marginBottom: 30,
     paddingHorizontal: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#333",
-    marginBottom: 15,
+    marginBottom: 18,
     marginLeft: 5,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderRadius: 15,
-    marginBottom: 10,
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    marginBottom: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: "rgba(255,107,107,0.05)",
+  },
+  adminMenuItem: {
+    borderWidth: 2,
+    borderColor: "rgba(52, 152, 219, 0.2)",
   },
   iconContainer: {
-    width: 45,
-    height: 45,
-    borderRadius: 12,
+    width: 50,
+    height: 50,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 15,
+    marginRight: 16,
   },
   menuContent: {
     flex: 1,
@@ -390,73 +621,109 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     color: "#333",
+    marginBottom: 4,
+  },
+  menuDescription: {
+    fontSize: 13,
+    color: "#666",
+    fontWeight: "400",
   },
   menuSubtitle: {
     fontSize: 14,
-    color: "#4CAF50",
-    fontWeight: "600",
-    marginTop: 2,
+    color: "#4ECDC4",
+    fontWeight: "700",
+    marginTop: 4,
   },
   badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginRight: 10,
-  },
-  badgeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  actionSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 30,
-  },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fff",
-    paddingVertical: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 15,
-    marginBottom: 15,
-    borderWidth: 2,
-    borderColor: "#667eea",
+    marginRight: 12,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  badgeText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  adminBadge: {
+    backgroundColor: "#3498DB",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 15,
+    marginRight: 12,
+  },
+  adminBadgeText: {
+    color: "#fff",
+    fontSize: 10,
+    fontWeight: "700",
+  },
+  chevronContainer: {
+    padding: 4,
+  },
+  actionSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  editButton: {
+    borderRadius: 20,
+    marginBottom: 15,
+    shadowColor: "#FF6B6B",
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+    overflow: "hidden",
+  },
+  editButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 20,
   },
   editButtonText: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#667eea",
+    color: "#fff",
     marginLeft: 10,
   },
   logoutButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#E74C3C",
-    paddingVertical: 16,
-    borderRadius: 15,
+    borderRadius: 20,
     shadowColor: "#E74C3C",
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: 6,
     },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 12,
+    elevation: 8,
+    overflow: "hidden",
+  },
+  logoutButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 18,
+    paddingHorizontal: 20,
   },
   logoutButtonText: {
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
     marginLeft: 10,
+  },
+  bottomSpacer: {
+    height: 20,
   },
 });

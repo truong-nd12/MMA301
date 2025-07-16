@@ -11,11 +11,17 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  RefreshControl,
+  StatusBar,
+  Dimensions,
 } from "react-native";
+import * as Animatable from "react-native-animatable";
+import * as Haptics from "expo-haptics";
 import { Product, productApi } from "../api/productApi";
 import { userApi } from "../api/userApi";
 import FavoriteStats from "../components/FavoriteStats";
 
+const { width } = Dimensions.get("window");
 
 export default function FavoriteFoodsScreen({ navigation }: any) {
   const [searchText, setSearchText] = useState("");
@@ -24,6 +30,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
   const [showSortMenu, setShowSortMenu] = useState(false);
   const [favoriteFoods, setFavoriteFoods] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
 
   useEffect(() => {
@@ -39,7 +46,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
     };
 
     fetchCategories();
-  }, [])
+  }, []);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -55,18 +62,38 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
 
     fetchFavorites();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    try {
+      const data = await userApi.getFavorites();
+      setFavoriteFoods(data.favorites);
+    } catch (error) {
+      console.error("Lỗi khi refresh món yêu thích:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   // Tính toán thống kê
-  const totalSpent = favoriteFoods.reduce((sum, food) => sum + food.price * food.orderCount, 0);
+  const totalSpent = favoriteFoods.reduce(
+    (sum, food) => sum + food.price * food.orderCount,
+    0
+  );
   const averageRating =
     favoriteFoods.length > 0
-      ? favoriteFoods.reduce((sum, food) => sum + food.rating, 0) / favoriteFoods.length
+      ? favoriteFoods.reduce((sum, food) => sum + food.rating, 0) /
+        favoriteFoods.length
       : 0;
 
   const mostOrdered =
     favoriteFoods.length > 0
-      ? favoriteFoods.reduce((max, food) => food.orderCount > max.orderCount ? food : max).name
+      ? favoriteFoods.reduce((max, food) =>
+          food.orderCount > max.orderCount ? food : max
+        ).name
       : "Không có món";
-
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
@@ -81,7 +108,8 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
         .toLowerCase()
         .includes(searchText.toLowerCase());
       const matchesCategory =
-        selectedCategory === "Tất cả" || food.category.name === selectedCategory;
+        selectedCategory === "Tất cả" ||
+        food.category.name === selectedCategory;
       return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
@@ -99,24 +127,36 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
       }
     });
 
-  const handleOrderNow = (food: Product) => {
+  const handleOrderNow = async (food: Product) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     Alert.alert(
-      "Đặt hàng nhanh",
-      `Bạn có muốn đặt "${food.name}" ngay bây giờ?`,
+      "🍽️ Đặt hàng nhanh",
+      `Bạn có muốn đặt "${food.name}" ngay bây giờ?\n\n💰 Giá: ${formatCurrency(
+        food.price
+      )}\n⭐ Đánh giá: ${food.rating}/5\n🔥 Calories: ${food.calories}`,
       [
-        { text: "Hủy", style: "cancel" },
+        {
+          text: "Hủy",
+          style: "cancel",
+          onPress: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+        },
         {
           text: "Đặt hàng",
-          onPress: () => {
+          onPress: async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             // Convert FavoriteFood to food object for OrderScreen
             const foodForOrder = {
               id: food._id,
               name: food.name,
               price: food.price,
               image:
-                "https://via.placeholder.com/300x200/667eea/ffffff?text=" +
-                encodeURIComponent(food.name),
-              desc: `${food.category} - ${food.calories} calo`,
+                food.images ||
+                "https://via.placeholder.com/300x200/FF6B6B/ffffff?text=" +
+                  encodeURIComponent(food.name),
+              desc: `${food.category.name} - ${food.calories} calo`,
+              calories: food.calories,
+              rating: food.rating,
             };
             navigation.navigate("Order", { food: foodForOrder });
           },
@@ -125,19 +165,26 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
     );
   };
 
-  const handleRemoveFavorite = (food: Product) => {
+  const handleRemoveFavorite = async (food: Product) => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     Alert.alert(
-      "Xóa khỏi yêu thích",
+      "💔 Xóa khỏi yêu thích",
       `Bạn có muốn xóa "${food.name}" khỏi danh sách yêu thích?`,
       [
-        { text: "Hủy", style: "cancel" },
+        {
+          text: "Hủy",
+          style: "cancel",
+          onPress: () => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light),
+        },
         {
           text: "Xóa",
           style: "destructive",
           onPress: async () => {
             try {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
               await userApi.removeFavorite(food._id); // Gọi API
-              Alert.alert("Thành công", "Đã xóa khỏi danh sách yêu thích!");
+              Alert.alert("✅ Thành công", "Đã xóa khỏi danh sách yêu thích!");
 
               // ✅ Cập nhật danh sách nếu dùng state
               setFavoriteFoods((prev) =>
@@ -145,7 +192,7 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
               );
             } catch (error) {
               console.error("❌ Lỗi xóa:", error);
-              Alert.alert("Lỗi", "Không thể xóa món yêu thích.");
+              Alert.alert("❌ Lỗi", "Không thể xóa món yêu thích.");
             }
           },
         },
@@ -155,253 +202,442 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
 
   const handleShareFavorites = async () => {
     try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
       const favoriteList = favoriteFoods
         .map(
           (food, index) =>
-            `${index + 1}. ${food.name} - ${formatCurrency(food.price)}`
+            `${index + 1}. ${food.name} - ${formatCurrency(food.price)} ⭐${
+              food.rating
+            }`
         )
         .join("\n");
 
-      const message = `🍽️ Danh sách món yêu thích của tôi:\n\n${favoriteList}\n\nTổng cộng: ${favoriteFoods.length} món`;
+      const message = `🍽️ Danh sách món yêu thích của tôi tại FPT Canteen:\n\n${favoriteList}\n\n📊 Thống kê:\n• Tổng cộng: ${
+        favoriteFoods.length
+      } món\n• Tổng chi tiêu: ${formatCurrency(
+        totalSpent
+      )}\n• Đánh giá trung bình: ${averageRating.toFixed(
+        1
+      )}/5\n• Món được đặt nhiều nhất: ${mostOrdered}\n\n💝 Được chia sẻ từ FPT Canteen App`;
 
       await Share.share({
         message,
-        title: "Món yêu thích của tôi",
+        title: "Món yêu thích của tôi - FPT Canteen",
       });
     } catch (error) {
       Alert.alert("Lỗi", "Không thể chia sẻ danh sách món yêu thích");
     }
   };
 
-  const renderFoodCard = (food: Product) => (
-    <View key={food._id} style={styles.foodCard}>
-      <View style={styles.foodHeader}>
-        <View style={styles.foodImageContainer}>
-          <Image
-            source={{ uri: food.images }}
-            style={styles.foodImage}
-            resizeMode="cover"
-          />
+  const handleClearSearch = () => {
+    setSearchText("");
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
 
+  const renderFoodCard = (food: Product, index: number) => (
+    <Animatable.View
+      key={food._id}
+      animation="fadeInUp"
+      delay={index * 100}
+      style={styles.foodCard}
+    >
+      <LinearGradient
+        colors={["#fff", "#fafbff"]}
+        style={styles.foodCardGradient}
+      >
+        <View style={styles.foodHeader}>
+          <View style={styles.foodImageContainer}>
+            <Image
+              source={{
+                uri:
+                  food.images ||
+                  `https://via.placeholder.com/80x80/FF6B6B/ffffff?text=${encodeURIComponent(
+                    food.name.charAt(0)
+                  )}`,
+              }}
+              style={styles.foodImage}
+              resizeMode="cover"
+            />
+            <View style={styles.imageOverlay}>
+              <LinearGradient
+                colors={["transparent", "rgba(0,0,0,0.3)"]}
+                style={styles.imageGradient}
+              />
+            </View>
+          </View>
+
+          <View style={styles.foodInfo}>
+            <Text style={styles.foodName}>{food.name}</Text>
+            <View style={styles.categoryContainer}>
+              <LinearGradient
+                colors={["#FF6B6B20", "#FF8E5310"]}
+                style={styles.categoryBadge}
+              >
+                <Ionicons name="restaurant-outline" size={12} color="#FF6B6B" />
+                <Text style={styles.foodCategory}>{food.category.name}</Text>
+              </LinearGradient>
+            </View>
+
+            <View style={styles.ratingContainer}>
+              <LinearGradient
+                colors={["#FFD700", "#FFA500"]}
+                style={styles.ratingBadge}
+              >
+                <Ionicons name="star" size={14} color="#fff" />
+                <Text style={styles.rating}>{food.rating}</Text>
+              </LinearGradient>
+              <Text style={styles.orderCount}>({food.orderCount} lần đặt)</Text>
+            </View>
+          </View>
+
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={() => handleRemoveFavorite(food)}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={["#FF6B6B", "#FF8E53"]}
+              style={styles.removeButtonGradient}
+            >
+              <Ionicons name="heart" size={20} color="#fff" />
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
-        <View style={styles.foodInfo}>
-          <Text style={styles.foodName}>{food.name}</Text>
-          <Text style={styles.foodCategory}>{food.category.name}</Text>
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={16} color="#FFD700" />
-            <Text style={styles.rating}>{food.rating}</Text>
-            <Text style={styles.orderCount}>({food.orderCount} lần)</Text>
+
+        <View style={styles.nutritionInfo}>
+          <View style={styles.nutritionItem}>
+            <LinearGradient
+              colors={["#4ECDC4", "#45B7D1"]}
+              style={styles.nutritionIcon}
+            >
+              <Ionicons name="flame-outline" size={16} color="#fff" />
+            </LinearGradient>
+            <View>
+              <Text style={styles.nutritionLabel}>Calories</Text>
+              <Text style={styles.nutritionValue}>{food.calories}</Text>
+            </View>
+          </View>
+
+          <View style={styles.nutritionItem}>
+            <LinearGradient
+              colors={["#96CEB4", "#FFEAA7"]}
+              style={styles.nutritionIcon}
+            >
+              <Ionicons name="time-outline" size={16} color="#fff" />
+            </LinearGradient>
+            <View>
+              <Text style={styles.nutritionLabel}>Thời gian</Text>
+              <Text style={styles.nutritionValue}>15-20p</Text>
+            </View>
           </View>
         </View>
-        <TouchableOpacity
-          style={styles.removeButton}
-          onPress={() => handleRemoveFavorite(food)}
-        >
-          <Ionicons name="heart" size={20} color="#E91E63" />
-        </TouchableOpacity>
-      </View>
 
-      <View style={styles.nutritionInfo}>
-        <View style={styles.nutritionItem}>
-          <Text style={styles.nutritionLabel}>Calo</Text>
-          <Text style={styles.nutritionValue}>{food.calories}</Text>
-        </View>
-      </View>
+        <View style={styles.foodFooter}>
+          <View style={styles.priceContainer}>
+            <Text style={styles.price}>{formatCurrency(food.price)}</Text>
+            <Text style={styles.priceLabel}>Giá hiện tại</Text>
+          </View>
 
-      <View style={styles.foodFooter}>
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>{formatCurrency(food.price)}</Text>
+          <TouchableOpacity
+            style={styles.orderButton}
+            onPress={() => handleOrderNow(food)}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={["#FF6B6B", "#FF8E53"]}
+              style={styles.orderButtonGradient}
+            >
+              <Ionicons name="add-circle-outline" size={20} color="#fff" />
+              <Text style={styles.orderButtonText}>Đặt ngay</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.orderButton}
-          onPress={() => handleOrderNow(food)}
-        >
-          <Ionicons name="add-circle" size={20} color="#fff" />
-          <Text style={styles.orderButtonText}>Đặt ngay</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+      </LinearGradient>
+    </Animatable.View>
   );
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={["#667eea", "#764ba2"]} style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Món yêu thích</Text>
-        <View style={styles.headerRight}>
-          <TouchableOpacity
-            style={styles.shareButton}
-            onPress={handleShareFavorites}
-          >
-            <Ionicons name="share-outline" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.favoriteCount}>{favoriteFoods.length} món</Text>
-        </View>
-      </LinearGradient>
+      <StatusBar barStyle="light-content" backgroundColor="#FF6B6B" />
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="#666" />
+      {/* Enhanced Header */}
+      <Animatable.View animation="fadeIn" duration={1000}>
+        <LinearGradient colors={["#FF6B6B", "#FF8E53"]} style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.goBack();
+            }}
+          >
+            <Ionicons name="arrow-back" size={24} color="#fff" />
+          </TouchableOpacity>
+
+          <View style={styles.headerCenter}>
+            <Text style={styles.headerTitle}>💖 Món yêu thích</Text>
+            <Text style={styles.headerSubtitle}>
+              Những món bạn yêu thích nhất
+            </Text>
+          </View>
+
+          <View style={styles.headerRight}>
+            <TouchableOpacity
+              style={styles.shareButton}
+              onPress={handleShareFavorites}
+            >
+              <Ionicons name="share-outline" size={22} color="#fff" />
+            </TouchableOpacity>
+            <View style={styles.countBadge}>
+              <Text style={styles.favoriteCount}>{favoriteFoods.length}</Text>
+            </View>
+          </View>
+        </LinearGradient>
+      </Animatable.View>
+
+      {/* Enhanced Search Bar */}
+      <Animatable.View
+        animation="slideInDown"
+        delay={200}
+        style={styles.searchContainer}
+      >
+        <LinearGradient
+          colors={["#fff", "#fafbff"]}
+          style={styles.searchBarGradient}
+        >
+          <Ionicons name="search" size={20} color="#FF6B6B" />
           <TextInput
             style={styles.searchInput}
             placeholder="Tìm kiếm món yêu thích..."
+            placeholderTextColor="#999"
             value={searchText}
             onChangeText={setSearchText}
           />
-        </View>
-      </View>
+          {searchText.length > 0 && (
+            <TouchableOpacity
+              onPress={handleClearSearch}
+              style={styles.clearButton}
+            >
+              <Ionicons name="close-circle" size={20} color="#999" />
+            </TouchableOpacity>
+          )}
+        </LinearGradient>
+      </Animatable.View>
 
-      {/* Category Filter and Sort */}
-      <View style={styles.filterContainer}>
+      {/* Enhanced Filter Container */}
+      <Animatable.View
+        animation="slideInLeft"
+        delay={300}
+        style={styles.filterContainer}
+      >
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.categoryContainer}
         >
-          {categories.map((category) => (
-            <TouchableOpacity
+          {categories.map((category, index) => (
+            <Animatable.View
               key={category}
-              style={[
-                styles.categoryButton,
-                selectedCategory === category && styles.categoryButtonActive,
-              ]}
-              onPress={() => setSelectedCategory(category)}
+              animation="fadeInRight"
+              delay={400 + index * 50}
             >
-              <Text
+              <TouchableOpacity
                 style={[
-                  styles.categoryText,
-                  selectedCategory === category && styles.categoryTextActive,
+                  styles.categoryButton,
+                  selectedCategory === category && styles.categoryButtonActive,
                 ]}
+                onPress={async () => {
+                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSelectedCategory(category);
+                }}
+                activeOpacity={0.8}
               >
-                {category}
-              </Text>
-            </TouchableOpacity>
+                <LinearGradient
+                  colors={
+                    selectedCategory === category
+                      ? ["#FF6B6B", "#FF8E53"]
+                      : ["#f8f9fa", "#f8f9fa"]
+                  }
+                  style={styles.categoryButtonGradient}
+                >
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      selectedCategory === category &&
+                        styles.categoryTextActive,
+                    ]}
+                  >
+                    {category}
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </Animatable.View>
           ))}
         </ScrollView>
 
         <TouchableOpacity
           style={styles.sortButton}
-          onPress={() => setShowSortMenu(!showSortMenu)}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setShowSortMenu(!showSortMenu);
+          }}
+          activeOpacity={0.8}
         >
-          <Ionicons name="funnel-outline" size={20} color="#666" />
-          <Text style={styles.sortButtonText}>
-            {sortBy === "name" && "Tên"}
-            {sortBy === "price" && "Giá"}
-            {sortBy === "rating" && "Đánh giá"}
-            {sortBy === "orderCount" && "Số lần đặt"}
-          </Text>
+          <LinearGradient
+            colors={["#f8f9fa", "#f0f2f5"]}
+            style={styles.sortButtonGradient}
+          >
+            <Ionicons name="funnel-outline" size={18} color="#FF6B6B" />
+            <Text style={styles.sortButtonText}>
+              {sortBy === "name" && "Tên"}
+              {sortBy === "price" && "Giá"}
+              {sortBy === "rating" && "Đánh giá"}
+              {sortBy === "orderCount" && "Phổ biến"}
+            </Text>
+          </LinearGradient>
         </TouchableOpacity>
-      </View>
+      </Animatable.View>
 
-      {/* Sort Menu */}
+      {/* Enhanced Sort Menu */}
       {showSortMenu && (
-        <View style={styles.sortMenu}>
-          <TouchableOpacity
-            style={[
-              styles.sortOption,
-              sortBy === "name" && styles.sortOptionActive,
-            ]}
-            onPress={() => {
-              setSortBy("name");
-              setShowSortMenu(false);
-            }}
+        <Animatable.View animation="fadeInDown" style={styles.sortMenu}>
+          <LinearGradient
+            colors={["#fff", "#fafbff"]}
+            style={styles.sortMenuGradient}
           >
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === "name" && styles.sortOptionTextActive,
-              ]}
-            >
-              Sắp xếp theo tên
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sortOption,
-              sortBy === "price" && styles.sortOptionActive,
-            ]}
-            onPress={() => {
-              setSortBy("price");
-              setShowSortMenu(false);
-            }}
-          >
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === "price" && styles.sortOptionTextActive,
-              ]}
-            >
-              Sắp xếp theo giá
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sortOption,
-              sortBy === "rating" && styles.sortOptionActive,
-            ]}
-            onPress={() => {
-              setSortBy("rating");
-              setShowSortMenu(false);
-            }}
-          >
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === "rating" && styles.sortOptionTextActive,
-              ]}
-            >
-              Sắp xếp theo đánh giá
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sortOption,
-              sortBy === "orderCount" && styles.sortOptionActive,
-            ]}
-            onPress={() => {
-              setSortBy("orderCount");
-              setShowSortMenu(false);
-            }}
-          >
-            <Text
-              style={[
-                styles.sortOptionText,
-                sortBy === "orderCount" && styles.sortOptionTextActive,
-              ]}
-            >
-              Sắp xếp theo số lần đặt
-            </Text>
-          </TouchableOpacity>
-        </View>
+            {[
+              { key: "name", label: "Sắp xếp theo tên", icon: "text-outline" },
+              {
+                key: "price",
+                label: "Sắp xếp theo giá",
+                icon: "pricetag-outline",
+              },
+              {
+                key: "rating",
+                label: "Sắp xếp theo đánh giá",
+                icon: "star-outline",
+              },
+              {
+                key: "orderCount",
+                label: "Sắp xếp theo độ phổ biến",
+                icon: "trending-up-outline",
+              },
+            ].map((option) => (
+              <TouchableOpacity
+                key={option.key}
+                style={[
+                  styles.sortOption,
+                  sortBy === option.key && styles.sortOptionActive,
+                ]}
+                onPress={async () => {
+                  await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSortBy(option.key);
+                  setShowSortMenu(false);
+                }}
+              >
+                <Ionicons
+                  name={option.icon as any}
+                  size={18}
+                  color={sortBy === option.key ? "#FF6B6B" : "#666"}
+                />
+                <Text
+                  style={[
+                    styles.sortOptionText,
+                    sortBy === option.key && styles.sortOptionTextActive,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </LinearGradient>
+        </Animatable.View>
       )}
 
       {/* Food List */}
-      <ScrollView style={styles.foodList} showsVerticalScrollIndicator={false}>
-        {/* Thống kê */}
-        <FavoriteStats
-          totalFavorites={favoriteFoods.length}
-          mostOrdered={mostOrdered}
-          totalSpent={totalSpent}
-          averageRating={averageRating}
-        />
+      <ScrollView
+        style={styles.foodList}
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#FF6B6B"]}
+            tintColor="#FF6B6B"
+          />
+        }
+      >
+        {/* Enhanced Stats */}
+        <Animatable.View animation="fadeInUp" delay={500}>
+          <FavoriteStats
+            totalFavorites={favoriteFoods.length}
+            mostOrdered={mostOrdered}
+            totalSpent={totalSpent}
+            averageRating={averageRating}
+          />
+        </Animatable.View>
 
         {filteredFoods.length > 0 ? (
-          filteredFoods.map(renderFoodCard)
-        ) : (
-          <View style={styles.emptyState}>
-            <Ionicons name="heart-outline" size={64} color="#ccc" />
-            <Text style={styles.emptyTitle}>Không tìm thấy món yêu thích</Text>
-            <Text style={styles.emptySubtitle}>
-              Thử thay đổi từ khóa tìm kiếm hoặc danh mục
-            </Text>
+          <View style={styles.foodGrid}>
+            {filteredFoods.map((food, index) => renderFoodCard(food, index))}
           </View>
+        ) : (
+          <Animatable.View
+            animation="fadeIn"
+            delay={800}
+            style={styles.emptyState}
+          >
+            <LinearGradient
+              colors={["#fff", "#fafbff"]}
+              style={styles.emptyStateGradient}
+            >
+              <View style={styles.emptyIconContainer}>
+                <LinearGradient
+                  colors={["#FF6B6B20", "#FF8E5310"]}
+                  style={styles.emptyIconBackground}
+                >
+                  <Ionicons name="heart-outline" size={48} color="#FF6B6B" />
+                </LinearGradient>
+              </View>
+
+              <Text style={styles.emptyTitle}>
+                {searchText ? "Không tìm thấy món ăn" : "Chưa có món yêu thích"}
+              </Text>
+              <Text style={styles.emptySubtitle}>
+                {searchText
+                  ? "Thử thay đổi từ khóa tìm kiếm hoặc danh mục"
+                  : "Hãy thêm món yêu thích từ menu để xem tại đây"}
+              </Text>
+
+              {!searchText && (
+                <TouchableOpacity
+                  style={styles.exploreButton}
+                  onPress={async () => {
+                    await Haptics.impactAsync(
+                      Haptics.ImpactFeedbackStyle.Medium
+                    );
+                    navigation.navigate("Menu");
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <LinearGradient
+                    colors={["#FF6B6B", "#FF8E53"]}
+                    style={styles.exploreButtonGradient}
+                  >
+                    <Ionicons
+                      name="restaurant-outline"
+                      size={20}
+                      color="#fff"
+                    />
+                    <Text style={styles.exploreButtonText}>Khám phá menu</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              )}
+            </LinearGradient>
+          </Animatable.View>
         )}
+
+        <View style={styles.bottomSpacer} />
       </ScrollView>
     </View>
   );
@@ -410,204 +646,305 @@ export default function FavoriteFoodsScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#f8faff",
   },
   header: {
     paddingTop: 50,
-    paddingBottom: 20,
+    paddingBottom: 25,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 20,
+    shadowColor: "#FF6B6B",
+    shadowOffset: {
+      width: 0,
+      height: 8,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   backButton: {
-    marginRight: 15,
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     color: "#fff",
-    flex: 1,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: "rgba(255,255,255,0.9)",
+    marginTop: 2,
   },
   headerRight: {
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   shareButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.3)",
     marginBottom: 8,
   },
+  countBadge: {
+    backgroundColor: "rgba(255,255,255,0.9)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
   favoriteCount: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.8)",
+    fontSize: 12,
+    color: "#FF6B6B",
+    fontWeight: "bold",
   },
   searchContainer: {
-    padding: 16,
-    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
   },
-  searchBar: {
+  searchBarGradient: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    borderRadius: 12,
+    borderRadius: 20,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 5,
   },
   searchInput: {
     flex: 1,
     marginLeft: 12,
     fontSize: 16,
+    color: "#333",
+  },
+  clearButton: {
+    padding: 4,
   },
   filterContainer: {
-    backgroundColor: "#fff",
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: 20,
+    paddingBottom: 15,
   },
   categoryContainer: {
     flex: 1,
+    marginRight: 15,
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
     marginRight: 12,
     borderRadius: 20,
-    backgroundColor: "#f8f9fa",
+    overflow: "hidden",
   },
-  categoryButtonActive: {
-    backgroundColor: "#667eea",
+  categoryButtonGradient: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
+  categoryButtonActive: {},
   categoryText: {
     fontSize: 14,
     color: "#666",
+    fontWeight: "500",
   },
   categoryTextActive: {
     color: "#fff",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   sortButton: {
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  sortButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    marginLeft: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
   },
   sortButtonText: {
     fontSize: 14,
-    color: "#666",
-    marginLeft: 4,
+    color: "#FF6B6B",
+    marginLeft: 6,
+    fontWeight: "500",
   },
   sortMenu: {
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginBottom: 8,
+    marginHorizontal: 20,
+    marginBottom: 15,
+    borderRadius: 20,
+    overflow: "hidden",
     shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  sortMenuGradient: {
+    padding: 8,
   },
   sortOption: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    borderRadius: 12,
+    marginVertical: 2,
   },
   sortOptionActive: {
-    backgroundColor: "#667eea15",
+    backgroundColor: "rgba(255,107,107,0.1)",
   },
   sortOptionText: {
     fontSize: 14,
     color: "#333",
+    marginLeft: 12,
+    fontWeight: "500",
   },
   sortOptionTextActive: {
-    color: "#667eea",
-    fontWeight: "500",
+    color: "#FF6B6B",
+    fontWeight: "600",
   },
   foodList: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 20,
+  },
+  foodGrid: {
+    paddingBottom: 20,
   },
   foodCard: {
-    backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
+    marginBottom: 20,
+    borderRadius: 25,
+    overflow: "hidden",
     shadowColor: "#000",
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 8,
+  },
+  foodCardGradient: {
+    padding: 20,
   },
   foodHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    marginBottom: 15,
   },
   foodImageContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 12,
-    backgroundColor: "#f8f9fa",
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
+    width: 80,
+    height: 80,
+    borderRadius: 20,
+    overflow: "hidden",
+    marginRight: 15,
+    position: "relative",
   },
   foodImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 10,
+    width: 80,
+    height: 80,
+  },
+  imageOverlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 30,
+  },
+  imageGradient: {
+    flex: 1,
   },
   foodInfo: {
     flex: 1,
   },
   foodName: {
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 4,
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  categoryContainer: {
+    marginBottom: 8,
+  },
+  categoryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
   foodCategory: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 4,
+    fontSize: 12,
+    color: "#FF6B6B",
+    marginLeft: 4,
+    fontWeight: "600",
   },
   ratingContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
+  ratingBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginRight: 8,
+  },
   rating: {
-    fontSize: 14,
-    fontWeight: "500",
-    marginLeft: 4,
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#fff",
+    marginLeft: 2,
   },
   orderCount: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#666",
-    marginLeft: 4,
+    fontWeight: "500",
   },
   removeButton: {
-    padding: 8,
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  removeButtonGradient: {
+    padding: 12,
   },
   nutritionInfo: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 12,
+    justifyContent: "space-around",
+    paddingVertical: 15,
     borderTopWidth: 1,
-    borderTopColor: "#f0f0f0",
+    borderTopColor: "rgba(255,107,107,0.1)",
     borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
-    marginBottom: 12,
+    borderBottomColor: "rgba(255,107,107,0.1)",
+    marginBottom: 15,
   },
   nutritionItem: {
+    flexDirection: "row",
     alignItems: "center",
   },
+  nutritionIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+  },
   nutritionLabel: {
-    fontSize: 12,
+    fontSize: 11,
     color: "#666",
-    marginBottom: 2,
+    fontWeight: "500",
   },
   nutritionValue: {
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#333",
   },
   foodFooter: {
     flexDirection: "row",
@@ -618,43 +955,87 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   price: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#667eea",
+    color: "#FF6B6B",
     marginBottom: 2,
   },
-  lastOrdered: {
-    fontSize: 12,
+  priceLabel: {
+    fontSize: 11,
     color: "#666",
+    fontWeight: "500",
   },
   orderButton: {
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  orderButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#667eea",
     paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingVertical: 12,
   },
   orderButtonText: {
     color: "#fff",
-    fontWeight: "500",
-    marginLeft: 4,
+    fontWeight: "bold",
+    marginLeft: 6,
+    fontSize: 14,
   },
   emptyState: {
+    marginTop: 40,
+    borderRadius: 25,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 5,
+  },
+  emptyStateGradient: {
+    alignItems: "center",
+    paddingVertical: 60,
+    paddingHorizontal: 40,
+  },
+  emptyIconContainer: {
+    marginBottom: 20,
+  },
+  emptyIconBackground: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 60,
   },
   emptyTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#666",
-    marginTop: 16,
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
     marginBottom: 8,
+    textAlign: "center",
   },
   emptySubtitle: {
     fontSize: 14,
-    color: "#999",
+    color: "#666",
     textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 30,
+  },
+  exploreButton: {
+    borderRadius: 20,
+    overflow: "hidden",
+  },
+  exploreButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+  },
+  exploreButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+  bottomSpacer: {
+    height: 30,
   },
 });
