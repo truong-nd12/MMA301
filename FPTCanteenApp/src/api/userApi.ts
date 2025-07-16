@@ -1,10 +1,7 @@
 import { User, tokenStorage } from "./authApi";
 import { Product } from "./productApi";
 
-
 import { API_BASE_URL } from "./config";
-
-
 
 export interface UpdateProfileData {
   fullName?: string;
@@ -95,6 +92,28 @@ export const userApi = {
     });
 
     if (!response.ok) throw new Error("Failed to fetch favorites");
+
+    return await response.json();
+  },
+  addFavorite: async (productId: string): Promise<{ success: boolean }> => {
+    const token = await tokenStorage.getToken();
+    if (!token) {
+      throw new Error("No authentication token found");
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users/favorites`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ productId }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.message || "Failed to add favorite");
+    }
 
     return await response.json();
   },
