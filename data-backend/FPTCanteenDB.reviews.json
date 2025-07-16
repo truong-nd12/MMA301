@@ -1,0 +1,76 @@
+[{
+  "_id": {
+    "$oid": "687040f204cf4f06d044bd00"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae83"
+  },
+  "order": {
+    "$oid": "670000000000000000000001"
+  },
+  "rating": 5,
+  "title": "Ngon tuyệt vời!",
+  "comment": "Cơm sườn rất vừa miệng, nướng thơm, sẽ đặt lại.",
+  "images": [],
+  "isVerified": true
+},
+{
+  "_id": {
+    "$oid": "687040f204cf4f06d044bd01"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae87"
+  },
+  "order": {
+    "$oid": "670000000000000000000001"
+  },
+  "rating": 4,
+  "title": "Mát lạnh đã khát",
+  "comment": "Uống mát, có điều hơi nhiều đá.",
+  "images": [],
+  "isVerified": true
+},
+{
+  "_id": {
+    "$oid": "687040f204cf4f06d044bd02"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae84"
+  },
+  "order": {
+    "$oid": "670000000000000000000002"
+  },
+  "rating": 5,
+  "title": "Rất ngon!",
+  "comment": "Bún riêu đậm đà, có cả chả cua nữa, đáng tiền!",
+  "images": [],
+  "isVerified": true
+},
+{
+  "_id": {
+    "$oid": "687040f204cf4f06d044bd03"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "product": {
+    "$oid": "6870328e9ce82c83a874ae8e"
+  },
+  "order": {
+    "$oid": "670000000000000000000002"
+  },
+  "rating": 3,
+  "title": "Ổn",
+  "comment": "Khoai chiên ổn nhưng hơi nguội khi giao tới.",
+  "images": [],
+  "isVerified": true
+}]

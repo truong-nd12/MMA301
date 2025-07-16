@@ -1,0 +1,166 @@
+[{
+  "_id": {
+    "$oid": "68703f8604cf4f06d044bcfc"
+  },
+  "order": {
+    "$oid": "670000000000000000000001"
+  },
+  "currentLocation": {
+    "lat": 10.762622,
+    "lng": 106.660172,
+    "updatedAt": {
+      "$date": "2025-07-10T10:30:00.000Z"
+    }
+  },
+  "statusLogs": [
+    {
+      "status": "pending",
+      "timestamp": {
+        "$date": "2025-07-10T07:00:00.000Z"
+      }
+    },
+    {
+      "status": "confirmed",
+      "timestamp": {
+        "$date": "2025-07-10T07:10:00.000Z"
+      }
+    },
+    {
+      "status": "processing",
+      "timestamp": {
+        "$date": "2025-07-10T07:30:00.000Z"
+      }
+    },
+    {
+      "status": "shipped",
+      "timestamp": {
+        "$date": "2025-07-10T08:00:00.000Z"
+      }
+    },
+    {
+      "status": "delivered",
+      "timestamp": {
+        "$date": "2025-07-10T08:45:00.000Z"
+      }
+    }
+  ],
+  "startedAt": {
+    "$date": "2025-07-10T07:00:00.000Z"
+  },
+  "completedAt": {
+    "$date": "2025-07-10T08:45:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68703f8604cf4f06d044bcfd"
+  },
+  "order": {
+    "$oid": "670000000000000000000002"
+  },
+  "currentLocation": {
+    "lat": 10.7769,
+    "lng": 106.7009,
+    "updatedAt": {
+      "$date": "2025-07-10T11:15:00.000Z"
+    }
+  },
+  "statusLogs": [
+    {
+      "status": "pending",
+      "timestamp": {
+        "$date": "2025-07-10T08:00:00.000Z"
+      }
+    },
+    {
+      "status": "confirmed",
+      "timestamp": {
+        "$date": "2025-07-10T08:05:00.000Z"
+      }
+    },
+    {
+      "status": "processing",
+      "timestamp": {
+        "$date": "2025-07-10T08:30:00.000Z"
+      }
+    },
+    {
+      "status": "shipped",
+      "timestamp": {
+        "$date": "2025-07-10T09:00:00.000Z"
+      }
+    },
+    {
+      "status": "delivered",
+      "timestamp": {
+        "$date": "2025-07-10T09:50:00.000Z"
+      }
+    }
+  ],
+  "startedAt": {
+    "$date": "2025-07-10T08:00:00.000Z"
+  },
+  "completedAt": {
+    "$date": "2025-07-10T09:50:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68703f8604cf4f06d044bcfe"
+  },
+  "order": {
+    "$oid": "670000000000000000000003"
+  },
+  "currentLocation": null,
+  "statusLogs": [
+    {
+      "status": "pending",
+      "timestamp": {
+        "$date": "2025-07-10T10:00:00.000Z"
+      }
+    },
+    {
+      "status": "cancelled",
+      "timestamp": {
+        "$date": "2025-07-10T10:10:00.000Z"
+      },
+      "note": "Người dùng huỷ đơn do đặt nhầm."
+    }
+  ],
+  "startedAt": {
+    "$date": "2025-07-10T10:00:00.000Z"
+  },
+  "completedAt": {
+    "$date": "2025-07-10T10:10:00.000Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68703f8604cf4f06d044bcff"
+  },
+  "order": {
+    "$oid": "670000000000000000000004"
+  },
+  "currentLocation": null,
+  "statusLogs": [
+    {
+      "status": "pending",
+      "timestamp": {
+        "$date": "2025-07-10T11:00:00.000Z"
+      }
+    },
+    {
+      "status": "cancelled",
+      "timestamp": {
+        "$date": "2025-07-10T11:20:00.000Z"
+      },
+      "note": "Không liên lạc được với khách hàng."
+    }
+  ],
+  "startedAt": {
+    "$date": "2025-07-10T11:00:00.000Z"
+  },
+  "completedAt": {
+    "$date": "2025-07-10T11:20:00.000Z"
+  }
+}]

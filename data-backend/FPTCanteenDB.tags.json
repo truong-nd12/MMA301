@@ -1,0 +1,309 @@
+[{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5a8"
+  },
+  "name": "Cơm phần"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5a9"
+  },
+  "name": "Cơm tấm"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5aa"
+  },
+  "name": "Cơm chiên"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ab"
+  },
+  "name": "Cơm văn phòng"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ac"
+  },
+  "name": "Bún bò"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ad"
+  },
+  "name": "Phở gà"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ae"
+  },
+  "name": "Bún riêu"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5af"
+  },
+  "name": "Hủ tiếu"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b0"
+  },
+  "name": "Trà sữa"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b1"
+  },
+  "name": "Cà phê"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b2"
+  },
+  "name": "Nước ép"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b3"
+  },
+  "name": "Sữa chua"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b4"
+  },
+  "name": "Soda"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b5"
+  },
+  "name": "Bánh mì thịt"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b6"
+  },
+  "name": "Xôi gà"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b7"
+  },
+  "name": "Xôi chả"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b8"
+  },
+  "name": "Bánh mì chay"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5b9"
+  },
+  "name": "Nem chua rán"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ba"
+  },
+  "name": "Khoai tây chiên"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5bb"
+  },
+  "name": "Cá viên"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5bc"
+  },
+  "name": "Trứng cút lộn"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5bd"
+  },
+  "name": "Không thịt"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5be"
+  },
+  "name": "Rau củ"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5bf"
+  },
+  "name": "Đậu hũ"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c0"
+  },
+  "name": "Vegan"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c1"
+  },
+  "name": "Healthy",
+  "color": "#9B59B6",
+  "description": "Tốt cho sức khỏe",
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.270Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c2"
+  },
+  "name": "Thịt heo"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c3"
+  },
+  "name": "Gà"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c4"
+  },
+  "name": "Bò"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c5"
+  },
+  "name": "Cá"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c6"
+  },
+  "name": "Hải sản"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c7"
+  },
+  "name": "Snack"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c8"
+  },
+  "name": "Nhanh gọn"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5c9"
+  },
+  "name": "Buổi chiều"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ca"
+  },
+  "name": "Ít calo"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5cb"
+  },
+  "name": "Lạnh"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5cc"
+  },
+  "name": "Nóng"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5cd"
+  },
+  "name": "Không đường"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5ce"
+  },
+  "name": "Đá ít"
+},
+{
+  "_id": {
+    "$oid": "687022670902e373e8d2c5cf"
+  },
+  "name": "Topping"
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e0c"
+  },
+  "name": "Spicy",
+  "__v": 0,
+  "color": "#E74C3C",
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.094Z"
+  },
+  "description": "Cay",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.254Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e0d"
+  },
+  "name": "Vegetarian",
+  "__v": 0,
+  "color": "#27AE60",
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.099Z"
+  },
+  "description": "Chay",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.260Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e0e"
+  },
+  "name": "Popular",
+  "__v": 0,
+  "color": "#F39C12",
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.102Z"
+  },
+  "description": "Phổ biến",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.264Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e0f"
+  },
+  "name": "New",
+  "__v": 0,
+  "color": "#3498DB",
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.104Z"
+  },
+  "description": "Mới",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.267Z"
+  }
+}]

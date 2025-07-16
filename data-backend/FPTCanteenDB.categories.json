@@ -1,0 +1,140 @@
+[{
+  "_id": {
+    "$oid": "687021d40902e373e8d2c5a4"
+  },
+  "name": "Chay",
+  "description": "Các món chay",
+  "image": "https://images.unsplash.com/photo-1723815338647-90dd65825fa5?q=80&w=997&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.238Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "687021d40902e373e8d2c5a5"
+  },
+  "name": "Mặn",
+  "description": "Các món ăn mặn thông thường",
+  "image": "https://cdn.tgdd.vn/Files/2021/11/22/1399628/tong-hop-10-mon-man-ngon-bo-re-de-lam-cho-nhung-ngay-khong-biet-an-gi-202111221403266825.jpg",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "687021d40902e373e8d2c5a6"
+  },
+  "name": "Ăn nhẹ",
+  "description": "Đồ ăn nhẹ, ăn vặt",
+  "image": "https://assets.grab.com/wp-content/uploads/sites/11/2020/03/01211356/17-1-e1583068446595.jpg",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "687021d40902e373e8d2c5a7"
+  },
+  "name": "Nước",
+  "description": "Các loại đồ uống",
+  "image": "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-10T20:25:56.815Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e04"
+  },
+  "name": "Cơm",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.012Z"
+  },
+  "description": "Các món cơm",
+  "image": "",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.181Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e05"
+  },
+  "name": "Bún",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.050Z"
+  },
+  "description": "Các món bún",
+  "image": "",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.219Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e06"
+  },
+  "name": "Mì",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.056Z"
+  },
+  "description": "Các món mì",
+  "image": "",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.224Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e07"
+  },
+  "name": "Nước uống",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.060Z"
+  },
+  "description": "Các loại nước uống",
+  "image": "",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.228Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871327cd8c04f4cb9363e08"
+  },
+  "name": "Tráng miệng",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2025-07-11T15:49:16.067Z"
+  },
+  "description": "Các món tráng miệng",
+  "image": "",
+  "isActive": true,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:14.233Z"
+  }
+}]

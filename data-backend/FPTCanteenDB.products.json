@@ -1,0 +1,1235 @@
+[{
+  "_id": {
+    "$oid": "6870308e9ce82c83a874ae83"
+  },
+  "name": "Cơm sườn nướng",
+  "description": "Cơm trắng ăn kèm sườn nướng đậm vị",
+  "images": "https://i.ytimg.com/vi/cJu6tFJe_Gc/maxresdefault.jpg",
+  "price": 35000,
+  "calories": 550,
+  "discount": 0,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a5"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c59f"
+  },
+  "sku": "SKU-MAN-001",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5a9"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c2"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c1"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Thêm trứng",
+      "price": 5000,
+      "calories": 70
+    },
+    {
+      "name": "Thêm chả",
+      "price": 7000,
+      "calories": 100
+    },
+    {
+      "name": "Nước sốt đặc biệt",
+      "price": 3000,
+      "calories": 50
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 30000,
+      "calories": 450
+    },
+    {
+      "size": "M",
+      "price": 35000,
+      "calories": 550
+    },
+    {
+      "size": "L",
+      "price": 40000,
+      "calories": 650
+    }
+  ],
+  "options": {},
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "wednesday",
+    "friday"
+  ],
+  "isFeatured": true,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870308e9ce82c83a874ae84"
+  },
+  "name": "Bún riêu cua",
+  "description": "Bún riêu cua chuẩn vị Bắc",
+  "images": "https://i.ytimg.com/vi/C1P1Cw9J1-I/maxresdefault.jpg",
+  "price": 30000,
+  "calories": 450,
+  "discount": 0,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a5"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a0"
+  },
+  "sku": "SKU-MAN-002",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5ae"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c5"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5be"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Chả cua",
+      "price": 8000,
+      "calories": 90
+    },
+    {
+      "name": "Đậu hũ",
+      "price": 4000,
+      "calories": 60
+    },
+    {
+      "name": "Rau thêm",
+      "price": 2000,
+      "calories": 10
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 25000,
+      "calories": 350
+    },
+    {
+      "size": "M",
+      "price": 30000,
+      "calories": 450
+    },
+    {
+      "size": "L",
+      "price": 35000,
+      "calories": 550
+    }
+  ],
+  "options": {},
+  "isActive": true,
+  "availableDays": [
+    "tuesday",
+    "thursday"
+  ],
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870308e9ce82c83a874ae85"
+  },
+  "name": "Xôi gà xé",
+  "description": "Xôi nếp dẻo thơm, thịt gà xé ngon đậm đà",
+  "images": "https://i.ytimg.com/vi/gZt9CsZCpDM/maxresdefault.jpg",
+  "price": 25000,
+  "calories": 500,
+  "discount": 0,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a5"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a2"
+  },
+  "sku": "SKU-MAN-003",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b6"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c3"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c8"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Thêm ruốc",
+      "price": 5000,
+      "calories": 60
+    },
+    {
+      "name": "Thêm pate",
+      "price": 6000,
+      "calories": 80
+    },
+    {
+      "name": "Thêm hành phi",
+      "price": 2000,
+      "calories": 30
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 20000,
+      "calories": 400
+    },
+    {
+      "size": "M",
+      "price": 25000,
+      "calories": 500
+    },
+    {
+      "size": "L",
+      "price": 30000,
+      "calories": 600
+    }
+  ],
+  "options": {},
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday"
+  ],
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870308e9ce82c83a874ae86"
+  },
+  "name": "Bánh mì pate trứng",
+  "description": "Bánh mì giòn với pate và trứng chiên",
+  "images": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/2024_2_19_638439762164888519_cach-lam-banh-mi-pate-trung-7.jpg",
+  "price": 20000,
+  "calories": 400,
+  "discount": 0,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a6"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a2"
+  },
+  "sku": "SKU-AN-004",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b5"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c2"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c8"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Thêm trứng",
+      "price": 4000,
+      "calories": 70
+    },
+    {
+      "name": "Phô mai",
+      "price": 6000,
+      "calories": 90
+    },
+    {
+      "name": "Thịt nguội",
+      "price": 8000,
+      "calories": 100
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 18000,
+      "calories": 350
+    },
+    {
+      "size": "M",
+      "price": 20000,
+      "calories": 400
+    },
+    {
+      "size": "L",
+      "price": 22000,
+      "calories": 450
+    }
+  ],
+  "options": {},
+  "isActive": true,
+  "availableDays": [
+    "friday"
+  ],
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870308e9ce82c83a874ae87"
+  },
+  "name": "Trà đào cam sả",
+  "description": "Trà đào tươi mát kết hợp cam sả",
+  "images": "https://bizweb.dktcdn.net/100/004/714/files/tra-dao-cam-sa-a.png?v=1621053250419",
+  "price": 25000,
+  "calories": 100,
+  "discount": 0,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a7"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a1"
+  },
+  "sku": "SKU-NUOC-005",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5cb"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5b2"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5ca"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c8"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Trân châu đen",
+      "price": 5000,
+      "calories": 100
+    },
+    {
+      "name": "Thạch trái cây",
+      "price": 5000,
+      "calories": 80
+    },
+    {
+      "name": "Kem cheese",
+      "price": 7000,
+      "calories": 120
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 20000,
+      "calories": 80
+    },
+    {
+      "size": "M",
+      "price": 25000,
+      "calories": 100
+    },
+    {
+      "size": "L",
+      "price": 30000,
+      "calories": 120
+    }
+  ],
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "wednesday",
+    "friday"
+  ],
+  "isFeatured": true,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870308e9ce82c83a874ae88"
+  },
+  "name": "Trà sữa trân châu",
+  "description": "Trà sữa trân châu ngọt béo",
+  "images": "https://mixueviet.com/wp-content/uploads/2024/06/Tra-sua-tran-chau-Mixue-Pearl-Milk-Tea.png",
+  "price": 25000,
+  "calories": 450,
+  "discount": 0,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a7"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a1"
+  },
+  "sku": "SKU-NUOC-010",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b0"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cf"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cb"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c8"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Thêm trân châu",
+      "price": 5000,
+      "calories": 100
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 20000,
+      "calories": 350
+    },
+    {
+      "size": "M",
+      "price": 25000,
+      "calories": 450
+    },
+    {
+      "size": "L",
+      "price": 30000,
+      "calories": 550
+    }
+  ],
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "wednesday",
+    "friday"
+  ],
+  "isFeatured": true,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae89"
+  },
+  "name": "Cơm gà xối mỡ",
+  "description": "Cơm gà xối mỡ thơm ngon với gà ta tươi ngon",
+  "price": 35000,
+  "calories": 450,
+  "discount": 0,
+  "category": {
+    "$oid": "6871327cd8c04f4cb9363e04"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c59f"
+  },
+  "sku": "SKU-MAN-006",
+  "stock": 50,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5a9"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c3"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c1"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Trứng cút",
+      "price": 5000,
+      "calories": 50,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bceb6"
+      }
+    },
+    {
+      "name": "Rau xanh",
+      "price": 3000,
+      "calories": 20,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bceb7"
+      }
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 30000,
+      "calories": 500
+    },
+    {
+      "size": "M",
+      "price": 35000,
+      "calories": 600
+    },
+    {
+      "size": "L",
+      "price": 40000,
+      "calories": 700
+    }
+  ],
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "isActive": true,
+  "availableDays": [
+    "tuesday",
+    "thursday"
+  ],
+  "images": "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400",
+  "isFeatured": true,
+  "rating": 4.5,
+  "reviewCount": 12,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:24.284Z"
+  },
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae8a"
+  },
+  "name": "Bún bò Huế",
+  "description": "Bún bò Huế đặc trưng với nước dùng đậm đà",
+  "price": 40000,
+  "calories": 380,
+  "discount": 10,
+  "category": {
+    "$oid": "6871327cd8c04f4cb9363e05"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a0"
+  },
+  "sku": "SKU-MAN-007",
+  "stock": 30,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5ac"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c4"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    }
+  ],
+  "addOns": [
+    {
+      "name": "Chả lụa",
+      "price": 8000,
+      "calories": 120,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bcebf"
+      }
+    },
+    {
+      "name": "Giá đỗ",
+      "price": 2000,
+      "calories": 15,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bcec0"
+      }
+    }
+  ],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 35000,
+      "calories": 480
+    },
+    {
+      "size": "M",
+      "price": 40000,
+      "calories": 580
+    },
+    {
+      "size": "L",
+      "price": 45000,
+      "calories": 680
+    }
+  ],
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "wednesday"
+  ],
+  "images": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
+  "isFeatured": true,
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "rating": 4.8,
+  "reviewCount": 8,
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:24.306Z"
+  },
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae8b"
+  },
+  "name": "Xôi đậu xanh chả lụa",
+  "description": "Xôi đậu xanh kèm chả lụa truyền thống",
+  "price": 25000,
+  "calories": 520,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a4"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a2"
+  },
+  "sku": "SKU-CHAY-008",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b7"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c2"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5be"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 22000,
+      "calories": 420
+    },
+    {
+      "size": "M",
+      "price": 25000,
+      "calories": 520
+    },
+    {
+      "size": "L",
+      "price": 28000,
+      "calories": 620
+    }
+  ],
+  "isActive": true,
+  "availableDays": [
+    "tuesday",
+    "thursday"
+  ],
+  "images": "https://file.hstatic.net/200000667673/file/cach-lam-xoi-xeo-cha-lua-ngon-tuyet-tai-nha-_3ce0029275604ec58f1aade18ec94dec_grande.jpg",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae8c"
+  },
+  "name": "Bánh mì chay nướng",
+  "description": "Bánh mì giòn với nhân nướng chay",
+  "price": 20000,
+  "calories": 380,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a4"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a2"
+  },
+  "sku": "SKU-CHAY-009",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b8"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c0"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c1"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 18000,
+      "calories": 300
+    },
+    {
+      "size": "M",
+      "price": 20000,
+      "calories": 380
+    },
+    {
+      "size": "L",
+      "price": 22000,
+      "calories": 450
+    }
+  ],
+  "isActive": true,
+  "availableDays": [
+    "wednesday",
+    "friday"
+  ],
+  "images": "https://dms.mydukaan.io/original/jpeg/upload_file_service/ea9b164c-5144-41be-adfc-598d56cf8a2c/banh-mi-suon-chien-chay.jpg",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae8d"
+  },
+  "name": "Chè đậu xanh nước cốt dừa",
+  "description": "Món tráng miệng mát lạnh, ngọt dịu",
+  "price": 15000,
+  "calories": 250,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a6"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a3"
+  },
+  "sku": "SKU-AN-010",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5cb"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c8"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 12000,
+      "calories": 200
+    },
+    {
+      "size": "M",
+      "price": 15000,
+      "calories": 250
+    },
+    {
+      "size": "L",
+      "price": 18000,
+      "calories": 300
+    }
+  ],
+  "isActive": true,
+  "availableDays": [
+    "friday"
+  ],
+  "images": "https://cdn.tgdd.vn/Files/2018/04/17/1082709/cach-nau-che-dau-xanh-danh-nuoc-cot-dua-tuyet-ngon-202109231732184111.jpg",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae8e"
+  },
+  "name": "Khoai tây chiên",
+  "description": "Snack khoai tây giòn rụm",
+  "price": 20000,
+  "calories": 300,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a6"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a3"
+  },
+  "sku": "SKU-AN-011",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5ba"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c7"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cc"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 15000,
+      "calories": 250
+    },
+    {
+      "size": "M",
+      "price": 20000,
+      "calories": 300
+    },
+    {
+      "size": "L",
+      "price": 25000,
+      "calories": 350
+    }
+  ],
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "thursday"
+  ],
+  "images": "https://cdn2.fptshop.com.vn/unsafe/1920x0/filters:format(webp):quality(75)/2023_9_28_638315154313184024_cach-lam-khoai-tay-chien-1.JPG",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae8f"
+  },
+  "name": "Sữa đậu nành",
+  "description": "Sữa đậu nguyên chất, ít đường",
+  "price": 10000,
+  "calories": 120,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a7"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a1"
+  },
+  "sku": "SKU-NUOC-012",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b3"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cd"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5ca"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 8000,
+      "calories": 100
+    },
+    {
+      "size": "M",
+      "price": 10000,
+      "calories": 120
+    },
+    {
+      "size": "L",
+      "price": 12000,
+      "calories": 150
+    }
+  ],
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "isActive": true,
+  "availableDays": [
+    "monday",
+    "tuesday",
+    "friday"
+  ],
+  "images": "https://www.aia.com.vn/vi/song-khoe/loi-khuyen/dinh-duong/uong-sua-dau-nanh-co-tac-dung-gi.thumb.800.480.png?ck=1731480863",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae90"
+  },
+  "name": "Trà tắc",
+  "description": "Trà tắc chua ngọt mát lạnh",
+  "price": 10000,
+  "calories": 80,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a7"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a1"
+  },
+  "sku": "SKU-NUOC-013",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5b2"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5cb"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5ca"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 8000,
+      "calories": 60
+    },
+    {
+      "size": "M",
+      "price": 10000,
+      "calories": 80
+    },
+    {
+      "size": "L",
+      "price": 12000,
+      "calories": 100
+    }
+  ],
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "isActive": true,
+  "availableDays": [
+    "tuesday",
+    "thursday"
+  ],
+  "images": "https://dms.mydukaan.io/original/jpeg/upload_file_service/1e152ff5-6dec-452f-8544-f2e50db86f65/tra-tac.jpg",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "6870328e9ce82c83a874ae91"
+  },
+  "name": "Bún chay Huế",
+  "description": "Bún chay thanh đạm kiểu Huế",
+  "price": 25000,
+  "calories": 400,
+  "category": {
+    "$oid": "687021d40902e373e8d2c5a4"
+  },
+  "brand": {
+    "$oid": "68701fc80902e373e8d2c5a0"
+  },
+  "sku": "SKU-CHAY-014",
+  "stock": 100,
+  "tags": [
+    {
+      "$oid": "687022670902e373e8d2c5ae"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5bd"
+    },
+    {
+      "$oid": "687022670902e373e8d2c5c0"
+    }
+  ],
+  "addOns": [],
+  "sizes": [
+    {
+      "size": "S",
+      "price": 22000,
+      "calories": 350
+    },
+    {
+      "size": "M",
+      "price": 25000,
+      "calories": 400
+    },
+    {
+      "size": "L",
+      "price": 28000,
+      "calories": 450
+    }
+  ],
+  "isActive": true,
+  "availableDays": [
+    "wednesday",
+    "friday"
+  ],
+  "images": "https://khamphahue.com.vn/Portals/0/Medias/Nam2018/T7/Bun-chay-Hue.jpg",
+  "isFeatured": false,
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "687144fff95db1cd6a1692a3"
+  },
+  "name": "Phở bò tái",
+  "__v": 0,
+  "addOns": [
+    {
+      "name": "Bò viên",
+      "price": 10000,
+      "calories": 150,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bcec8"
+      }
+    },
+    {
+      "name": "Gầu bò",
+      "price": 15000,
+      "calories": 200,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bcec9"
+      }
+    }
+  ],
+  "availableDays": [],
+  "calories": 420,
+  "category": {
+    "$oid": "6871327cd8c04f4cb9363e06"
+  },
+  "createdAt": {
+    "$date": "2025-07-11T17:08:15.061Z"
+  },
+  "description": "Phở bò tái với nước dùng ngọt thanh",
+  "discount": 0,
+  "images": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400",
+  "isActive": true,
+  "isFeatured": false,
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "price": 45000,
+  "rating": 4.6,
+  "reviewCount": 15,
+  "sizes": [],
+  "stock": 25,
+  "tags": [],
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:24.312Z"
+  },
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "name": "Cà phê sữa đá",
+  "__v": 0,
+  "addOns": [],
+  "availableDays": [],
+  "calories": 120,
+  "category": {
+    "$oid": "6871327cd8c04f4cb9363e07"
+  },
+  "createdAt": {
+    "$date": "2025-07-11T17:08:15.070Z"
+  },
+  "description": "Cà phê sữa đá truyền thống Việt Nam",
+  "discount": 0,
+  "images": "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400",
+  "isActive": true,
+  "isFeatured": true,
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "price": 25000,
+  "rating": 4.3,
+  "reviewCount": 20,
+  "sizes": [
+    {
+      "size": "S",
+      "price": 20000,
+      "calories": 100,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bcece"
+      }
+    },
+    {
+      "size": "M",
+      "price": 25000,
+      "calories": 120,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bcecf"
+      }
+    },
+    {
+      "size": "L",
+      "price": 30000,
+      "calories": 150,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bced0"
+      }
+    }
+  ],
+  "stock": 100,
+  "tags": [],
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:24.320Z"
+  },
+  "orderCount": 0
+},
+{
+  "_id": {
+    "$oid": "687144fff95db1cd6a1692a5"
+  },
+  "name": "Chè hạt sen long nhãn",
+  "__v": 0,
+  "addOns": [
+    {
+      "name": "Thêm hạt sen",
+      "price": 5000,
+      "calories": 50,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bced6"
+      }
+    },
+    {
+      "name": "Thêm long nhãn",
+      "price": 3000,
+      "calories": 30,
+      "_id": {
+        "$oid": "6871ff5c5c3b2cdfd20bced7"
+      }
+    }
+  ],
+  "availableDays": [],
+  "calories": 280,
+  "category": {
+    "$oid": "6871327cd8c04f4cb9363e08"
+  },
+  "createdAt": {
+    "$date": "2025-07-11T17:08:15.075Z"
+  },
+  "description": "Chè hạt sen long nhãn ngọt thanh",
+  "discount": 15,
+  "images": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
+  "isActive": true,
+  "isFeatured": false,
+  "options": {
+    "sugar": [
+      "0%",
+      "50%",
+      "100%"
+    ],
+    "ice": [
+      "No Ice",
+      "Less Ice",
+      "Normal Ice"
+    ]
+  },
+  "price": 30000,
+  "rating": 4.7,
+  "reviewCount": 6,
+  "sizes": [],
+  "stock": 40,
+  "tags": [],
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:24.325Z"
+  },
+  "orderCount": 0
+}]

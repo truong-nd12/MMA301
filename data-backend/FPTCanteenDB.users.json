@@ -1,0 +1,184 @@
+[{
+  "_id": {
+    "$oid": "68701bc7caa62de7e0d10835"
+  },
+  "username": "admin01",
+  "email": "admin01@example.com",
+  "password": "$2a$12$k5nMZ7z/Y0O3ohKgIGsBv.8Lf2t1YIX6QrmZzHx3qEmZujyT2cFHa",
+  "fullName": "Admin One",
+  "studentCode": "000001",
+  "major": "Information Technology",
+  "year": "4",
+  "class": "IT401",
+  "role": "admin",
+  "isActive": true,
+  "avatar": "",
+  "dateOfBirth": null,
+  "favorites": [],
+  "gender": "other",
+  "lastLogin": null,
+  "phone": "0984336097"
+},
+{
+  "_id": {
+    "$oid": "68701bc7caa62de7e0d10836"
+  },
+  "username": "admin02",
+  "email": "admin02@example.com",
+  "password": "$2a$12$k5nMZ7z/Y0O3ohKgIGsBv.8Lf2t1YIX6QrmZzHx3qEmZujyT2cFHa",
+  "fullName": "Admin Two",
+  "studentCode": "000002",
+  "major": "Information Systems",
+  "year": "3",
+  "class": "IS301",
+  "role": "admin",
+  "isActive": true,
+  "avatar": "",
+  "dateOfBirth": null,
+  "favorites": [],
+  "gender": "other",
+  "lastLogin": null,
+  "phone": "0984336097"
+},
+{
+  "_id": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "username": "user01",
+  "email": "user01@example.com",
+  "password": "$2a$12$k5nMZ7z/Y0O3ohKgIGsBv.8Lf2t1YIX6QrmZzHx3qEmZujyT2cFHa",
+  "fullName": "User One",
+  "studentCode": "100001",
+  "major": "Computer Science",
+  "year": "2",
+  "class": "CS201",
+  "role": "user",
+  "isActive": true,
+  "avatar": "",
+  "dateOfBirth": null,
+  "favorites": [],
+  "gender": "other",
+  "lastLogin": null,
+  "phone": "0984336097"
+},
+{
+  "_id": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "username": "user02",
+  "email": "user02@example.com",
+  "password": "$2a$12$k5nMZ7z/Y0O3ohKgIGsBv.8Lf2t1YIX6QrmZzHx3qEmZujyT2cFHa",
+  "fullName": "User Two",
+  "studentCode": "100002",
+  "major": "Software Engineering",
+  "year": "1",
+  "class": "SE101",
+  "role": "user",
+  "isActive": true,
+  "avatar": "",
+  "dateOfBirth": null,
+  "favorites": [],
+  "gender": "other",
+  "lastLogin": null,
+  "phone": "0984336097"
+},
+{
+  "_id": {
+    "$oid": "68701bc7caa62de7e0d10839"
+  },
+  "username": "user03",
+  "email": "user03@example.com",
+  "password": "$2a$12$k5nMZ7z/Y0O3ohKgIGsBv.8Lf2t1YIX6QrmZzHx3qEmZujyT2cFHa",
+  "fullName": "User Three",
+  "studentCode": "100003",
+  "major": "AI & Data Science",
+  "year": "3",
+  "class": "AI301",
+  "role": "user",
+  "isActive": true,
+  "avatar": "",
+  "dateOfBirth": null,
+  "favorites": [],
+  "gender": "other",
+  "lastLogin": null,
+  "phone": "0984336097"
+},
+{
+  "_id": {
+    "$oid": "68701bc7caa62de7e0d1083a"
+  },
+  "username": "user04",
+  "email": "user04@example.com",
+  "password": "$2a$12$k5nMZ7z/Y0O3ohKgIGsBv.8Lf2t1YIX6QrmZzHx3qEmZujyT2cFHa",
+  "fullName": "User Four",
+  "studentCode": "100004",
+  "major": "Cyber Security",
+  "year": "2",
+  "class": "CY201",
+  "role": "user",
+  "isActive": true,
+  "avatar": "",
+  "dateOfBirth": null,
+  "favorites": [],
+  "gender": "other",
+  "lastLogin": null,
+  "phone": "0984336097"
+},
+{
+  "_id": {
+    "$oid": "68712d32d1cf907ad6aca833"
+  },
+  "username": "nntruong709",
+  "email": "nntruong79230@gmail.com",
+  "password": "$2b$12$kN2JUqrUyS.483c6mxy5m.r7lNEctU8KtWqNiG7jD8MWowMBPN63S",
+  "fullName": "Ngo Ngoc Truong",
+  "avatar": "",
+  "phone": "0924566491",
+  "gender": "other",
+  "studentCode": "172873",
+  "major": "SE",
+  "year": "4",
+  "class": "SE1846",
+  "favorites": [],
+  "role": "user",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-07-11T15:26:42.069Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-15T11:21:32.144Z"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-07-15T11:21:32.143Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6871300cd22f19c7e694d41f"
+  },
+  "username": "truongnnhe172873",
+  "email": "truongnnhe172873@fpt.edu.vn",
+  "password": "$2b$12$bOCI056huaus1PBeuhRU4OdUE3r7eqVG40C9OJODe8G75IZ73WNKy",
+  "fullName": "trường hehe",
+  "avatar": "",
+  "phone": "0924566491",
+  "gender": "other",
+  "studentCode": "172874",
+  "major": "SE",
+  "year": "4",
+  "class": "1846",
+  "favorites": [],
+  "role": "admin",
+  "isActive": true,
+  "createdAt": {
+    "$date": "2025-07-11T15:38:52.462Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-15T11:22:23.752Z"
+  },
+  "__v": 0,
+  "lastLogin": {
+    "$date": "2025-07-15T11:22:23.751Z"
+  }
+}]

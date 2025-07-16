@@ -1,0 +1,399 @@
+[{
+  "_id": {
+    "$oid": "6871ff68d5ffc495ab6c28bb"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae83"
+  },
+  "quantity": 3,
+  "itemPrice": 35000,
+  "size": "M",
+  "addOns": [],
+  "sugarLevel": "100%",
+  "iceLevel": "Normal Ice",
+  "createdAt": {
+    "$date": "2025-07-12T06:23:36.876Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:36.876Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6871ff68d5ffc495ab6c28c2"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae84"
+  },
+  "quantity": 2,
+  "itemPrice": 30000,
+  "size": "M",
+  "addOns": [],
+  "sugarLevel": "100%",
+  "iceLevel": "Normal Ice",
+  "createdAt": {
+    "$date": "2025-07-12T06:23:36.890Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T06:23:36.890Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68720bb9949ad543361220a0"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae88"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": "M",
+  "addOns": [],
+  "sugarLevel": "100%",
+  "iceLevel": "Normal Ice",
+  "createdAt": {
+    "$date": "2025-07-12T07:16:09.257Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:16:09.257Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68720c6d949ad54336122283"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae88"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": "M",
+  "addOns": [],
+  "sugarLevel": "100%",
+  "iceLevel": "Normal Ice",
+  "createdAt": {
+    "$date": "2025-07-12T07:19:09.063Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:19:09.063Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68720e03949ad54336122534"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae83"
+  },
+  "quantity": 1,
+  "itemPrice": 35000,
+  "size": "M",
+  "addOns": [],
+  "sugarLevel": "100%",
+  "iceLevel": "Normal Ice",
+  "createdAt": {
+    "$date": "2025-07-12T07:25:55.532Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:25:55.532Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68720e6d949ad543361225a5"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae83"
+  },
+  "quantity": 1,
+  "itemPrice": 35000,
+  "size": "M",
+  "addOns": [],
+  "sugarLevel": "100%",
+  "iceLevel": "Normal Ice",
+  "createdAt": {
+    "$date": "2025-07-12T07:27:41.159Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:27:41.159Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68720fd5949ad543361226f2"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae87"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:33:41.704Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:33:41.704Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6872101c949ad543361226fd"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae87"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:34:52.598Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:34:52.598Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6872112e949ad54336122a93"
+  },
+  "product": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:39:26.113Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:39:26.113Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "687211e4949ad54336122ace"
+  },
+  "product": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:42:28.850Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:42:28.850Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68721256949ad54336122b09"
+  },
+  "product": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:44:22.053Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:44:22.053Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "687212c22c224a5526a3dc00"
+  },
+  "product": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:46:10.559Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:46:10.559Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "687212ef2c224a5526a3dcaa"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae84"
+  },
+  "quantity": 1,
+  "itemPrice": 30000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T07:46:55.453Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T07:46:55.453Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68721760b33b3e8eeff0ea97"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae86"
+  },
+  "quantity": 2,
+  "itemPrice": 20000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T08:05:52.048Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T08:05:52.048Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68721837b33b3e8eeff0ec70"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae83"
+  },
+  "quantity": 1,
+  "itemPrice": 35000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T08:09:27.233Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T08:09:27.233Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68721840b33b3e8eeff0ecb2"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae88"
+  },
+  "quantity": 1,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-12T08:09:36.530Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-12T08:09:36.530Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68763615fb6b53d862702fb0"
+  },
+  "product": {
+    "$oid": "6870308e9ce82c83a874ae85"
+  },
+  "quantity": 2,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-15T11:05:57.006Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-15T11:05:57.006Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "687639c9fb6b53d8627030c9"
+  },
+  "product": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "quantity": 5,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-15T11:21:45.659Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-15T11:21:45.659Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6876d4c7eb19abb44f095fff"
+  },
+  "product": {
+    "$oid": "687144fff95db1cd6a1692a4"
+  },
+  "quantity": 2,
+  "itemPrice": 25000,
+  "size": null,
+  "addOns": [],
+  "sugarLevel": null,
+  "iceLevel": null,
+  "createdAt": {
+    "$date": "2025-07-15T22:23:03.619Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-15T22:23:03.619Z"
+  },
+  "__v": 0
+}]

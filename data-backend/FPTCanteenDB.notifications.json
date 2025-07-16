@@ -1,0 +1,612 @@
+[{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd04"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH001 của bạn đã được xác nhận. Chúng tôi sẽ chuẩn bị và giao hàng sớm nhất có thể.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.531Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd05"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Cảm ơn bạn đã đặt hàng! Đơn hàng #DH002 đang được xử lý và sẽ được giao trong 24h tới.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.531Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd06"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10839"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH003 của bạn đã được tiếp nhận. Thời gian giao hàng dự kiến: 30-45 phút.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.531Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd07"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Mã giảm giá dành cho người dùng mới",
+  "message": "Chào mừng bạn đến với cửa hàng! Sử dụng mã NEWUSER10 để được giảm 10% cho đơn hàng đầu tiên (tối đa 20.000đ).",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae92"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.539Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd08"
+  },
+  "user": null,
+  "title": "🚚 Miễn phí ship cho đơn từ 200K",
+  "message": "Nhập mã FREESHIP50K để được giảm 50.000đ phí vận chuyển cho đơn hàng từ 200.000đ. Nhanh tay, chỉ có 500 mã!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae93"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.539Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd09"
+  },
+  "user": null,
+  "title": "🍿 Giảm 15% cho đồ ăn vặt",
+  "message": "Thèm ăn vặt? Sử dụng mã DOANVAT15 để được giảm 15% (tối đa 15.000đ) cho tất cả đồ ăn vặt yêu thích!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae94"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.539Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd0a"
+  },
+  "user": null,
+  "title": "🥤 Giảm 50% cho nước uống",
+  "message": "Khát nước? Nhập mã TRA50 để được giảm 50% (tối đa 10.000đ) cho các loại nước uống. Áp dụng đến 30/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae95"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.539Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd0b"
+  },
+  "user": null,
+  "title": "🎒 Khuyến mãi Back to School",
+  "message": "Chuẩn bị năm học mới! Sử dụng mã BACK2SCHOOL20 để được giảm 20.000đ cho đơn từ 100.000đ. Có hiệu lực từ 1/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae96"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.539Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd0c"
+  },
+  "user": null,
+  "title": "Cập nhật chính sách giao hàng",
+  "message": "Chúng tôi đã cập nhật thời gian giao hàng để phục vụ bạn tốt hơn. Giờ giao hàng: 7:00 - 22:00 hàng ngày.",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.544Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd0d"
+  },
+  "user": null,
+  "title": "Sản phẩm mới đã có mặt",
+  "message": "Khám phá các sản phẩm mới nhất từ các thương hiệu uy tín. Đặt hàng ngay để trải nghiệm!",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.544Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd0e"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH001 của bạn đã được xác nhận. Chúng tôi sẽ chuẩn bị và giao hàng sớm nhất có thể.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd0f"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Cảm ơn bạn đã đặt hàng! Đơn hàng #DH002 đang được xử lý và sẽ được giao trong 24h tới.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd10"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10839"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH003 của bạn đã được tiếp nhận. Thời gian giao hàng dự kiến: 30-45 phút.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd11"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Mã giảm giá dành cho người dùng mới",
+  "message": "Chào mừng bạn đến với cửa hàng! Sử dụng mã NEWUSER10 để được giảm 10% cho đơn hàng đầu tiên (tối đa 20.000đ).",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae92"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd12"
+  },
+  "user": null,
+  "title": "🚚 Miễn phí ship cho đơn từ 200K",
+  "message": "Nhập mã FREESHIP50K để được giảm 50.000đ phí vận chuyển cho đơn hàng từ 200.000đ. Nhanh tay, chỉ có 500 mã!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae93"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd13"
+  },
+  "user": null,
+  "title": "🍿 Giảm 15% cho đồ ăn vặt",
+  "message": "Thèm ăn vặt? Sử dụng mã DOANVAT15 để được giảm 15% (tối đa 15.000đ) cho tất cả đồ ăn vặt yêu thích!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae94"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd14"
+  },
+  "user": null,
+  "title": "🥤 Giảm 50% cho nước uống",
+  "message": "Khát nước? Nhập mã TRA50 để được giảm 50% (tối đa 10.000đ) cho các loại nước uống. Áp dụng đến 30/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae95"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd15"
+  },
+  "user": null,
+  "title": "🎒 Khuyến mãi Back to School",
+  "message": "Chuẩn bị năm học mới! Sử dụng mã BACK2SCHOOL20 để được giảm 20.000đ cho đơn từ 100.000đ. Có hiệu lực từ 1/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae96"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd16"
+  },
+  "user": null,
+  "title": "Cập nhật chính sách giao hàng",
+  "message": "Chúng tôi đã cập nhật thời gian giao hàng để phục vụ bạn tốt hơn. Giờ giao hàng: 7:00 - 22:00 hàng ngày.",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870433304cf4f06d044bd17"
+  },
+  "user": null,
+  "title": "Sản phẩm mới đã có mặt",
+  "message": "Khám phá các sản phẩm mới nhất từ các thương hiệu uy tín. Đặt hàng ngay để trải nghiệm!",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:48:19.546Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870436804cf4f06d044bd18"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH001 của bạn đã được xác nhận. Chúng tôi sẽ chuẩn bị và giao hàng sớm nhất có thể.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:12.013Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870436804cf4f06d044bd19"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Cảm ơn bạn đã đặt hàng! Đơn hàng #DH002 đang được xử lý và sẽ được giao trong 24h tới.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:12.013Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870436804cf4f06d044bd1a"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10839"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH003 của bạn đã được tiếp nhận. Thời gian giao hàng dự kiến: 30-45 phút.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:12.013Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870438b04cf4f06d044bd1b"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Mã giảm giá dành cho người dùng mới",
+  "message": "Chào mừng bạn đến với cửa hàng! Sử dụng mã NEWUSER10 để được giảm 10% cho đơn hàng đầu tiên (tối đa 20.000đ).",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae92"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:47.804Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870438b04cf4f06d044bd1c"
+  },
+  "user": null,
+  "title": "🚚 Miễn phí ship cho đơn từ 200K",
+  "message": "Nhập mã FREESHIP50K để được giảm 50.000đ phí vận chuyển cho đơn hàng từ 200.000đ. Nhanh tay, chỉ có 500 mã!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae93"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:47.804Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870438b04cf4f06d044bd1d"
+  },
+  "user": null,
+  "title": "🍿 Giảm 15% cho đồ ăn vặt",
+  "message": "Thèm ăn vặt? Sử dụng mã DOANVAT15 để được giảm 15% (tối đa 15.000đ) cho tất cả đồ ăn vặt yêu thích!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae94"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:47.804Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870438b04cf4f06d044bd1e"
+  },
+  "user": null,
+  "title": "🥤 Giảm 50% cho nước uống",
+  "message": "Khát nước? Nhập mã TRA50 để được giảm 50% (tối đa 10.000đ) cho các loại nước uống. Áp dụng đến 30/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae95"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:47.804Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870438b04cf4f06d044bd1f"
+  },
+  "user": null,
+  "title": "🎒 Khuyến mãi Back to School",
+  "message": "Chuẩn bị năm học mới! Sử dụng mã BACK2SCHOOL20 để được giảm 20.000đ cho đơn từ 100.000đ. Có hiệu lực từ 1/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae96"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:49:47.804Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd20"
+  },
+  "user": null,
+  "title": "Cập nhật chính sách giao hàng",
+  "message": "Chúng tôi đã cập nhật thời gian giao hàng để phục vụ bạn tốt hơn. Giờ giao hàng: 7:00 - 22:00 hàng ngày.",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.768Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd21"
+  },
+  "user": null,
+  "title": "Sản phẩm mới đã có mặt",
+  "message": "Khám phá các sản phẩm mới nhất từ các thương hiệu uy tín. Đặt hàng ngay để trải nghiệm!",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.768Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd22"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH001 của bạn đã được xác nhận. Chúng tôi sẽ chuẩn bị và giao hàng sớm nhất có thể.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd23"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10838"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Cảm ơn bạn đã đặt hàng! Đơn hàng #DH002 đang được xử lý và sẽ được giao trong 24h tới.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd24"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10839"
+  },
+  "title": "Đặt hàng thành công",
+  "message": "Đơn hàng #DH003 của bạn đã được tiếp nhận. Thời gian giao hàng dự kiến: 30-45 phút.",
+  "type": "order",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd25"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "title": "Mã giảm giá dành cho người dùng mới",
+  "message": "Chào mừng bạn đến với cửa hàng! Sử dụng mã NEWUSER10 để được giảm 10% cho đơn hàng đầu tiên (tối đa 20.000đ).",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae92"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd26"
+  },
+  "user": null,
+  "title": "🚚 Miễn phí ship cho đơn từ 200K",
+  "message": "Nhập mã FREESHIP50K để được giảm 50.000đ phí vận chuyển cho đơn hàng từ 200.000đ. Nhanh tay, chỉ có 500 mã!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae93"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd27"
+  },
+  "user": null,
+  "title": "🍿 Giảm 15% cho đồ ăn vặt",
+  "message": "Thèm ăn vặt? Sử dụng mã DOANVAT15 để được giảm 15% (tối đa 15.000đ) cho tất cả đồ ăn vặt yêu thích!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae94"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd28"
+  },
+  "user": null,
+  "title": "🥤 Giảm 50% cho nước uống",
+  "message": "Khát nước? Nhập mã TRA50 để được giảm 50% (tối đa 10.000đ) cho các loại nước uống. Áp dụng đến 30/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae95"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd29"
+  },
+  "user": null,
+  "title": "🎒 Khuyến mãi Back to School",
+  "message": "Chuẩn bị năm học mới! Sử dụng mã BACK2SCHOOL20 để được giảm 20.000đ cho đơn từ 100.000đ. Có hiệu lực từ 1/8!",
+  "type": "promotion",
+  "relatedPromotion": {
+    "$oid": "687034239ce82c83a874ae96"
+  },
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd2a"
+  },
+  "user": null,
+  "title": "Cập nhật chính sách giao hàng",
+  "message": "Chúng tôi đã cập nhật thời gian giao hàng để phục vụ bạn tốt hơn. Giờ giao hàng: 7:00 - 22:00 hàng ngày.",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6870439904cf4f06d044bd2b"
+  },
+  "user": null,
+  "title": "Sản phẩm mới đã có mặt",
+  "message": "Khám phá các sản phẩm mới nhất từ các thương hiệu uy tín. Đặt hàng ngay để trải nghiệm!",
+  "type": "system",
+  "read": false,
+  "createdAt": {
+    "$date": "2025-07-10T22:50:01.771Z"
+  }
+}]

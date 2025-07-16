@@ -1,0 +1,82 @@
+[{
+  "_id": {
+    "$oid": "6870368b9ce82c83a874ae97"
+  },
+  "user": {
+    "$oid": "68701bc7caa62de7e0d10837"
+  },
+  "items": [
+    {
+      "product": {
+        "$oid": "6870308e9ce82c83a874ae83"
+      },
+      "quantity": 1,
+      "size": "M",
+      "addOns": [
+        {
+          "name": "Thêm trứng",
+          "price": 5000,
+          "calories": 70
+        },
+        {
+          "name": "Nước sốt đặc biệt",
+          "price": 3000,
+          "calories": 50
+        }
+      ],
+      "sugarLevel": null,
+      "iceLevel": null,
+      "itemPrice": 43000,
+      "addedAt": {
+        "$date": "2025-07-10T21:54:19.048Z"
+      }
+    },
+    {
+      "product": {
+        "$oid": "6870328e9ce82c83a874ae8e"
+      },
+      "quantity": 2,
+      "size": "L",
+      "addOns": [],
+      "sugarLevel": null,
+      "iceLevel": null,
+      "itemPrice": 25000,
+      "addedAt": {
+        "$date": "2025-07-10T21:54:19.049Z"
+      }
+    },
+    {
+      "product": {
+        "$oid": "687031f79ce82c83a874ae8b"
+      },
+      "quantity": 1,
+      "size": "L",
+      "addOns": [
+        {
+          "name": "Trân châu đen",
+          "price": 5000,
+          "calories": 100
+        },
+        {
+          "name": "Kem cheese",
+          "price": 7000,
+          "calories": 120
+        }
+      ],
+      "sugarLevel": "50%",
+      "iceLevel": "Less Ice",
+      "itemPrice": 42000,
+      "addedAt": {
+        "$date": "2025-07-10T21:54:19.049Z"
+      }
+    }
+  ],
+  "totalItems": 4,
+  "totalPrice": 135000,
+  "createdAt": {
+    "$date": "2025-07-10T21:54:19.049Z"
+  },
+  "updatedAt": {
+    "$date": "2025-07-10T21:54:19.049Z"
+  }
+}]
