@@ -50,13 +50,13 @@ const types = [
 
 const days = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
 const dayNames: Record<string, string> = {
-  T2: "Thứ 2",
-  T3: "Thứ 3",
-  T4: "Thứ 4",
-  T5: "Thứ 5",
-  T6: "Thứ 6",
-  T7: "Thứ 7",
-  CN: "Chủ nhật",
+  T2: "",
+  T3: "",
+  T4: "",
+  T5: "",
+  T6: "",
+  T7: "",
+  CN: "",
 };
 
 const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
@@ -71,11 +71,13 @@ const MenuCard = ({
   onOrder,
   onToggleFavorite,
   isFavorite,
+  onPress,
 }: {
   item: MenuItem;
   onOrder?: (item: MenuItem) => void;
   onToggleFavorite?: (item: MenuItem) => void;
   isFavorite?: boolean;
+  onPress?: (item: MenuItem) => void;
 }) => {
   const statusMap: Record<
     string,
@@ -106,7 +108,11 @@ const MenuCard = ({
   };
 
   return (
-    <Animatable.View animation="fadeInUp" duration={600} style={styles.card}>
+    <TouchableOpacity 
+      onPress={() => onPress?.(item)}
+      activeOpacity={0.9}
+    >
+      <Animatable.View animation="fadeInUp" duration={600} style={styles.card}>
       <View style={styles.cardImageContainer}>
         <Image source={{ uri: item.image }} style={styles.image} />
 
@@ -227,6 +233,7 @@ const MenuCard = ({
         </TouchableOpacity>
       </View>
     </Animatable.View>
+    </TouchableOpacity>
   );
 };
 
@@ -273,6 +280,8 @@ const MenuScreen = ({ navigation }: any) => {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [itemDetailVisible, setItemDetailVisible] = useState(false);
 
   const fetchMenu = async () => {
     try {
@@ -390,6 +399,11 @@ const MenuScreen = ({ navigation }: any) => {
     }
   };
 
+  const handleItemPress = (item: MenuItem) => {
+    setSelectedItem(item);
+    setItemDetailVisible(true);
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -448,6 +462,7 @@ const MenuScreen = ({ navigation }: any) => {
                 onOrder={handleOrder}
                 onToggleFavorite={toggleFavorite}
                 isFavorite={favorites.includes(item.id)}
+                onPress={handleItemPress}
               />
             )}
             renderSectionHeader={({ section: { title } }) => (
@@ -486,7 +501,7 @@ const MenuScreen = ({ navigation }: any) => {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* Day filter */}
-              <Text style={styles.modalLabel}>📅 Chọn ngày</Text>
+            
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -695,6 +710,228 @@ const MenuScreen = ({ navigation }: any) => {
                 <Text style={styles.modalBtnPrimaryText}>Áp dụng</Text>
               </TouchableOpacity>
             </View>
+          </Animatable.View>
+        </View>
+      </Modal>
+
+      {/* Item Detail Modal */}
+      <Modal
+        visible={itemDetailVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setItemDetailVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <Animatable.View animation="slideInUp" style={styles.detailModalBox}>
+            {selectedItem && (
+              <>
+                {/* Header with close button */}
+                <View style={styles.detailModalHeader}>
+                  <TouchableOpacity 
+                    onPress={() => setItemDetailVisible(false)}
+                    style={styles.closeButton}
+                  >
+                    <Ionicons name="close" size={24} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Image section */}
+                <View style={styles.detailImageContainer}>
+                  <Image source={{ uri: selectedItem.image }} style={styles.detailImage} />
+                  
+                  {/* Badges overlay */}
+                  <View style={styles.detailBadgeContainer}>
+                    {selectedItem.isNew && (
+                      <View style={[styles.badge, styles.newBadge]}>
+                        <Text style={styles.badgeText}>MỚI</Text>
+                      </View>
+                    )}
+                    {selectedItem.isPopular && (
+                      <View style={[styles.badge, styles.popularBadge]}>
+                        <Ionicons name="flame" size={12} color="#fff" />
+                        <Text style={styles.badgeText}>HOT</Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {/* Favorite button */}
+                 
+                </View>
+
+                {/* Content section */}
+                <ScrollView style={styles.detailContent} showsVerticalScrollIndicator={false}>
+                  {/* Title and price */}
+                  <View style={styles.detailTitleSection}>
+                    <Text style={styles.detailTitle}>{selectedItem.name}</Text>
+                    <View style={styles.detailPriceContainer}>
+                      <Text style={styles.detailPrice}>{selectedItem.price.toLocaleString()}đ</Text>
+                      {selectedItem.originalPrice > selectedItem.price && (
+                        <Text style={styles.detailOriginalPrice}>
+                          {selectedItem.originalPrice.toLocaleString()}đ
+                        </Text>
+                      )}
+                      {selectedItem.studentDiscount > 0 && (
+                        <View style={styles.detailDiscountBadge}>
+                          <Text style={styles.detailDiscountText}>-{selectedItem.studentDiscount}% SV</Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Rating and reviews */}
+                  <View style={styles.detailRatingSection}>
+                    <View style={styles.ratingContainer}>
+                      <Ionicons name="star" size={16} color="#FFD700" />
+                      <Text style={styles.detailRatingText}>{selectedItem.rating}</Text>
+                      <Text style={styles.detailReviewText}>({selectedItem.reviewCount} đánh giá)</Text>
+                    </View>
+                    <View style={styles.detailInfoRow}>
+                      <Ionicons name="time-outline" size={16} color="#666" />
+                      <Text style={styles.detailInfoText}>{selectedItem.estimatedWaitTime}</Text>
+                    </View>
+                  </View>
+
+                  {/* Description */}
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Mô tả món ăn</Text>
+                    <Text style={styles.detailDescription}>{selectedItem.desc}</Text>
+                  </View>
+
+                  {/* Vendor info */}
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Thông tin quầy</Text>
+                    <View style={styles.detailVendorInfo}>
+                      <Ionicons
+                        name={vendors.find(v => v.id === selectedItem.vendorId)?.icon as any}
+                        size={20}
+                        color={vendors.find(v => v.id === selectedItem.vendorId)?.color}
+                      />
+                      <Text style={[styles.detailVendorText, { color: vendors.find(v => v.id === selectedItem.vendorId)?.color }]}>
+                        {vendors.find(v => v.id === selectedItem.vendorId)?.name}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Nutritional info */}
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Thông tin dinh dưỡng</Text>
+                    <View style={styles.nutritionalInfo}>
+                      <View style={styles.nutritionalItem}>
+                        <Ionicons name="fitness-outline" size={16} color="#666" />
+                        <Text style={styles.nutritionalText}>{selectedItem.calories} cal</Text>
+                      </View>
+                      {selectedItem.spicyLevel > 0 && (
+                        <View style={styles.nutritionalItem}>
+                          <Text style={styles.nutritionalLabel}>Độ cay:</Text>
+                          <View style={styles.spicyContainer}>
+                            {[...Array(3)].map((_, i) => (
+                              <Ionicons
+                                key={i}
+                                name="flame"
+                                size={14}
+                                color={i < selectedItem.spicyLevel ? "#FF6347" : "#DDD"}
+                              />
+                            ))}
+                          </View>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Category and type */}
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Phân loại</Text>
+                    <View style={styles.detailTagsContainer}>
+                      <View style={[
+                        styles.detailTag, 
+                        { backgroundColor: categories.find(c => c.id === selectedItem.category)?.color + "20" }
+                      ]}>
+                        <Ionicons 
+                          name={categories.find(c => c.id === selectedItem.category)?.icon as any} 
+                          size={14} 
+                          color={categories.find(c => c.id === selectedItem.category)?.color} 
+                        />
+                        <Text style={[
+                          styles.detailTagText, 
+                          { color: categories.find(c => c.id === selectedItem.category)?.color }
+                        ]}>
+                          {categories.find(c => c.id === selectedItem.category)?.name}
+                        </Text>
+                      </View>
+                      <View style={styles.detailTag}>
+                        <Ionicons 
+                          name={types.find(t => t.id === selectedItem.type)?.icon as any} 
+                          size={14} 
+                          color="#666" 
+                        />
+                        <Text style={styles.detailTagText}>
+                          {types.find(t => t.id === selectedItem.type)?.name}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* Serving time */}
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Thời gian phục vụ</Text>
+                    <Text style={styles.detailServingTime}>
+                      <Ionicons name="restaurant-outline" size={16} color="#666" /> {selectedItem.servingTime}
+                    </Text>
+                  </View>
+
+                  {/* Status */}
+                  <View style={styles.detailSection}>
+                    <Text style={styles.detailSectionTitle}>Trạng thái</Text>
+                    <View style={[
+                      styles.detailStatusBadge,
+                      { backgroundColor: {
+                        available: "#E8F5E8",
+                        almost_out: "#FFF8E1", 
+                        out: "#FFEBEE"
+                      }[selectedItem.status] }
+                    ]}>
+                      <Text style={[
+                        styles.detailStatusText,
+                        { color: {
+                          available: "#27AE60",
+                          almost_out: "#F39C12",
+                          out: "#E74C3C"
+                        }[selectedItem.status] }
+                      ]}>
+                        {{
+                          available: "Còn hàng",
+                          almost_out: "Sắp hết",
+                          out: "Hết món"
+                        }[selectedItem.status]}
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Add some bottom padding for the order button */}
+                  <View style={{ height: 100 }} />
+                </ScrollView>
+
+                {/* Fixed order button at bottom */}
+                <View style={styles.detailOrderSection}>
+                  <TouchableOpacity
+                    style={[
+                      styles.detailOrderBtn,
+                      selectedItem.status === "out" && styles.detailOrderBtnDisabled,
+                    ]}
+                    onPress={() => {
+                      setItemDetailVisible(false);
+                      handleOrder(selectedItem);
+                    }}
+                    disabled={selectedItem.status === "out"}
+                    activeOpacity={selectedItem.status === "out" ? 1 : 0.8}
+                  >
+                    <Text style={styles.detailOrderBtnText}>
+                      {selectedItem.status === "out" ? "Hết món" : `ĐẶT MÓN - ${selectedItem.price.toLocaleString()}đ`}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </Animatable.View>
         </View>
       </Modal>
@@ -1149,6 +1386,235 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
+  },
+  // Detail Modal Styles
+  detailModalBox: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: "95%",
+    flex: 1,
+  },
+  detailModalHeader: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    paddingTop: 50,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  closeButton: {
+    alignSelf: "flex-end",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  detailImageContainer: {
+    position: "relative",
+    height: 200,
+  },
+  detailImage: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "#f0f0f0",
+  },
+  detailBadgeContainer: {
+    position: "absolute",
+    top: 80,
+    left: 16,
+    flexDirection: "row",
+  },
+  detailFavoriteBtn: {
+    position: "absolute",
+    top: 80,
+    right: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  detailContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+  },
+  detailTitleSection: {
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+  },
+  detailTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 12,
+  },
+  detailPriceContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  detailPrice: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#FF6347",
+    marginRight: 12,
+  },
+  detailOriginalPrice: {
+    fontSize: 16,
+    color: "#999",
+    textDecorationLine: "line-through",
+    marginRight: 12,
+  },
+  detailDiscountBadge: {
+    backgroundColor: "#FF6B6B",
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  detailDiscountText: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  detailRatingSection: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+  },
+  detailRatingText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+    marginLeft: 6,
+  },
+  detailReviewText: {
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 4,
+  },
+  detailInfoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  detailInfoText: {
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 6,
+  },
+  detailSection: {
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f0f0f0",
+  },
+  detailSectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 12,
+  },
+  detailDescription: {
+    fontSize: 16,
+    color: "#666",
+    lineHeight: 24,
+  },
+  detailVendorInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  detailVendorText: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  nutritionalInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  nutritionalItem: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  nutritionalText: {
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 6,
+  },
+  nutritionalLabel: {
+    fontSize: 14,
+    color: "#666",
+    marginRight: 8,
+  },
+  detailTagsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  detailTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: "#f8f9fa",
+    marginRight: 12,
+    marginBottom: 8,
+  },
+  detailTagText: {
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 6,
+    fontWeight: "500",
+  },
+  detailServingTime: {
+    fontSize: 16,
+    color: "#666",
+  },
+  detailStatusBadge: {
+    alignSelf: "flex-start",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  detailStatusText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  detailOrderSection: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: "#f0f0f0",
+    backgroundColor: "#fff",
+  },
+  detailOrderBtn: {
+    backgroundColor: "#FF6347",
+    borderRadius: 25,
+    paddingVertical: 16,
+    alignItems: "center",
+    shadowColor: "#FF6347",
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  detailOrderBtnDisabled: {
+    backgroundColor: "#CCC",
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  detailOrderBtnText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+    letterSpacing: 1,
   },
 });
 

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   Alert,
   Dimensions,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -62,7 +63,11 @@ const AdminSwitchScreen = ({ navigation }: any) => {
         </Text>
       </LinearGradient>
 
-      <View style={styles.content}>
+      <ScrollView 
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <Animatable.View
           animation="fadeInUp"
           delay={300}
@@ -174,7 +179,7 @@ const AdminSwitchScreen = ({ navigation }: any) => {
             Admin Mode cần quyền truy cập đặc biệt.
           </Text>
         </Animatable.View>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -201,7 +206,10 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  contentContainer: {
     padding: 20,
+    paddingBottom: 40,
   },
   modeCard: {
     backgroundColor: 'white',
