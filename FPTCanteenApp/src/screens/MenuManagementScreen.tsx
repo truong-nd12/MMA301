@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -15,6 +14,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+// @ts-ignore
 import * as Animatable from 'react-native-animatable';
 import { Product, productApi } from '../api/productApi';
 
@@ -300,7 +300,7 @@ const MenuManagementScreen = () => {
 
   const testBackendConnection = async () => {
     try {
-      const response = await fetch('http://10.33.55.98:8080/api/products', {
+      const response = await fetch('http://192.168.2.6:8080/api/products', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -447,10 +447,7 @@ const MenuManagementScreen = () => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#3498DB', '#2980B9']}
-        style={styles.header}
-      >
+      <View style={[styles.header, { backgroundColor: '#3498DB' }]}>
         <Text style={styles.headerTitle}>Quản lý món ăn</Text>
         <TouchableOpacity
           style={styles.addButton}
@@ -458,7 +455,7 @@ const MenuManagementScreen = () => {
         >
           <Ionicons name="add" size={24} color="white" />
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
 
       {menuItems.length === 0 ? (
         <View style={styles.emptyContainer}>

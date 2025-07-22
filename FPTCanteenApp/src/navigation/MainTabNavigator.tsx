@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import MenuScreen from "../screens/MenuScreen";
 import OrderScreen from "../screens/OrderScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import OrderTrackingScreen from "../screens/OrderTrackingScreen";
+import OrderTrackingScreen from "../screens/OrderTrackingScreen_fixed";
 import AIChatScreen from "../screens/AIChatScreen";
 import { Ionicons } from "@expo/vector-icons";
 

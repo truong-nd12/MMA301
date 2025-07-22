@@ -9,7 +9,7 @@ import OrderDetailScreen from "../screens/OrderDetailScreen";
 import OrderHistoryScreen from "../screens/OrderHistoryScreen";
 import OrderReviewScreen from "../screens/OrderReviewScreen";
 import OrderScreen from "../screens/OrderScreen";
-import OrderTrackingScreen from "../screens/OrderTrackingScreen";
+import OrderTrackingScreen from "../screens/OrderTrackingScreen_fixed";
 import SettingsScreen from "../screens/SettingsScreen";
 import SupportScreen from "../screens/SupportScreen";
 import WalletScreen from "../screens/WalletScreen";

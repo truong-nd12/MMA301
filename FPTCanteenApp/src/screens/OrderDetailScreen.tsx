@@ -86,7 +86,7 @@ const statusConfig = {
     gradient: ["#64B5F6", "#2196F3"],
     step: 2,
   },
-  preparing: {
+  processing: {
     label: "Đang chuẩn bị",
     color: "#FF6B6B",
     bgColor: "#FFEBEE",
@@ -94,7 +94,7 @@ const statusConfig = {
     gradient: ["#FF8A80", "#FF6B6B"],
     step: 3,
   },
-  ready: {
+  shipped: {
     label: "Sẵn sàng",
     color: "#4CAF50",
     bgColor: "#E8F5E8",
@@ -192,6 +192,16 @@ const OrderTimeline = ({
   orderTimeline: any[];
   currentStatus: string;
 }) => {
+  const steps: (keyof typeof statusConfig)[] = [
+    "pending",
+    "confirmed",
+    "processing",
+    "shipped",
+    "delivered",
+  ];
+  const currentStep =
+    statusConfig[currentStatus as keyof typeof statusConfig]?.step || 0;
+
   if (currentStatus === "cancelled") {
     return (
       <View style={styles.timelineContainer}>
@@ -267,9 +277,9 @@ export default function OrderDetailScreen({ route, navigation }: any) {
         return "Đang xác nhận...";
       case "confirmed":
         return "Chuẩn bị trong 10-15 phút";
-      case "preparing":
+      case "processing":
         return "5-10 phút nữa";
-      case "ready":
+      case "shipped":
         return "Sẵn sàng nhận";
       case "delivered":
         return "Đã hoàn thành";
@@ -297,31 +307,31 @@ export default function OrderDetailScreen({ route, navigation }: any) {
           "vi-VN",
           { hour: "2-digit", minute: "2-digit" }
         ),
-        completed: ["confirmed", "preparing", "ready", "delivered"].includes(
+        completed: ["confirmed", "processing", "shipped", "delivered"].includes(
           currentStatus
         ),
       },
       {
-        status: "preparing",
-        time: ["preparing", "ready", "delivered"].includes(currentStatus)
+        status: "processing",
+        time: ["processing", "shipped", "delivered"].includes(currentStatus)
           ? new Date(baseTime.getTime() + 5 * 60000).toLocaleTimeString(
               "vi-VN",
               { hour: "2-digit", minute: "2-digit" }
             )
           : null,
-        completed: ["ready", "delivered"].includes(currentStatus),
-        active: currentStatus === "preparing",
+        completed: ["shipped", "delivered"].includes(currentStatus),
+        active: currentStatus === "processing",
       },
       {
-        status: "ready",
-        time: ["ready", "delivered"].includes(currentStatus)
+        status: "shipped",
+        time: ["shipped", "delivered"].includes(currentStatus)
           ? new Date(baseTime.getTime() + 15 * 60000).toLocaleTimeString(
               "vi-VN",
               { hour: "2-digit", minute: "2-digit" }
             )
           : null,
         completed: currentStatus === "delivered",
-        active: currentStatus === "ready",
+        active: currentStatus === "shipped",
       },
       {
         status: "delivered",
@@ -432,13 +442,20 @@ export default function OrderDetailScreen({ route, navigation }: any) {
     );
   }
 
-  const config = statusConfig[order.status as keyof typeof statusConfig];
+  const config = statusConfig[order.status as keyof typeof statusConfig] || {
+    label: 'Không xác định',
+    color: '#999',
+    bgColor: '#eee',
+    icon: 'help-circle-outline',
+    gradient: ['#ccc', '#999'],
+    step: 0,
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient
-        colors={config.gradient || [config.color, config.color]}
+        colors={(config.gradient || [config.color, config.color]) as [string, string]}
         style={styles.header}
       >
         <View style={styles.headerContent}>

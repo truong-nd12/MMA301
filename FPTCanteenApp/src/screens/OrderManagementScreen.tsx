@@ -1,5 +1,4 @@
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -23,8 +22,8 @@ const { width } = Dimensions.get('window');
 const statusColors = {
   pending: '#FFA500',
   confirmed: '#3498DB',
-  preparing: '#F39C12',
-  ready: '#27AE60',
+  processing: '#F39C12',
+  shipped: '#27AE60',
   delivered: '#2ECC71',
   cancelled: '#E74C3C'
 };
@@ -32,11 +31,57 @@ const statusColors = {
 const statusLabels = {
   pending: 'Chờ xác nhận',
   confirmed: 'Đã xác nhận',
-  preparing: 'Đang chuẩn bị',
-  ready: 'Sẵn sàng',
+  processing: 'Đang chuẩn bị',
+  shipped: 'Sẵn sàng',
   delivered: 'Đã giao',
   cancelled: 'Đã hủy'
 };
+
+// Định nghĩa status filter list với colors tương ứng
+const statusFilterList = [
+  { 
+    key: 'all', 
+    label: 'Tất cả', 
+    icon: 'list-outline',
+    color: '#6C7B7F' // Màu neutral cho "Tất cả"
+  },
+  { 
+    key: 'pending', 
+    label: 'Chờ xác nhận', 
+    icon: 'time-outline',
+    color: statusColors.pending
+  },
+  { 
+    key: 'confirmed', 
+    label: 'Đã xác nhận', 
+    icon: 'checkmark-done-outline',
+    color: statusColors.confirmed
+  },
+  { 
+    key: 'processing', 
+    label: 'Đang chuẩn bị', 
+    icon: 'restaurant-outline',
+    color: statusColors.processing
+  },
+  { 
+    key: 'shipped', 
+    label: 'Sẵn sàng', 
+    icon: 'cube-outline',
+    color: statusColors.shipped
+  },
+  { 
+    key: 'delivered', 
+    label: 'Đã giao', 
+    icon: 'checkmark-circle-outline',
+    color: statusColors.delivered
+  },
+  { 
+    key: 'cancelled', 
+    label: 'Đã hủy', 
+    icon: 'close-circle-outline',
+    color: statusColors.cancelled
+  },
+];
 
 const OrderCard = ({ 
   order, 
@@ -128,8 +173,8 @@ const OrderCard = ({
                 [
                   { text: 'Chờ xác nhận', onPress: () => onStatusChange(order._id, 'pending') },
                   { text: 'Đã xác nhận', onPress: () => onStatusChange(order._id, 'confirmed') },
-                  { text: 'Đang chuẩn bị', onPress: () => onStatusChange(order._id, 'preparing') },
-                  { text: 'Sẵn sàng', onPress: () => onStatusChange(order._id, 'ready') },
+                  { text: 'Đang chuẩn bị', onPress: () => onStatusChange(order._id, 'processing') },
+                  { text: 'Sẵn sàng', onPress: () => onStatusChange(order._id, 'shipped') },
                   { text: 'Đã giao', onPress: () => onStatusChange(order._id, 'delivered') },
                   { text: 'Hủy', onPress: () => onStatusChange(order._id, 'cancelled') },
                   { text: 'Hủy', style: 'cancel' }
@@ -327,8 +372,8 @@ const OrderManagementScreen = () => {
     all: orders.length,
     pending: orders.filter(o => o.status === 'pending').length,
     confirmed: orders.filter(o => o.status === 'confirmed').length,
-    preparing: orders.filter(o => o.status === 'preparing').length,
-    ready: orders.filter(o => o.status === 'ready').length,
+    processing: orders.filter(o => o.status === 'processing').length,
+    shipped: orders.filter(o => o.status === 'shipped').length,
     delivered: orders.filter(o => o.status === 'delivered').length,
     cancelled: orders.filter(o => o.status === 'cancelled').length,
   };
@@ -344,10 +389,7 @@ const OrderManagementScreen = () => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#3498DB', '#2980B9']}
-        style={styles.header}
-      >
+      <View style={[styles.header, { backgroundColor: '#3498DB' }]}>
         <Text style={styles.headerTitle}>Quản lý đơn hàng</Text>
         <TouchableOpacity
           style={styles.refreshButton}
@@ -355,38 +397,57 @@ const OrderManagementScreen = () => {
         >
           <Ionicons name="refresh" size={24} color="white" />
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
 
-      {/* Status Filter */}
+      {/* Status Filter - Đã đồng bộ style */}
       <ScrollView 
         horizontal 
         showsHorizontalScrollIndicator={false}
         style={styles.statusFilter}
         contentContainerStyle={styles.statusFilterContent}
       >
-        {Object.entries(statusCounts).map(([status, count]) => (
-          <TouchableOpacity
-            key={status}
-            style={[
-              styles.statusFilterButton,
-              selectedStatus === status && styles.statusFilterButtonActive
-            ]}
-            onPress={() => setSelectedStatus(status as Order['status'] | 'all')}
-          >
-            <Text style={[
-              styles.statusFilterText,
-              selectedStatus === status && styles.statusFilterTextActive
-            ]}>
-              {status === 'all' ? 'Tất cả' : statusLabels[status as Order['status']]}
-            </Text>
-            <Text style={[
-              styles.statusFilterCount,
-              selectedStatus === status && styles.statusFilterCountActive
-            ]}>
-              {count}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {statusFilterList.map(({ key, label, icon, color }) => {
+          const isActive = selectedStatus === key;
+          const count = statusCounts[key as keyof typeof statusCounts] ?? 0;
+          
+          return (
+            <TouchableOpacity
+              key={key}
+              style={[
+                styles.statusFilterButton,
+                isActive && [
+                  styles.statusFilterButtonActive,
+                  { backgroundColor: color }
+                ]
+              ]}
+              onPress={() => setSelectedStatus(key as Order['status'] | 'all')}
+            >
+              <Ionicons
+                name={icon as any}
+                size={16}
+                color={isActive ? 'white' : color}
+                style={{ marginRight: 6 }}
+              />
+              <Text style={[
+                styles.statusFilterText,
+                isActive && styles.statusFilterTextActive
+              ]}>
+                {label}
+              </Text>
+              <View style={[
+                styles.statusFilterCountContainer,
+                isActive && styles.statusFilterCountContainerActive
+              ]}>
+                <Text style={[
+                  styles.statusFilterCount,
+                  isActive && styles.statusFilterCountActive
+                ]}>
+                  {count}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
 
       {filteredOrders.length === 0 ? (
@@ -467,42 +528,60 @@ const styles = StyleSheet.create({
   },
   statusFilter: {
     backgroundColor: 'white',
-    paddingVertical: 12,
+    paddingVertical: 16,
   },
   statusFilterContent: {
     paddingHorizontal: 16,
   },
   statusFilterButton: {
+    minHeight: 44,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#f0f0f0',
-    marginRight: 8,
+    borderRadius: 22,
+    backgroundColor: '#f8f9fa',
+    marginRight: 12,
     flexDirection: 'row',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e9ecef',
   },
   statusFilterButtonActive: {
-    backgroundColor: '#3498DB',
+    borderColor: 'transparent',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
   },
   statusFilterText: {
     fontSize: 14,
-    color: '#666',
-    marginRight: 4,
+    color: '#495057',
+    fontWeight: '500',
+    marginRight: 8,
   },
   statusFilterTextActive: {
     color: 'white',
+    fontWeight: '600',
+  },
+  statusFilterCountContainer: {
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#dee2e6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  statusFilterCountContainerActive: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   statusFilterCount: {
     fontSize: 12,
-    color: '#999',
-    backgroundColor: '#e0e0e0',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 10,
+    color: '#6c757d',
+    fontWeight: '600',
+    textAlign: 'center',
   },
   statusFilterCountActive: {
     color: 'white',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   listContainer: {
     padding: 16,
@@ -540,14 +619,16 @@ const styles = StyleSheet.create({
     color: '#999',
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    minWidth: 80,
+    alignItems: 'center',
   },
   statusText: {
     fontSize: 12,
     color: 'white',
-    fontWeight: '500',
+    fontWeight: '600',
   },
   orderItems: {
     marginBottom: 12,
@@ -713,4 +794,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OrderManagementScreen; 
+export default OrderManagementScreen;
